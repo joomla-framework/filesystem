@@ -9,6 +9,7 @@
 namespace Joomla\Filesystem\Clients;
 
 use Joomla\Log\Log;
+use Psr\Log\LoggerAwareInterface;
 
 /** Error Codes:
  * - 30 : Unable to connect to host
@@ -52,7 +53,7 @@ if (!defined('FTP_NATIVE'))
  *
  * @since  1.0
  */
-class FtpClient
+class FtpClient implements LoggerAwareInterface
 {
 	/**
 	 * @var    resource  Socket resource
