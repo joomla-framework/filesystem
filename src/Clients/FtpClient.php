@@ -8,8 +8,9 @@
 
 namespace Joomla\Filesystem\Clients;
 
-use Joomla\Log\Log;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /** Error Codes:
  * - 30 : Unable to connect to host
