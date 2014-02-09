@@ -8,7 +8,6 @@
 
 namespace Joomla\Filesystem;
 
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -17,7 +16,7 @@ use Psr\Log\NullLogger;
  *
  * @since  1.0
  */
-class File implements LoggerAwareInterface
+class File
 {
 	/**
 	 * Logger object
