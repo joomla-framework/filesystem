@@ -1,6 +1,6 @@
 <?php
 /**
- * Part of the Joomla Framework Client Package
+ * Part of the Joomla Framework Filesystem Package
  *
  * @copyright  Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
@@ -130,6 +130,14 @@ class FtpClient
 	 * @since  1.0
 	 */
 	protected static $instances = array();
+
+	/**
+	 * Logger object
+	 *
+	 * @var    LoggerInterface
+	 * @since  1.1
+	 */
+	protected $logger;
 
 	/**
 	 * JClientFtp object constructor
@@ -269,7 +277,7 @@ class FtpClient
 
 			if ($this->conn === false)
 			{
-				Log::add(sprintf('%1$s: Could not connect to host " %2$s " on port " %3$s "', __METHOD__, $host, $port), Log::WARNING, 'jerror');
+				$this->getLogger()->warning(sprintf('%1$s: Could not connect to host " %2$s " on port " %3$s "', __METHOD__, $host, $port));
 
 				return false;
 			}
@@ -285,7 +293,7 @@ class FtpClient
 
 		if (!$this->conn)
 		{
-			Log::add(
+			$this->getLogger()->warning(
 				sprintf(
 					'%1$s: Could not connect to host " %2$s " on port " %3$s ". Socket error number: %4$s and error message: %5$s',
 					__METHOD__,
@@ -293,9 +301,8 @@ class FtpClient
 					$port,
 					$errno,
 					$err
-				),
-				Log::WARNING,
-				'jerror');
+				)
+			);
 
 			return false;
 		}
@@ -306,7 +313,7 @@ class FtpClient
 		// Check for welcome response code
 		if (!$this->_verifyResponse(220))
 		{
-			Log::add(sprintf('%1$s: Bad response. Server response: %2$s [Expected: 220]', __METHOD__, $this->response), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: Bad response. Server response: %2$s [Expected: 220]', __METHOD__, $this->response));
 
 			return false;
 		}
@@ -343,7 +350,7 @@ class FtpClient
 		{
 			if (@ftp_login($this->conn, $user, $pass) === false)
 			{
-				Log::add('JFTP::login: Unable to login', Log::WARNING, 'jerror');
+				$this->getLogger()->warning('JFTP::login: Unable to login');
 
 				return false;
 			}
@@ -354,9 +361,8 @@ class FtpClient
 		// Send the username
 		if (!$this->_putCmd('USER ' . $user, array(331, 503)))
 		{
-			Log::add(
-				sprintf('%1$s: Bad Username. Server response: %2$s [Expected: 331]. Username sent: %3$s', __METHOD__, $this->response, $user),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad Username. Server response: %2$s [Expected: 331]. Username sent: %3$s', __METHOD__, $this->response, $user)
 			);
 
 			return false;
@@ -371,7 +377,7 @@ class FtpClient
 		// Send the password
 		if (!$this->_putCmd('PASS ' . $pass, 230))
 		{
-			Log::add(sprintf('%1$s: Bad Password. Server response: %2$s [Expected: 230].', __METHOD__, $this->response), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: Bad Password. Server response: %2$s [Expected: 230].', __METHOD__, $this->response));
 
 			return false;
 		}
@@ -417,7 +423,7 @@ class FtpClient
 		{
 			if (($ret = @ftp_pwd($this->conn)) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -430,7 +436,7 @@ class FtpClient
 		// Send print working directory command and verify success
 		if (!$this->_putCmd('PWD', 257))
 		{
-			Log::add(sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 257]', __METHOD__, $this->response), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 257]', __METHOD__, $this->response));
 
 			return false;
 		}
@@ -456,7 +462,7 @@ class FtpClient
 		{
 			if (($ret = @ftp_systype($this->conn)) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -466,7 +472,7 @@ class FtpClient
 			// Send print working directory command and verify success
 			if (!$this->_putCmd('SYST', 215))
 			{
-				Log::add(sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 215]', __METHOD__, $this->response), Log::WARNING, 'jerror');
+				$this->getLogger()->warning(sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 215]', __METHOD__, $this->response));
 
 				return false;
 			}
@@ -508,7 +514,7 @@ class FtpClient
 		{
 			if (@ftp_chdir($this->conn, $path) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -519,9 +525,8 @@ class FtpClient
 		// Send change directory command and verify success
 		if (!$this->_putCmd('CWD ' . $path, 250))
 		{
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 250].  Sent path: %3$s', __METHOD__, $this->response, $path),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 250].  Sent path: %3$s', __METHOD__, $this->response, $path)
 			);
 
 			return false;
@@ -546,7 +551,7 @@ class FtpClient
 		{
 			if (@ftp_site($this->conn, 'REIN') === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -557,7 +562,7 @@ class FtpClient
 		// Send reinitialise command to the server
 		if (!$this->_putCmd('REIN', 220))
 		{
-			Log::add(sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 220]', __METHOD__, $this->response), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 220]', __METHOD__, $this->response));
 
 			return false;
 		}
@@ -582,7 +587,7 @@ class FtpClient
 		{
 			if (@ftp_rename($this->conn, $from, $to) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -593,9 +598,8 @@ class FtpClient
 		// Send rename from command to the server
 		if (!$this->_putCmd('RNFR ' . $from, 350))
 		{
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 350].  From path sent: %3$s', __METHOD__, $this->response, $from),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 350].  From path sent: %3$s', __METHOD__, $this->response, $from)
 			);
 
 			return false;
@@ -604,9 +608,8 @@ class FtpClient
 		// Send rename to command to the server
 		if (!$this->_putCmd('RNTO ' . $to, 250))
 		{
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 250].  To path sent: %3$s', __METHOD__, $this->response, $to),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 250].  To path sent: %3$s', __METHOD__, $this->response, $to)
 			);
 
 			return false;
@@ -646,7 +649,7 @@ class FtpClient
 			{
 				if (!defined('PHP_WINDOWS_VERSION_MAJOR'))
 				{
-					Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+					$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 				}
 
 				return false;
@@ -660,16 +663,14 @@ class FtpClient
 		{
 			if (!defined('PHP_WINDOWS_VERSION_MAJOR'))
 			{
-				Log::add(
+				$this->getLogger()->warning(
 					sprintf(
 						'%1$s: Bad response.  Server response: %2$s [Expected: 250].  Path sent: %3$s.  Mode sent: %4$s',
 						__METHOD__,
 						$this->response,
 						$path,
 						$mode
-					),
-					Log::WARNING,
-					'jerror'
+					)
 				);
 			}
 
@@ -697,7 +698,7 @@ class FtpClient
 			{
 				if (@ftp_rmdir($this->conn, $path) === false)
 				{
-					Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+					$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 					return false;
 				}
@@ -711,9 +712,8 @@ class FtpClient
 		{
 			if (!$this->_putCmd('RMD ' . $path, 250))
 			{
-				Log::add(
-					sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 250].  Path sent: %3$s', __METHOD__, $this->response, $path),
-					Log::WARNING, 'jerror'
+				$this->getLogger()->warning(
+					sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 250].  Path sent: %3$s', __METHOD__, $this->response, $path)
 				);
 
 				return false;
@@ -739,7 +739,7 @@ class FtpClient
 		{
 			if (@ftp_mkdir($this->conn, $path) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -750,9 +750,8 @@ class FtpClient
 		// Send change directory command and verify success
 		if (!$this->_putCmd('MKD ' . $path, 257))
 		{
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 257].  Path sent: %3$s', __METHOD__, $this->response, $path),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 257].  Path sent: %3$s', __METHOD__, $this->response, $path)
 			);
 
 			return false;
@@ -777,7 +776,7 @@ class FtpClient
 		{
 			if (@ftp_site($this->conn, 'REST ' . $point) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -788,11 +787,10 @@ class FtpClient
 		// Send restart command and verify success
 		if (!$this->_putCmd('REST ' . $point, 350))
 		{
-			Log::add(
+			$this->getLogger()->warning(
 				sprintf(
 					'%1$s: Bad response.  Server response: %2$s [Expected: 350].  Restart point sent: %3$s', __METHOD__, $this->response, $point
-				),
-				Log::WARNING, 'jerror'
+				)
 			);
 
 			return false;
@@ -818,7 +816,7 @@ class FtpClient
 			// Turn passive mode on
 			if (@ftp_pasv($this->conn, true) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
@@ -827,7 +825,7 @@ class FtpClient
 
 			if (@ftp_fput($this->conn, $path, $buffer, FTP_ASCII) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 				fclose($buffer);
 
 				return false;
@@ -841,7 +839,7 @@ class FtpClient
 		// Start passive mode
 		if (!$this->_passive())
 		{
-			Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 			return false;
 		}
@@ -849,9 +847,8 @@ class FtpClient
 		if (!$this->_putCmd('STOR ' . $path, array(150, 125)))
 		{
 			@ fclose($this->dataconn);
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $path),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $path)
 			);
 
 			return false;
@@ -862,9 +859,8 @@ class FtpClient
 
 		if (!$this->_verifyResponse(226))
 		{
-			Log::add(
-				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $path),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $path)
 			);
 
 			return false;
@@ -894,7 +890,7 @@ class FtpClient
 			// Turn passive mode on
 			if (@ftp_pasv($this->conn, true) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
@@ -904,7 +900,7 @@ class FtpClient
 			if (@ftp_fget($this->conn, $tmp, $remote, $mode) === false)
 			{
 				fclose($tmp);
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -928,7 +924,7 @@ class FtpClient
 		// Start passive mode
 		if (!$this->_passive())
 		{
-			Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 			return false;
 		}
@@ -936,9 +932,8 @@ class FtpClient
 		if (!$this->_putCmd('RETR ' . $remote, array(150, 125)))
 		{
 			@ fclose($this->dataconn);
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote)
 			);
 
 			return false;
@@ -970,12 +965,11 @@ class FtpClient
 
 		if (!$this->_verifyResponse(226))
 		{
-			Log::add(
+			$this->getLogger()->warning(
 				sprintf(
 					'%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Restart point sent: %3$s',
 					__METHOD__, $this->response, $remote
-				),
-				Log::WARNING, 'jerror'
+				)
 			);
 
 			return false;
@@ -1005,14 +999,14 @@ class FtpClient
 			// Turn passive mode on
 			if (@ftp_pasv($this->conn, true) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
 
 			if (@ftp_get($this->conn, $local, $remote, $mode) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -1027,7 +1021,7 @@ class FtpClient
 
 		if (!$fp)
 		{
-			Log::add(sprintf('%1$s: Unable to open local file for writing.  Local path: %2$s', __METHOD__, $local), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: Unable to open local file for writing.  Local path: %2$s', __METHOD__, $local));
 
 			return false;
 		}
@@ -1035,7 +1029,7 @@ class FtpClient
 		// Start passive mode
 		if (!$this->_passive())
 		{
-			Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 			return false;
 		}
@@ -1043,9 +1037,8 @@ class FtpClient
 		if (!$this->_putCmd('RETR ' . $remote, array(150, 125)))
 		{
 			@ fclose($this->dataconn);
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote)
 			);
 
 			return false;
@@ -1064,9 +1057,8 @@ class FtpClient
 
 		if (!$this->_verifyResponse(226))
 		{
-			Log::add(
-				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $remote),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $remote)
 			);
 
 			return false;
@@ -1103,14 +1095,14 @@ class FtpClient
 			// Turn passive mode on
 			if (@ftp_pasv($this->conn, true) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
 
 			if (@ftp_put($this->conn, $remote, $local, $mode) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -1127,14 +1119,14 @@ class FtpClient
 
 			if (!$fp)
 			{
-				Log::add(sprintf('%1$s: Unable to open local file for reading. Local path: %2$s', __METHOD__, $local), Log::WARNING, 'jerror');
+				$this->getLogger()->warning(sprintf('%1$s: Unable to open local file for reading. Local path: %2$s', __METHOD__, $local));
 
 				return false;
 			}
 		}
 		else
 		{
-			Log::add(sprintf('%1$s: Unable to find local file. Local path: %2$s', __METHOD__, $local), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: Unable to find local file. Local path: %2$s', __METHOD__, $local));
 
 			return false;
 		}
@@ -1143,7 +1135,7 @@ class FtpClient
 		if (!$this->_passive())
 		{
 			@ fclose($fp);
-			Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 			return false;
 		}
@@ -1153,9 +1145,8 @@ class FtpClient
 		{
 			@ fclose($fp);
 			@ fclose($this->dataconn);
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote)
 			);
 
 			return false;
@@ -1170,7 +1161,7 @@ class FtpClient
 			{
 				if (($result = @ fwrite($this->dataconn, $line)) === false)
 				{
-					Log::add(__METHOD__ . ': Unable to write to data port socket', Log::WARNING, 'jerror');
+					$this->getLogger()->warning(__METHOD__ . ': Unable to write to data port socket');
 
 					return false;
 				}
@@ -1186,9 +1177,8 @@ class FtpClient
 
 		if (!$this->_verifyResponse(226))
 		{
-			Log::add(
-				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $remote),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $remote)
 			);
 
 			return false;
@@ -1218,7 +1208,7 @@ class FtpClient
 			// Turn passive mode on
 			if (@ftp_pasv($this->conn, true) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
@@ -1230,7 +1220,7 @@ class FtpClient
 			if (@ftp_fput($this->conn, $remote, $tmp, $mode) === false)
 			{
 				fclose($tmp);
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -1246,7 +1236,7 @@ class FtpClient
 		// Start passive mode
 		if (!$this->_passive())
 		{
-			Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 			return false;
 		}
@@ -1254,9 +1244,8 @@ class FtpClient
 		// Send store command to the FTP server
 		if (!$this->_putCmd('STOR ' . $remote, array(150, 125)))
 		{
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $remote)
 			);
 			@ fclose($this->dataconn);
 
@@ -1268,7 +1257,7 @@ class FtpClient
 		{
 			if (($result = @ fwrite($this->dataconn, $buffer)) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to write to data port socket.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to write to data port socket.');
 
 				return false;
 			}
@@ -1284,9 +1273,8 @@ class FtpClient
 		// Verify that the server recieved the transfer
 		if (!$this->_verifyResponse(226))
 		{
-			Log::add(
-				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $remote),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $remote)
 			);
 
 			return false;
@@ -1317,7 +1305,7 @@ class FtpClient
 			// Turn passive mode on
 			if (@ftp_pasv($this->conn, true) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
@@ -1330,7 +1318,7 @@ class FtpClient
 					return array();
 				}
 
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -1359,7 +1347,7 @@ class FtpClient
 		// Start passive mode
 		if (!$this->_passive())
 		{
-			Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 			return false;
 		}
@@ -1374,9 +1362,8 @@ class FtpClient
 				return array();
 			}
 
-			Log::add(
-				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $path),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s', __METHOD__, $this->response, $path)
 			);
 
 			return false;
@@ -1393,9 +1380,8 @@ class FtpClient
 		// Everything go okay?
 		if (!$this->_verifyResponse(226))
 		{
-			Log::add(
-				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $path),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $path)
 			);
 
 			return false;
@@ -1441,14 +1427,14 @@ class FtpClient
 			// Turn passive mode on
 			if (@ftp_pasv($this->conn, true) === false)
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
 
 			if (($contents = @ftp_rawlist($this->conn, $path)) === false)
 			{
-				Log::add(__METHOD__ . 'Bad response.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . 'Bad response.');
 
 				return false;
 			}
@@ -1460,7 +1446,7 @@ class FtpClient
 			// Start passive mode
 			if (!$this->_passive())
 			{
-				Log::add(__METHOD__ . ': Unable to use passive mode.', Log::WARNING, 'jerror');
+				$this->getLogger()->warning(__METHOD__ . ': Unable to use passive mode.');
 
 				return false;
 			}
@@ -1475,12 +1461,11 @@ class FtpClient
 			if (!$this->_putCmd(($recurse == true) ? 'LIST -R' : 'LIST' . $path, array(150, 125)))
 			{
 				@ fclose($this->dataconn);
-				Log::add(
+				$this->getLogger()->warning(
 					sprintf(
 						'%1$s: Bad response.  Server response: %2$s [Expected: 150 or 125].  Path sent: %3$s',
 						__METHOD__, $this->response, $path
-					),
-					Log::WARNING, 'jerror'
+					)
 				);
 
 				return false;
@@ -1497,9 +1482,8 @@ class FtpClient
 			// Everything go okay?
 			if (!$this->_verifyResponse(226))
 			{
-				Log::add(
-					sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $path),
-					Log::WARNING, 'jerror'
+				$this->getLogger()->warning(
+					sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $path)
 				);
 
 				return false;
@@ -1555,7 +1539,7 @@ class FtpClient
 
 		if (!$osType)
 		{
-			Log::add(__METHOD__ . ': Unrecognised directory listing format.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Unrecognised directory listing format.');
 
 			return false;
 		}
@@ -1665,7 +1649,7 @@ class FtpClient
 		// Make sure we have a connection to the server
 		if (!is_resource($this->conn))
 		{
-			Log::add(__METHOD__ . ': Not connected to the control port.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Not connected to the control port.');
 
 			return false;
 		}
@@ -1673,7 +1657,7 @@ class FtpClient
 		// Send the command to the server
 		if (!fwrite($this->conn, $cmd . "\r\n"))
 		{
-			Log::add(sprintf('%1$s: Unable to send command: %2$s', __METHOD__, $cmd), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: Unable to send command: %2$s', __METHOD__, $cmd));
 		}
 
 		return $this->_verifyResponse($expectedResponse);
@@ -1706,12 +1690,11 @@ class FtpClient
 		// Catch a timeout or bad response
 		if (!isset($parts[1]))
 		{
-			Log::add(
+			$this->getLogger()->warning(
 				sprintf(
 					'%1$s: Timeout or unrecognised response while waiting for a response from the server. Server response: %2$s',
 					__METHOD__, $this->response
-				),
-				Log::WARNING, 'jerror'
+				)
 			);
 
 			return false;
@@ -1765,7 +1748,7 @@ class FtpClient
 		// Make sure we have a connection to the server
 		if (!is_resource($this->conn))
 		{
-			Log::add(__METHOD__ . ': Not connected to the control port.', Log::WARNING, 'jerror');
+			$this->getLogger()->warning(__METHOD__ . ': Not connected to the control port.');
 
 			return false;
 		}
@@ -1787,12 +1770,12 @@ class FtpClient
 		// Catch a timeout or bad response
 		if (!isset($parts[1]))
 		{
-			Log::add(
+			$this->getLogger()->warning(
 				sprintf(
 					'%1$s: Timeout or unrecognised response while waiting for a response from the server. Server response: %2$s',
 					__METHOD__, $this->response
-				),
-				Log::WARNING, 'jerror');
+				)
+			);
 
 			return false;
 		}
@@ -1804,9 +1787,8 @@ class FtpClient
 		// If it's not 227, we weren't given an IP and port, which means it failed.
 		if ($this->_responseCode != '227')
 		{
-			Log::add(
-				sprintf('%1$s: Unable to obtain IP and port for data transfer. Server response: %2$s', __METHOD__, $this->_responseMsg),
-				Log::WARNING, 'jerror'
+			$this->getLogger()->warning(
+				sprintf('%1$s: Unable to obtain IP and port for data transfer. Server response: %2$s', __METHOD__, $this->_responseMsg)
 			);
 
 			return false;
@@ -1815,7 +1797,7 @@ class FtpClient
 		// Snatch the IP and port information, or die horribly trying...
 		if (preg_match('~\((\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))\)~', $this->_responseMsg, $match) == 0)
 		{
-			Log::add(sprintf('%1$s: IP and port for data transfer not valid. Server response: %2$s', __METHOD__, $this->_responseMsg), Log::WARNING, 'jerror');
+			$this->getLogger()->warning(sprintf('%1$s: IP and port for data transfer not valid. Server response: %2$s', __METHOD__, $this->_responseMsg));
 
 			return false;
 		}
@@ -1828,7 +1810,7 @@ class FtpClient
 
 		if (!$this->dataconn)
 		{
-			Log::add(
+			$this->getLogger()->warning(
 				sprintf(
 					'%1$s: Could not connect to host %2$s on port %3$s. Socket error number: %4$s and error message: %5$s',
 					__METHOD__,
@@ -1836,9 +1818,7 @@ class FtpClient
 					$this->pasv['port'],
 					$errno,
 					$err
-				),
-				Log::WARNING,
-				'jerror'
+				)
 			);
 
 			return false;
@@ -1903,9 +1883,8 @@ class FtpClient
 		{
 			if (!$this->_putCmd("TYPE I", 200))
 			{
-				Log::add(
-					sprintf('%1$s: Bad response. Server response: %2$s [Expected: 200]. Mode sent: Binary', __METHOD__, $this->response),
-					Log::WARNING, 'jerror'
+				$this->getLogger()->warning(
+					sprintf('%1$s: Bad response. Server response: %2$s [Expected: 200]. Mode sent: Binary', __METHOD__, $this->response)
 				);
 
 				return false;
@@ -1915,9 +1894,8 @@ class FtpClient
 		{
 			if (!$this->_putCmd("TYPE A", 200))
 			{
-				Log::add(
-					sprintf('%1$s: Bad response. Server response: %2$s [Expected: 200]. Mode sent: ASCII', __METHOD__, $this->response),
-					Log::WARNING, 'jerror'
+				$this->getLogger()->warning(
+					sprintf('%1$s: Bad response. Server response: %2$s [Expected: 200]. Mode sent: ASCII', __METHOD__, $this->response)
 				);
 
 				return false;
@@ -1925,5 +1903,37 @@ class FtpClient
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get the logger.
+	 *
+	 * @return  LoggerInterface
+	 *
+	 * @since   1.1
+	 */
+	public function getLogger()
+	{
+		// If a logger hasn't been set, use NullLogger
+		if (!($this->logger instanceof LoggerInterface))
+		{
+			$this->logger = new NullLogger;
+		}
+
+		return $this->logger;
+	}
+
+	/**
+	 * Set the logger.
+	 *
+	 * @param   LoggerInterface  $logger  The logger.
+	 *
+	 * @return  FtpClient  Method allows chaining
+	 *
+	 * @since   1.0
+	 */
+	public function setLogger(LoggerInterface $logger)
+	{
+		$this->logger = $logger;
 	}
 }

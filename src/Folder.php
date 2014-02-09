@@ -8,7 +8,9 @@
 
 namespace Joomla\Filesystem;
 
-use Joomla\Log\Log;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * A Folder handling class
@@ -17,6 +19,14 @@ use Joomla\Log\Log;
  */
 abstract class Folder
 {
+	/**
+	 * Logger object
+	 *
+	 * @var    LoggerInterface
+	 * @since  1.1
+	 */
+	protected static $logger;
+
 	/**
 	 * Copy a folder.
 	 *
@@ -137,7 +147,7 @@ abstract class Folder
 
 			if (($nested > 20) || ($parent == $path))
 			{
-				Log::add(__METHOD__ . ': Infinite loop detected', Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': Infinite loop detected');
 				$nested--;
 
 				return false;
@@ -196,7 +206,7 @@ abstract class Folder
 			if ($inBaseDir == false)
 			{
 				// Return false for JFolder::create because the path to be created is not in open_basedir
-				Log::add(__METHOD__ . ': Path not in open_basedir paths', Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': Path not in open_basedir paths');
 
 				return false;
 			}
@@ -209,7 +219,7 @@ abstract class Folder
 		if (!$ret = @mkdir($path, $mode))
 		{
 			@umask($origmask);
-			Log::add(__METHOD__ . ': Could not create directory.  Path: ' . $path, Log::WARNING, 'jerror');
+			static::getLogger()->warning(__METHOD__ . ': Could not create directory.  Path: ' . $path);
 
 			return false;
 		}
@@ -238,7 +248,7 @@ abstract class Folder
 		if (!$path)
 		{
 			// Bad programmer! Bad Bad programmer!
-			Log::add(__METHOD__ . ': You can not delete a base directory.', Log::WARNING, 'jerror');
+			static::getLogger()->warning(__METHOD__ . ': You can not delete a base directory.');
 
 			return false;
 		}
@@ -256,7 +266,7 @@ abstract class Folder
 		// Is this really a folder?
 		if (!is_dir($path))
 		{
-			Log::add(sprintf('%1$s: Path is not a folder. Path: %2$s', __METHOD__, $path), Log::WARNING, 'jerror');
+			static::getLogger()->warning(sprintf('%1$s: Path is not a folder. Path: %2$s', __METHOD__, $path));
 
 			return false;
 		}
@@ -302,7 +312,7 @@ abstract class Folder
 		}
 		else
 		{
-			Log::add(sprintf('%1$s: Could not delete folder. Path: %2$s', __METHOD__, $path), Log::WARNING, 'jerror');
+			static::getLogger()->warning(sprintf('%1$s: Could not delete folder. Path: %2$s', __METHOD__, $path));
 
 			return false;
 		}
@@ -383,7 +393,7 @@ abstract class Folder
 		// Is the path a folder?
 		if (!is_dir($path))
 		{
-			Log::add(sprintf('%1$s: Path is not a folder. Path: %2$s', __METHOD__, $path), Log::WARNING, 'jerror');
+			static::getLogger()->warning(sprintf('%1$s: Path is not a folder. Path: %2$s', __METHOD__, $path));
 
 			return false;
 		}
@@ -430,7 +440,7 @@ abstract class Folder
 		// Is the path a folder?
 		if (!is_dir($path))
 		{
-			Log::add(sprintf('%1$s: Path is not a folder. Path: %2$s', __METHOD__, $path), Log::WARNING, 'jerror');
+			static::getLogger()->warning(sprintf('%1$s: Path is not a folder. Path: %2$s', __METHOD__, $path));
 
 			return false;
 		}
@@ -583,5 +593,37 @@ abstract class Folder
 		$regex = array('#[^A-Za-z0-9_\\\/\(\)\[\]\{\}\#\$\^\+\.\'~`!@&=;,-]#');
 
 		return preg_replace($regex, '', $path);
+	}
+
+	/**
+	 * Get the logger.
+	 *
+	 * @return  LoggerInterface
+	 *
+	 * @since   1.1
+	 */
+	public static function getLogger()
+	{
+		// If a logger hasn't been set, use NullLogger
+		if (!(static::$logger instanceof LoggerInterface))
+		{
+			static::$logger = new NullLogger;
+		}
+
+		return static::$logger;
+	}
+
+	/**
+	 * Set the logger.
+	 *
+	 * @param   LoggerInterface  $logger  The logger.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public static function setLogger(LoggerInterface $logger)
+	{
+		static::$logger = $logger;
 	}
 }
