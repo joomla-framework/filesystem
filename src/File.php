@@ -8,7 +8,8 @@
 
 namespace Joomla\Filesystem;
 
-use Joomla\Log\Log;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * A File handling class
@@ -17,6 +18,14 @@ use Joomla\Log\Log;
  */
 class File
 {
+	/**
+	 * Logger object
+	 *
+	 * @var    LoggerInterface
+	 * @since  1.1
+	 */
+	protected static $logger;
+
 	/**
 	 * Strips the last extension off of a file name
 	 *
@@ -77,7 +86,7 @@ class File
 		// Check src path
 		if (!is_readable($src))
 		{
-			Log::add(__METHOD__ . ': Cannot find or read file: ' . $src, Log::WARNING, 'jerror');
+			static::getLogger()->warning(__METHOD__ . ': Cannot find or read file: ' . $src);
 
 			return false;
 		}
@@ -88,7 +97,7 @@ class File
 
 			if (!$stream->copy($src, $dest))
 			{
-				Log::add(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError()), Log::WARNING, 'jerror');
+				static::getLogger()->warning(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError()));
 
 				return false;
 			}
@@ -99,7 +108,7 @@ class File
 		{
 			if (!@ copy($src, $dest))
 			{
-				Log::add(__METHOD__ . ': Copy failed.', Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': Copy failed.');
 
 				return false;
 			}
@@ -138,7 +147,7 @@ class File
 			else
 			{
 				$filename = basename($file);
-				Log::add(__METHOD__ . ': Failed deleting ' . $filename, Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': Failed deleting ' . $filename);
 
 				return false;
 			}
@@ -179,7 +188,7 @@ class File
 
 			if (!$stream->move($src, $dest))
 			{
-				Log::add(__METHOD__ . ': ' . $stream->getError(), Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': ' . $stream->getError());
 
 				return false;
 			}
@@ -190,7 +199,7 @@ class File
 		{
 			if (!@ rename($src, $dest))
 			{
-				Log::add(__METHOD__ . ': Rename failed.', Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': Rename failed.');
 
 				return false;
 			}
@@ -229,7 +238,7 @@ class File
 
 			if (!$stream->writeFile($file, $buffer))
 			{
-				Log::add(sprintf('%1$s(%2$s): %3$s', __METHOD__, $file, $stream->getError()), Log::WARNING, 'jerror');
+				static::getLogger()->warning(sprintf('%1$s(%2$s): %3$s', __METHOD__, $file, $stream->getError()));
 
 				return false;
 			}
@@ -275,7 +284,7 @@ class File
 
 			if (!$stream->upload($src, $dest))
 			{
-				Log::add(__METHOD__ . ': ' . $stream->getError(), Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': ' . $stream->getError());
 
 				return false;
 			}
@@ -293,15 +302,47 @@ class File
 				}
 				else
 				{
-					Log::add(__METHOD__ . ': Failed to change file permissions.', Log::WARNING, 'jerror');
+					static::getLogger()->warning(__METHOD__ . ': Failed to change file permissions.');
 				}
 			}
 			else
 			{
-				Log::add(__METHOD__ . ': Failed to move file.', Log::WARNING, 'jerror');
+				static::getLogger()->warning(__METHOD__ . ': Failed to move file.');
 			}
 
 			return false;
 		}
+	}
+
+	/**
+	 * Get the logger.
+	 *
+	 * @return  LoggerInterface
+	 *
+	 * @since   1.1
+	 */
+	public static function getLogger()
+	{
+		// If a logger hasn't been set, use NullLogger
+		if (!(static::$logger instanceof LoggerInterface))
+		{
+			static::$logger = new NullLogger;
+		}
+
+		return static::$logger;
+	}
+
+	/**
+	 * Set the logger.
+	 *
+	 * @param   LoggerInterface  $logger  The logger.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public static function setLogger(LoggerInterface $logger)
+	{
+		static::$logger = $logger;
 	}
 }
