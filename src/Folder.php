@@ -23,7 +23,7 @@ abstract class Folder
 	 * @param   string   $src          The path to the source folder.
 	 * @param   string   $dest         The path to the destination folder.
 	 * @param   string   $path         An optional base path to prefix to the file names.
-	 * @param   string   $force        Force copy.
+	 * @param   boolean   $force        Force copy.
 	 * @param   boolean  $use_streams  Optionally force folder/file overwrites.
 	 *
 	 * @return  boolean  True on success.
@@ -91,9 +91,10 @@ abstract class Folder
 					{
 						$stream = Stream::getStream();
 
-						if (!$stream->copy($sfid, $dfid))
-						{
-							throw new FilesystemException('Cannot copy file: ' . $stream->getError(), -1);
+						try {
+							$stream->copy($sfid, $dfid);
+						} catch (\Exception $e) {
+							throw new FilesystemException('Cannot copy file: ' . $e->getMessage(), -1);
 						}
 					}
 					else
@@ -332,11 +333,11 @@ abstract class Folder
 		{
 			$stream = Stream::getStream();
 
-			if (!$stream->move($src, $dest))
-			{
-				return 'Rename failed: ' . $stream->getError();
+			try {
+				$stream->move($src, $dest);
+			} catch (\Exception $e) {
+				return 'Rename failed: ' . $e->getMessage();
 			}
-
 			return true;
 		}
 		else

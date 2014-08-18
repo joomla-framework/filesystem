@@ -10,8 +10,12 @@
     },
     "autoload": {
     	"psr-4": {
-            "Joomla\\Filesystem\\": "src/",
-            "Joomla\\Filesystem\\Tests\\": "Tests/"
+            "Joomla\\Filesystem\\": "src/"
     	}
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Joomla\\Filesystem\\Tests\\": "Tests/"
+        }
     }
 }

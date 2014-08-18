@@ -86,11 +86,11 @@ class File
 		{
 			$stream = Stream::getStream();
 
-			if (!$stream->copy($src, $dest))
-			{
-				throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError()));
+			try {
+				$stream->copy($src, $dest);
+			} catch(\Exception $e) {
+				throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $e->getMessage()));
 			}
-
 			return true;
 		}
 		else
@@ -170,11 +170,11 @@ class File
 		{
 			$stream = Stream::getStream();
 
-			if (!$stream->move($src, $dest))
-			{
-				throw new FilesystemException(__METHOD__ . ': ' . $stream->getError());
+			try {
+				$stream->move($src, $dest);
+			} catch (\Exception $e) {
+				throw new FilesystemException(__METHOD__ . ': ' . $e->getMessage());
 			}
-
 			return true;
 		}
 		else
@@ -217,9 +217,10 @@ class File
 			// Beef up the chunk size to a meg
 			$stream->set('chunksize', (1024 * 1024));
 
-			if (!$stream->writeFile($file, $buffer))
-			{
-				throw new FilesystemException(sprintf('%1$s(%2$s): %3$s', __METHOD__, $file, $stream->getError()));
+			try {
+				$stream->writeFile($file, $buffer);
+			} catch (\Exception $e) {
+				throw new FilesystemException(sprintf('%1$s(%2$s): %3$s', __METHOD__, $file, $e->getMessage()));
 			}
 
 			return true;
@@ -262,11 +263,11 @@ class File
 		{
 			$stream = Stream::getStream();
 
-			if (!$stream->upload($src, $dest))
-			{
-				throw new FilesystemException(__METHOD__ . ': ' . $stream->getError());
+			try {
+				$stream->upload($src, $dest);
+			} catch (\Exception $e) {
+				throw new FilesystemException(__METHOD__ . ': ' . $e->getMessage());
 			}
-
 			return true;
 		}
 		else
@@ -287,8 +288,6 @@ class File
 			{
 				throw new FilesystemException(__METHOD__ . ': Failed to move file.');
 			}
-
-			return false;
 		}
 	}
 }

@@ -76,6 +76,7 @@ class Helper
 				$pass = '';
 			}
 
+			$ftpid = null;
 			switch ($sch)
 			{
 				case 'ftp':
@@ -157,6 +158,7 @@ class Helper
 			$pass = '';
 		}
 
+		$ftpid = null;
 		switch ($sch)
 		{
 			case 'ftp':
