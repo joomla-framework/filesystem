@@ -215,7 +215,7 @@ class Patcher
 	 *
 	 * @since   1.0
 	 */
-	public function addFile($filename, $root = JPATH_ROOT, $strip = 0)
+	public function addFile($filename, $root, $strip = 0)
 	{
 		return $this->add(file_get_contents($filename), $root, $strip);
 	}
@@ -231,7 +231,7 @@ class Patcher
 	 *
 	 * @since   1.0
 	 */
-	public function add($udiff, $root = JPATH_ROOT, $strip = 0)
+	public function add($udiff, $root, $strip = 0)
 	{
 		$this->patches[] = array(
 			'udiff' => $udiff,
