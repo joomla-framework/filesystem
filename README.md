@@ -47,6 +47,13 @@ $path = JPATH_ROOT . '/' . $config['folder'] . '/' . File::makeSafe($file['name'
 File::upload($file['tmp_name'], $path);
 ```
 
+## Changes From 1.x
+
+### Patcher
+
+In 1.x, the second parameter of the `add` and `addFile` methods was optional.  In 2.0, this parameter is required.  This parameter requires the
+root path of the source which you are patching.
+
 ## Installation via Composer
 
 Add `"joomla/filesystem": "2.0.*@dev"` to the require block in your composer.json and then run `composer install`.
