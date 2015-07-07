@@ -155,7 +155,7 @@ class Path
 	 * @since   1.0
 	 * @throws  \Exception
 	 */
-	public static function check($path, $basePath)
+	public static function check($path, $basePath = '')
 	{
 		if (strpos($path, '..') !== false)
 		{
