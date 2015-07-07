@@ -69,7 +69,7 @@ class FolderTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException  UnexpectedValueException
+	 * @expectedException  InvalidArgumentException
 	 */
 	public function testDeleteArrayPath()
 	{
