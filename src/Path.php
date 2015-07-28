@@ -220,7 +220,6 @@ class Path
 	 * @return  boolean  True if the php script owns the path passed.
 	 *
 	 * @since   1.0
-	 * @throws  \LogicException
 	 */
 	public static function isOwner($path)
 	{
