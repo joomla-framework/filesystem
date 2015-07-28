@@ -148,7 +148,7 @@ class Path
 	 * Checks for snooping outside of the file system root.
 	 *
 	 * @param   string  $path      A file system path to check.
-	 * @param   string  $basepath  The base path of the system
+	 * @param   string  $basePath  The base path of the system
 	 *
 	 * @return  string  A cleaned version of the path or exit on error.
 	 *
