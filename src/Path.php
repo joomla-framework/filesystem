@@ -8,11 +8,6 @@
 
 namespace Joomla\Filesystem;
 
-if (!defined('JPATH_ROOT'))
-{
-	throw new \LogicException('The "JPATH_ROOT" constant must be defined for your application.');
-}
-
 /**
  * A Path handling class
  *
@@ -152,14 +147,15 @@ class Path
 	/**
 	 * Checks for snooping outside of the file system root.
 	 *
-	 * @param   string  $path  A file system path to check.
+	 * @param   string  $path      A file system path to check.
+	 * @param   string  $basePath  The base path of the system
 	 *
 	 * @return  string  A cleaned version of the path or exit on error.
 	 *
 	 * @since   1.0
 	 * @throws  \Exception
 	 */
-	public static function check($path)
+	public static function check($path, $basePath = '')
 	{
 		if (strpos($path, '..') !== false)
 		{
@@ -168,7 +164,8 @@ class Path
 
 		$path = self::clean($path);
 
-		if ((JPATH_ROOT != '') && strpos($path, self::clean(JPATH_ROOT)) !== 0)
+		// If a base path is defined then check the cleaned path is not outside of root
+		if (($basePath != '') && strpos($path, self::clean($basePath)) !== 0)
 		{
 			throw new \Exception('JPath::check Snooping out of bounds @ ' . $path, 20);
 		}
@@ -191,16 +188,17 @@ class Path
 	{
 		if (!is_string($path))
 		{
-			throw new \UnexpectedValueException('JPath::clean $path is not a string.');
+			throw new \InvalidArgumentException('Path::clean $path is not a string.');
+		}
+
+		if (empty($path))
+		{
+			throw new \InvalidArgumentException('You must specify a non-empty path to clean');
 		}
 
 		$path = trim($path);
 
-		if (empty($path))
-		{
-			$path = JPATH_ROOT;
-		}
-		elseif (($ds == '\\') && ($path[0] == '\\' ) && ( $path[1] == '\\' ))
+		if (($ds == '\\') && ($path[0] == '\\' ) && ( $path[1] == '\\' ))
 		// Remove double slashes and backslashes and convert all slashes and backslashes to DIRECTORY_SEPARATOR
 		// If dealing with a UNC path don't forget to prepend the path with a backslash.
 		{
@@ -227,12 +225,10 @@ class Path
 	{
 		$tmp = md5(mt_rand());
 		$ssp = ini_get('session.save_path');
-		$jtp = JPATH_ROOT . '/tmp';
 
 		// Try to find a writable directory
 		$dir = is_writable('/tmp') ? '/tmp' : false;
 		$dir = (!$dir && is_writable($ssp)) ? $ssp : false;
-		$dir = (!$dir && is_writable($jtp)) ? $jtp : false;
 
 		if ($dir)
 		{
