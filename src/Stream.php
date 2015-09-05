@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Filesystem Package
  *
- * @copyright  Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -1375,25 +1375,27 @@ class Stream
 			$tmode = trim($mode, 'btf123456789');
 
 			// Check if it's a write mode then add the appropriate prefix
-			// Get rid of JPATH_ROOT (legacy compat) along the way
 			if (in_array($tmode, Helper::getWriteModes()))
 			{
-				if (!$relative && $this->writeprefix)
-				{
-					$filename = str_replace(JPATH_ROOT, '', $filename);
-				}
-
-				$filename = $this->writeprefix . $filename;
+				$prefixToUse = $this->writeprefix;
 			}
 			else
 			{
-				if (!$relative && $this->readprefix)
-				{
-					$filename = str_replace(JPATH_ROOT, '', $filename);
-				}
-
-				$filename = $this->readprefix . $filename;
+				$prefixToUse = $this->readprefix;
 			}
+
+			// Get rid of JPATH_ROOT (legacy compat)
+			if (!$relative && $prefixToUse)
+			{
+				$pos = strpos($filename, JPATH_ROOT);
+
+				if ($pos !== false)
+				{
+					$filename = substr_replace($filename, '', $pos, strlen(JPATH_ROOT));
+				}
+			}
+
+			$filename = ($prefixToUse ? $prefixToUse : '') . $filename;
 		}
 
 		return $filename;

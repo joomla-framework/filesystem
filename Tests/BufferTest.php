@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -188,7 +188,7 @@ class BufferTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return array
 	 */
-	public function casesEOF()
+	public function casesEof()
 	{
 		return array(
 			'~EOF' => array(
@@ -214,10 +214,10 @@ class BufferTest extends \PHPUnit_Framework_TestCase
 	 * @param   int     $position  The position in the buffer of the current pointer
 	 * @param   bool    $expected  The expected test return
 	 *
-	 * @dataProvider casesEOF
+	 * @dataProvider casesEof
 	 * @return void
 	 */
-	public function testStreamEOF($buffer, $name, $position, $expected)
+	public function testStreamEof($buffer, $name, $position, $expected)
 	{
 		$this->object->name = $name;
 		$this->object->position = $position;
