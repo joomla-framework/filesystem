@@ -4,17 +4,17 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-use Joomla\Filesystem\Stream\String as StreamString;
+use Joomla\Filesystem\Stream\StringWrapper;
 
 /**
- * Test class for StreamString.
+ * Test class for StringWrapper.
  *
  * @since  1.0
  */
-class StreamStringTest extends PHPUnit_Framework_TestCase
+class StringWrapperTest extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var StreamString
+	 * @var StringWrapper
 	 */
 	protected $object;
 
@@ -28,7 +28,7 @@ class StreamStringTest extends PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->object = new StreamString;
+		$this->object = new StringWrapper;
 	}
 
 	/**

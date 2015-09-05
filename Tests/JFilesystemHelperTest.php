@@ -133,7 +133,7 @@ class FilesystemHelperTest extends PHPUnit_Framework_TestCase
 		$streams = Helper::getJStreams();
 
 		$this->assertEquals(
-			array('String'),
+			array('StringWrapper'),
 			$streams
 		);
 	}
@@ -148,7 +148,7 @@ class FilesystemHelperTest extends PHPUnit_Framework_TestCase
 	public function testIsJoomlaStream()
 	{
 		$this->assertTrue(
-			Helper::isJoomlaStream('String')
+			Helper::isJoomlaStream('StringWrapper')
 		);
 
 		$this->assertFalse(
