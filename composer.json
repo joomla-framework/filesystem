@@ -6,7 +6,7 @@
     "homepage": "https://github.com/joomla/joomla-framework-filesystem",
     "license": "GPL-2.0+",
     "require": {
-        "php": "^5.3.10|~7.0"
+        "php": "^5.5.9|~7.0"
     },
     "require-dev": {
         "paragonie/random_compat": "~1.0|~2.0",
