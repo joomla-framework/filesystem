@@ -5,13 +5,14 @@
  */
 
 use Joomla\Filesystem\Stream\StringWrapper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for StringWrapper.
  *
  * @since  1.0
  */
-class StringWrapperTest extends PHPUnit_Framework_TestCase
+class StringWrapperTest extends TestCase
 {
 	/**
 	 * @var StringWrapper

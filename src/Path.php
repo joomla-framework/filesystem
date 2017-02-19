@@ -26,6 +26,11 @@ class Path
 	 */
 	public static function canChmod($path)
 	{
+		if (!file_exists($path))
+		{
+			return false;
+		}
+
 		$perms = fileperms($path);
 
 		if ($perms !== false)
