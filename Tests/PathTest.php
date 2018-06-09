@@ -278,7 +278,6 @@ class PathTest extends FilesystemTestCase
 		return array(
 			// Input Path, Directory Separator, Expected Output
 			'Nothing to do.' => array('/var/www/foo/bar/baz', '/', '/var/www/foo/bar/baz'),
-			'Return JPATH_ROOT.' => array(' ', '/', JPATH_ROOT),
 			'One backslash.' => array('/var/www/foo\\bar/baz', '/', '/var/www/foo/bar/baz'),
 			'Two and one backslashes.' => array('/var/www\\\\foo\\bar/baz', '/', '/var/www/foo/bar/baz'),
 			'Mixed backslashes and double forward slashes.' => array('/var\\/www//foo\\bar/baz', '/', '/var/www/foo/bar/baz'),
@@ -314,7 +313,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException  UnexpectedValueException
+	 * @expectedException  InvalidArgumentException
 	 * @since   __DEPLOY_VERSION__
 	 */
 	public function testCleanArrayPath()

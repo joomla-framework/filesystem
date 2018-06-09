@@ -94,9 +94,10 @@ class HelperTest extends TestCase
 	 */
 	public function testGetSupported()
 	{
-		$this->assertTrue(
-			in_array('String', Helper::getSupported()),
-			'Line:' . __LINE__ . ' Joomla Streams must contain String.'
+		$this->assertContains(
+			'StringWrapper',
+			Helper::getSupported(),
+			'Line:' . __LINE__ . ' Joomla Streams must contain StringWrapper.'
 		);
 
 		$registeredStreams = stream_get_wrappers();
@@ -169,8 +170,8 @@ class HelperTest extends TestCase
 	public function testIsJoomlaStream()
 	{
 		$this->assertTrue(
-			Helper::isJoomlaStream('String'),
-			'Line:' . __LINE__ . ' String must be a Joomla Stream.'
+			Helper::isJoomlaStream('StringWrapper'),
+			'Line:' . __LINE__ . ' StringWrapper must be a Joomla Stream.'
 		);
 
 		$this->assertFalse(
