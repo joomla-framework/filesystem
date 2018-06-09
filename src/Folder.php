@@ -136,13 +136,22 @@ abstract class Folder
 				throw new FilesystemException(__METHOD__ . ': Infinite loop detected');
 			}
 
-			// Create the parent directory
-			if (self::create($parent, $mode) !== true)
+			try
 			{
-				// Folder::create throws an error
+				// Create the parent directory
+				if (self::create($parent, $mode) !== true)
+				{
+					// Folder::create throws an error
+					$nested--;
+
+					return false;
+				}
+			}
+			catch (FilesystemException $exception)
+			{
 				$nested--;
 
-				return false;
+				throw $exception;
 			}
 
 			// OK, parent directory has been created
@@ -179,7 +188,7 @@ abstract class Folder
 			{
 				$test = Path::clean($test);
 
-				if (strpos($path, $test) === 0)
+				if (strpos($path, $test) === 0 || strpos($path, realpath($test)) === 0)
 				{
 					$inBaseDir = true;
 					break;
@@ -232,15 +241,8 @@ abstract class Folder
 			throw new FilesystemException(__METHOD__ . ': You can not delete a base directory.');
 		}
 
-		try
-		{
-			// Check to make sure the path valid and clean
-			$path = Path::clean($path);
-		}
-		catch (\UnexpectedValueException $e)
-		{
-			throw $e;
-		}
+		// Check to make sure the path valid and clean
+		$path = Path::clean($path);
 
 		// Is this really a folder?
 		if (!is_dir($path))
@@ -465,7 +467,7 @@ abstract class Folder
 				&& (empty($excludeFilterString) || !preg_match($excludeFilterString, $file)))
 			{
 				// Compute the fullpath
-				$fullpath = $path . '/' . $file;
+				$fullpath = Path::clean($path . '/' . $file);
 
 				// Compute the isDir flag
 				$isDir = is_dir($fullpath);

@@ -8,6 +8,8 @@
 
 namespace Joomla\Filesystem;
 
+use Joomla\Filesystem\Exception\FilesystemException;
+
 /**
  * A Path handling class
  *
@@ -31,7 +33,7 @@ class Path
 			return false;
 		}
 
-		$perms = fileperms($path);
+		$perms = @fileperms($path);
 
 		if ($perms !== false)
 		{
@@ -64,39 +66,42 @@ class Path
 
 		if (is_dir($path))
 		{
-			$dh = opendir($path);
+			$dh = @opendir($path);
 
-			while ($file = readdir($dh))
+			if ($dh)
 			{
-				if ($file != '.' && $file != '..')
+				while ($file = readdir($dh))
 				{
-					$fullpath = $path . '/' . $file;
+					if ($file != '.' && $file != '..')
+					{
+						$fullpath = $path . '/' . $file;
 
-					if (is_dir($fullpath))
-					{
-						if (!self::setPermissions($fullpath, $filemode, $foldermode))
+						if (is_dir($fullpath))
 						{
-							$ret = false;
-						}
-					}
-					else
-					{
-						if (isset($filemode))
-						{
-							if (!@ chmod($fullpath, octdec($filemode)))
+							if (!static::setPermissions($fullpath, $filemode, $foldermode))
 							{
 								$ret = false;
 							}
 						}
+						else
+						{
+							if (isset($filemode))
+							{
+								if (!static::canChmod($fullpath) || !@ chmod($fullpath, octdec($filemode)))
+								{
+									$ret = false;
+								}
+							}
+						}
 					}
 				}
-			}
 
-			closedir($dh);
+				closedir($dh);
+			}
 
 			if (isset($foldermode))
 			{
-				if (!@ chmod($path, octdec($foldermode)))
+				if (!static::canChmod($path) || !@ chmod($path, octdec($foldermode)))
 				{
 					$ret = false;
 				}
@@ -106,7 +111,10 @@ class Path
 		{
 			if (isset($filemode))
 			{
-				$ret = @ chmod($path, octdec($filemode));
+				if (!static::canChmod($path) || !@ chmod($path, octdec($filemode)))
+				{
+					$ret = false;
+				}
 			}
 		}
 
@@ -158,21 +166,34 @@ class Path
 	 * @return  string  A cleaned version of the path or exit on error.
 	 *
 	 * @since   1.0
-	 * @throws  \Exception
+	 * @throws  FilesystemException
 	 */
 	public static function check($path, $basePath = '')
 	{
 		if (strpos($path, '..') !== false)
 		{
-			throw new \Exception('JPath::check Use of relative paths not permitted', 20);
+			throw new FilesystemException(
+				sprintf(
+					'%s() - Use of relative paths not permitted',
+					__METHOD__
+				),
+				20
+			);
 		}
 
-		$path = self::clean($path);
+		$path = static::clean($path);
 
 		// If a base path is defined then check the cleaned path is not outside of root
-		if (($basePath != '') && strpos($path, self::clean($basePath)) !== 0)
+		if (($basePath != '') && strpos($path, static::clean($basePath)) !== 0)
 		{
-			throw new \Exception('JPath::check Snooping out of bounds @ ' . $path, 20);
+			throw new FilesystemException(
+				sprintf(
+					'%1$s() - Snooping out of bounds @ %2$s',
+					__METHOD__,
+					$path
+				),
+				20
+			);
 		}
 
 		return $path;
@@ -193,19 +214,24 @@ class Path
 	{
 		if (!is_string($path))
 		{
-			throw new \InvalidArgumentException('Path::clean $path is not a string.');
+			throw new \InvalidArgumentException('You must specify a non-empty path to clean');
 		}
 
-		if (empty($path))
+		$stream = explode("://", $path, 2);
+		$scheme = '';
+		$path = $stream[0];
+
+		if (count($stream) >= 2)
 		{
-			throw new \InvalidArgumentException('You must specify a non-empty path to clean');
+			$scheme = $stream[0] . '://';
+			$path = $stream[1];
 		}
 
 		$path = trim($path);
 
-		if (($ds == '\\') && ($path[0] == '\\' ) && ( $path[1] == '\\' ))
 		// Remove double slashes and backslashes and convert all slashes and backslashes to DIRECTORY_SEPARATOR
 		// If dealing with a UNC path don't forget to prepend the path with a backslash.
+		if (($ds == '\\') && ($path[0] == '\\') && ($path[1] == '\\'))
 		{
 			$path = "\\" . preg_replace('#[/\\\\]+#', $ds, $path);
 		}
@@ -214,7 +240,7 @@ class Path
 			$path = preg_replace('#[/\\\\]+#', $ds, $path);
 		}
 
-		return $path;
+		return $scheme . $path;
 	}
 
 	/**
@@ -234,7 +260,6 @@ class Path
 		// Try to find a writable directory
 		$dir = is_writable('/tmp') ? '/tmp' : false;
 		$dir = (!$dir && is_writable($ssp)) ? $ssp : $dir;
-		$dir = (!$dir && is_writable($jtp)) ? $jtp : $dir;
 
 		if ($dir)
 		{
