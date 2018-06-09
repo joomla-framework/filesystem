@@ -17,7 +17,6 @@ cache:
 ## Build matrix for lowest and highest possible targets
 environment:
   matrix:
-  - php: 5.6
   - php: 7.0
   - php: 7.1
   - php: 7.2
@@ -32,11 +31,7 @@ install:
     - ps: |
         # Check if installation is cached
         if (!(Test-Path c:\tools\php)) {
-          If ($env:php -eq "5.6") {
-            appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y --forcex86 php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
-          } Else {
-            appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
-          }
+          appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
 
           Get-ChildItem -Path c:\tools\php
           cd c:\tools\php
@@ -48,11 +43,7 @@ install:
           Add-Content php.ini "`n memory_limit=1G"
           Add-Content php.ini "`n extension=php_openssl.dll"
           Add-Content php.ini "`n extension=php_fileinfo.dll"
-
-          # Enable FTP extension on PHP 7
-          If ($env:php -ne "5.6") {
-            Add-Content php.ini "`n extension=php_ftp.dll"
-          }
+          Add-Content php.ini "`n extension=php_ftp.dll"
 
           Remove-Item c:\tools\php\* -include .zip
           cd c:\tools\php
