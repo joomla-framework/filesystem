@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Filesystem Package
  *
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -135,7 +135,7 @@ class Path
 		$path = self::clean($path);
 		$mode = @ decoct(@ fileperms($path) & 0777);
 
-		if (strlen($mode) < 3)
+		if (\strlen($mode) < 3)
 		{
 			return '---------';
 		}
@@ -212,7 +212,7 @@ class Path
 	 */
 	public static function clean($path, $ds = DIRECTORY_SEPARATOR)
 	{
-		if (!is_string($path))
+		if (!\is_string($path))
 		{
 			throw new \InvalidArgumentException('You must specify a non-empty path to clean');
 		}
@@ -221,7 +221,7 @@ class Path
 		$scheme = '';
 		$path = $stream[0];
 
-		if (count($stream) >= 2)
+		if (\count($stream) >= 2)
 		{
 			$scheme = $stream[0] . '://';
 			$path = $stream[1];
@@ -294,7 +294,7 @@ class Path
 	public static function find($paths, $file)
 	{
 		// Force to array
-		if (!is_array($paths) && !($paths instanceof \Iterator))
+		if (!\is_array($paths) && !($paths instanceof \Iterator))
 		{
 			settype($paths, 'array');
 		}
@@ -322,7 +322,7 @@ class Path
 			 * non-registered directories are not accessible via directory
 			 * traversal attempts.
 			 */
-			if (file_exists($fullname) && substr($fullname, 0, strlen($path)) == $path)
+			if (file_exists($fullname) && substr($fullname, 0, \strlen($path)) == $path)
 			{
 				return $fullname;
 			}

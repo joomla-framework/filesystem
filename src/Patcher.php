@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Filesystem Package
  *
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -461,7 +461,7 @@ class Patcher
 					if ($srcSize > 0)
 					{
 						$dstLines = & $this->getDestination($dst, $src);
-						$srcBottom = $srcLine + count($source);
+						$srcBottom = $srcLine + \count($source);
 
 						for ($l = $srcLine; $l < $srcBottom; $l++)
 						{
@@ -471,7 +471,7 @@ class Patcher
 							}
 						}
 
-						array_splice($dstLines, $dstLine, count($source), $destin);
+						array_splice($dstLines, $dstLine, \count($source), $destin);
 					}
 					else
 					{

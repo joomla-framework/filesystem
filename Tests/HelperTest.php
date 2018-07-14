@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -21,7 +21,7 @@ class HelperTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public function testRemotefsize()
 	{
@@ -55,7 +55,7 @@ class HelperTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public function testFtpChmod()
 	{
@@ -90,7 +90,7 @@ class HelperTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public function testGetSupported()
 	{
@@ -103,7 +103,7 @@ class HelperTest extends TestCase
 		$registeredStreams = stream_get_wrappers();
 
 		$this->assertEquals(
-			count(array_diff($registeredStreams, Helper::getSupported())),
+			\count(array_diff($registeredStreams, Helper::getSupported())),
 			0,
 			'Line:' . __LINE__ . ' getSupported should contains default streams.'
 		);
@@ -114,14 +114,14 @@ class HelperTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public function testGetTransports()
 	{
 		$registeredTransports = stream_get_transports();
 
 		$this->assertEquals(
-			count(array_diff($registeredTransports, Helper::getTransports())),
+			\count(array_diff($registeredTransports, Helper::getTransports())),
 			0,
 			'Line:' . __LINE__ . ' getTransports should contains default transports.'
 		);
@@ -132,14 +132,14 @@ class HelperTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public function testGetFilters()
 	{
 		$registeredFilters = stream_get_filters();
 
 		$this->assertEquals(
-			count(array_diff($registeredFilters, Helper::getFilters())),
+			\count(array_diff($registeredFilters, Helper::getFilters())),
 			0,
 			'Line:' . __LINE__ . ' getFilters should contains default filters.'
 		);
@@ -150,13 +150,13 @@ class HelperTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public function testGetJStreams()
 	{
 		$streams = Helper::getJStreams();
 
-		$this->assertTrue(in_array('StringWrapper', Helper::getJStreams()));
+		$this->assertTrue(\in_array('StringWrapper', Helper::getJStreams()));
 	}
 
 	/**
@@ -164,7 +164,7 @@ class HelperTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 * @covers  Joomla\Filesystem\Helper::isJoomlaStream
 	 */
 	public function testIsJoomlaStream()

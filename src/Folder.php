@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Filesystem Package
  *
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -170,7 +170,7 @@ abstract class Folder
 		// If open_basedir is set we need to get the open_basedir that the path is in
 		if ($obd != null)
 		{
-			if (defined('PHP_WINDOWS_VERSION_MAJOR'))
+			if (\defined('PHP_WINDOWS_VERSION_MAJOR'))
 			{
 				$obdSeparator = ";";
 			}
@@ -369,7 +369,7 @@ abstract class Folder
 		}
 
 		// Compute the excludefilter string
-		if (count($excludeFilter))
+		if (\count($excludeFilter))
 		{
 			$excludeFilterString = '/(' . implode('|', $excludeFilter) . ')/';
 		}
@@ -416,7 +416,7 @@ abstract class Folder
 		}
 
 		// Compute the excludefilter string
-		if (count($excludeFilter))
+		if (\count($excludeFilter))
 		{
 			$excludeFilterString = '/(' . implode('|', $excludeFilter) . ')/';
 		}
@@ -463,7 +463,7 @@ abstract class Folder
 
 		while (($file = readdir($handle)) !== false)
 		{
-			if ($file != '.' && $file != '..' && !in_array($file, $exclude)
+			if ($file != '.' && $file != '..' && !\in_array($file, $exclude)
 				&& (empty($excludeFilterString) || !preg_match($excludeFilterString, $file)))
 			{
 				// Compute the fullpath
@@ -490,7 +490,7 @@ abstract class Folder
 				if ($isDir && $recurse)
 				{
 					// Search recursively
-					if (is_int($recurse))
+					if (\is_int($recurse))
 					{
 						// Until depth 0 is reached
 						$arr = array_merge($arr, self::_items($fullpath, $filter, $recurse - 1, $full, $exclude, $excludeFilterString, $findfiles));

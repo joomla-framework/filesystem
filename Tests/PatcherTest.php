@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -22,11 +22,11 @@ class PatcherTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public static function setUpBeforeClass()
 	{
-		if (!defined('JPATH_ROOT'))
+		if (!\defined('JPATH_ROOT'))
 		{
 			self::markTestSkipped('Constant `JPATH_ROOT` is not defined.');
 		}
@@ -268,7 +268,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.0
 	 */
 	public function testReset()
 	{
@@ -962,7 +962,7 @@ But after they are produced,
 
 		foreach ($destinations as $path => $content)
 		{
-			if (is_null($content))
+			if (\is_null($content))
 			{
 				$this->assertFalse(
 					is_file($path),
