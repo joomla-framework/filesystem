@@ -145,13 +145,13 @@ class Path
 		for ($i = 0; $i < 3; $i++)
 		{
 			// Read
-			$parsedMode .= ($mode{$i} & 04) ? "r" : "-";
+			$parsedMode .= ($mode{$i} & 04) ? 'r' : '-';
 
 			// Write
-			$parsedMode .= ($mode{$i} & 02) ? "w" : "-";
+			$parsedMode .= ($mode{$i} & 02) ? 'w' : '-';
 
 			// Execute
-			$parsedMode .= ($mode{$i} & 01) ? "x" : "-";
+			$parsedMode .= ($mode{$i} & 01) ? 'x' : '-';
 		}
 
 		return $parsedMode;
@@ -217,14 +217,14 @@ class Path
 			throw new \InvalidArgumentException('You must specify a non-empty path to clean');
 		}
 
-		$stream = explode("://", $path, 2);
+		$stream = explode('://', $path, 2);
 		$scheme = '';
-		$path = $stream[0];
+		$path   = $stream[0];
 
 		if (\count($stream) >= 2)
 		{
 			$scheme = $stream[0] . '://';
-			$path = $stream[1];
+			$path   = $stream[1];
 		}
 
 		$path = trim($path);
@@ -233,7 +233,7 @@ class Path
 		// If dealing with a UNC path don't forget to prepend the path with a backslash.
 		if (($ds == '\\') && ($path[0] == '\\') && ($path[1] == '\\'))
 		{
-			$path = "\\" . preg_replace('#[/\\\\]+#', $ds, $path);
+			$path = '\\' . preg_replace('#[/\\\\]+#', $ds, $path);
 		}
 		else
 		{
@@ -312,7 +312,7 @@ class Path
 				// traversal attempts on the local file system.
 
 				// Needed for substr() later
-				$path = realpath($path);
+				$path     = realpath($path);
 				$fullname = realpath($fullname);
 			}
 

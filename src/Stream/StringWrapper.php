@@ -105,8 +105,8 @@ class StringWrapper
 
 		if ($this->currentString)
 		{
-			$this->len = \strlen($this->currentString);
-			$this->pos = 0;
+			$this->len  = \strlen($this->currentString);
+			$this->pos  = 0;
 			$this->stat = $this->url_stat($path, 0);
 
 			return true;
@@ -141,23 +141,24 @@ class StringWrapper
 	 */
 	public function url_stat($path, $flags = 0)
 	{
-		$now = time();
+		$now     = time();
 		$refPath = StringController::getRef(str_replace('string://', '', $path));
-		$string = &$refPath;
-		$stat = array(
-			'dev' => 0,
-			'ino' => 0,
-			'mode' => 0,
-			'nlink' => 1,
-			'uid' => 0,
-			'gid' => 0,
-			'rdev' => 0,
-			'size' => \strlen($string),
-			'atime' => $now,
-			'mtime' => $now,
-			'ctime' => $now,
+		$string  = &$refPath;
+		$stat    = array(
+			'dev'     => 0,
+			'ino'     => 0,
+			'mode'    => 0,
+			'nlink'   => 1,
+			'uid'     => 0,
+			'gid'     => 0,
+			'rdev'    => 0,
+			'size'    => \strlen($string),
+			'atime'   => $now,
+			'mtime'   => $now,
+			'ctime'   => $now,
 			'blksize' => '512',
-			'blocks' => ceil(\strlen($string) / 512));
+			'blocks'  => ceil(\strlen($string) / 512),
+		);
 
 		return $stat;
 	}
@@ -250,6 +251,7 @@ class StringWrapper
 		{
 			case SEEK_SET:
 				$this->pos = $offset;
+
 				break;
 
 			case SEEK_CUR:
@@ -259,10 +261,12 @@ class StringWrapper
 				}
 
 				$this->pos += $offset;
+
 				break;
 
 			case SEEK_END:
 				$this->pos = $this->len - $offset;
+
 				break;
 		}
 

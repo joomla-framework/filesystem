@@ -72,7 +72,7 @@ class File
 		// Prepend a base path if it exists
 		if ($path)
 		{
-			$src = Path::clean($path . '/' . $src);
+			$src  = Path::clean($path . '/' . $src);
 			$dest = Path::clean($path . '/' . $dest);
 		}
 
@@ -118,7 +118,7 @@ class File
 
 		foreach ($files as $file)
 		{
-			$file = Path::clean($file);
+			$file     = Path::clean($file);
 			$filename = basename($file);
 
 			if (!Path::canChmod($file))
@@ -158,7 +158,7 @@ class File
 	{
 		if ($path)
 		{
-			$src = Path::clean($path . '/' . $src);
+			$src  = Path::clean($path . '/' . $src);
 			$dest = Path::clean($path . '/' . $dest);
 		}
 
@@ -204,9 +204,9 @@ class File
 		@set_time_limit(ini_get('max_execution_time'));
 
 		// If the destination directory doesn't exist we need to create it
-		if (!file_exists(dirname($file)))
+		if (!file_exists(\dirname($file)))
 		{
-			Folder::create(dirname($file));
+			Folder::create(\dirname($file));
 		}
 
 		if ($useStreams)
@@ -244,7 +244,7 @@ class File
 		$dest = Path::clean($dest);
 
 		// Create the destination directory if it does not exist
-		$baseDir = dirname($dest);
+		$baseDir = \dirname($dest);
 
 		if (!is_dir($baseDir))
 		{
@@ -263,7 +263,7 @@ class File
 			return true;
 		}
 
-		if (is_writeable($baseDir) && move_uploaded_file($src, $dest))
+		if (is_writable($baseDir) && move_uploaded_file($src, $dest))
 		{
 			// Short circuit to prevent file permission errors
 			if (Path::setPermissions($dest))

@@ -32,7 +32,7 @@ class Buffer
 	 * @var    string
 	 * @since  1.0
 	 */
-	public $name = null;
+	public $name;
 
 	/**
 	 * Buffer hash
@@ -57,10 +57,10 @@ class Buffer
 	 */
 	public function stream_open($path, $mode, $options, &$openedPath)
 	{
-		$url = parse_url($path);
-		$this->name = $url['host'];
+		$url                        = parse_url($path);
+		$this->name                 = $url['host'];
 		$this->buffers[$this->name] = null;
-		$this->position = 0;
+		$this->position             = 0;
 
 		return true;
 	}
@@ -97,8 +97,8 @@ class Buffer
 	 */
 	public function stream_write($data)
 	{
-		$left = substr($this->buffers[$this->name], 0, $this->position);
-		$right = substr($this->buffers[$this->name], $this->position + \strlen($data));
+		$left                       = substr($this->buffers[$this->name], 0, $this->position);
+		$right                      = substr($this->buffers[$this->name], $this->position + \strlen($data));
 		$this->buffers[$this->name] = $left . $data . $right;
 		$this->position += \strlen($data);
 
@@ -154,11 +154,8 @@ class Buffer
 
 					return true;
 				}
-				else
-				{
-					return false;
-				}
-				break;
+
+				return false;
 
 			case SEEK_CUR:
 				if ($offset >= 0)
@@ -167,11 +164,8 @@ class Buffer
 
 					return true;
 				}
-				else
-				{
-					return false;
-				}
-				break;
+
+				return false;
 
 			case SEEK_END:
 				if (\strlen($this->buffers[$this->name]) + $offset >= 0)
@@ -180,11 +174,8 @@ class Buffer
 
 					return true;
 				}
-				else
-				{
-					return false;
-				}
-				break;
+
+				return false;
 
 			default:
 				return false;
