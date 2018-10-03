@@ -40,7 +40,7 @@ class Buffer
 	 * @var    array
 	 * @since  1.0
 	 */
-	public $buffers = array();
+	public $buffers = [];
 
 	/**
 	 * Function to open file or url

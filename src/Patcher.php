@@ -40,28 +40,28 @@ class Patcher
 	 * @var    array  sources files
 	 * @since  1.0
 	 */
-	protected $sources = array();
+	protected $sources = [];
 
 	/**
 	 * @var    array  destination files
 	 * @since  1.0
 	 */
-	protected $destinations = array();
+	protected $destinations = [];
 
 	/**
 	 * @var    array  removal files
 	 * @since  1.0
 	 */
-	protected $removals = array();
+	protected $removals = [];
 
 	/**
 	 * @var    array  patches
 	 * @since  1.0
 	 */
-	protected $patches = array();
+	protected $patches = [];
 
 	/**
-	 * @var    array  instance of this class
+	 * @var    Patcher  instance of this class
 	 * @since  1.0
 	 */
 	protected static $instance;
@@ -103,10 +103,10 @@ class Patcher
 	 */
 	public function reset()
 	{
-		$this->sources      = array();
-		$this->destinations = array();
-		$this->removals     = array();
-		$this->patches      = array();
+		$this->sources      = [];
+		$this->destinations = [];
+		$this->removals     = [];
+		$this->patches      = [];
 
 		return $this;
 	}
@@ -193,13 +193,13 @@ class Patcher
 		}
 
 		// Clear the destinations cache
-		$this->destinations = array();
+		$this->destinations = [];
 
 		// Clear the removals
-		$this->removals = array();
+		$this->removals = [];
 
 		// Clear the patches
-		$this->patches = array();
+		$this->patches = [];
 
 		return $done;
 	}
@@ -233,11 +233,11 @@ class Patcher
 	 */
 	public function add($udiff, $root, $strip = 0)
 	{
-		$this->patches[] = array(
+		$this->patches[] = [
 			'udiff' => $udiff,
 			'root'  => isset($root) ? rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR : '',
 			'strip' => $strip,
-		);
+		];
 
 		return $this;
 	}
@@ -394,10 +394,10 @@ class Patcher
 		$line = current($lines);
 
 		// Source lines (old file)
-		$source = array();
+		$source = [];
 
 		// New lines (new file)
-		$destin  = array();
+		$destin  = [];
 		$srcLeft = $srcSize;
 		$dstLeft = $dstSize;
 

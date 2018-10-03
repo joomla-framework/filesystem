@@ -21,7 +21,7 @@ class StringController
 	 * @var     array
 	 * @ssince  1.4.0
 	 */
-	private static $strings = array();
+	private static $strings = [];
 
 	/**
 	 * Defines a variable as an array
