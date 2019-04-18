@@ -1,22 +1,37 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
+namespace Joomla\Filesystem\Tests;
+
 use Joomla\Filesystem\Patcher;
 use Joomla\Filesystem\Path;
-
-// We MUST define JPATH_ROOT for Patcher to work. :(
-defined('JPATH_ROOT') or define('JPATH_ROOT', __DIR__);
+use PHPUnit\Framework\TestCase;
 
 /**
  * A unit test class for Patcher
  *
  * @since  1.0
  */
-class PatcherTest extends PHPUnit_Framework_TestCase
+class PatcherTest extends TestCase
 {
+	/**
+	 * This method is called before the first test of this test class is run.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.4.0
+	 */
+	public static function setUpBeforeClass()
+	{
+		if (!\defined('JPATH_ROOT'))
+		{
+			self::markTestSkipped('Constant `JPATH_ROOT` is not defined.');
+		}
+	}
+
 	/**
 	 * Sets up the fixture.
 	 * This method is called before a test is executed.
@@ -182,9 +197,8 @@ class PatcherTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
+	 * @dataProvider addData
 	 * @since   1.0
-	 *
-	 * @dataProvider PatcherTest::addData
 	 */
 	public function testAdd($udiff, $root, $strip, $expected)
 	{
@@ -253,6 +267,8 @@ class PatcherTest extends PHPUnit_Framework_TestCase
 	 * Patcher::reset reset the patcher to its initial state
 	 *
 	 * @return  void
+	 *
+	 * @since   1.4.0
 	 */
 	public function testReset()
 	{
@@ -913,15 +929,22 @@ But after they are produced,
 	 *
 	 * @return  void
 	 *
+	 * @dataProvider applyData
 	 * @since   1.0
-	 *
-	 * @dataProvider PatcherTest::applyData
 	 */
 	public function testApply($udiff, $root, $strip, $sources, $destinations, $result, $throw)
 	{
 		if ($throw)
 		{
-			$this->setExpectedException($throw);
+			// expectException was added in PHPUnit 5.2 and setExpectedException removed in 6.0
+			if (method_exists($this, 'expectException'))
+			{
+				$this->expectException($throw);
+			}
+			else
+			{
+				$this->setExpectedException($throw);
+			}
 		}
 
 		foreach ($sources as $path => $content)
@@ -939,7 +962,7 @@ But after they are produced,
 
 		foreach ($destinations as $path => $content)
 		{
-			if (is_null($content))
+			if (\is_null($content))
 			{
 				$this->assertFalse(
 					is_file($path),
