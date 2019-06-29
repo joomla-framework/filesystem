@@ -10,18 +10,12 @@ use Joomla\Filesystem\Helper;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test class for Helper.
- *
- * @since  1.0
+ * Test class for Joomla\Filesystem\Helper.
  */
 class HelperTest extends TestCase
 {
 	/**
 	 * Test remotefsize method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testRemotefsize()
 	{
@@ -52,10 +46,6 @@ class HelperTest extends TestCase
 
 	/**
 	 * Test ftpChmod method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testFtpChmod()
 	{
@@ -71,26 +61,7 @@ class HelperTest extends TestCase
 	}
 
 	/**
-	 * Test...
-	 *
-	 * @todo Implement testGetWriteModes().
-	 *
-	 * @return void
-	 */
-	public function testGetWriteModes()
-	{
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-			'This test has not been implemented yet.'
-		);
-	}
-
-	/**
 	 * Test getSupported method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testGetSupported()
 	{
@@ -111,10 +82,6 @@ class HelperTest extends TestCase
 
 	/**
 	 * Test getTransports method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testGetTransports()
 	{
@@ -129,10 +96,6 @@ class HelperTest extends TestCase
 
 	/**
 	 * Test getFilters method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testGetFilters()
 	{
@@ -147,10 +110,6 @@ class HelperTest extends TestCase
 
 	/**
 	 * Test getJStreams mthod.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testGetJStreams()
 	{
@@ -162,9 +121,6 @@ class HelperTest extends TestCase
 	/**
 	 * Test
 	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 * @covers  Joomla\Filesystem\Helper::isJoomlaStream
 	 */
 	public function testIsJoomlaStream()

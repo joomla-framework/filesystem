@@ -6,22 +6,17 @@
 
 namespace Joomla\Filesystem\Tests;
 
+use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 
 /**
- * Tests for the Path class.
- *
- * @since  1.0
+ * Tests for the Joomla\Filesystem\Path class.
  */
 class PathTest extends FilesystemTestCase
 {
 	/**
 	 * Test canChmod method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testCanChmodFile()
 	{
@@ -42,10 +37,6 @@ class PathTest extends FilesystemTestCase
 
 	/**
 	 * Test canChmod method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testCanChmodFolder()
 	{
@@ -58,10 +49,6 @@ class PathTest extends FilesystemTestCase
 
 	/**
 	 * Test canChmod method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testCanChmodNonExistingFile()
 	{
@@ -74,10 +61,6 @@ class PathTest extends FilesystemTestCase
 
 	/**
 	 * Test setPermissions method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testSetAndGetPermissionsFile()
 	{
@@ -112,10 +95,6 @@ class PathTest extends FilesystemTestCase
 
 	/**
 	 * Test setPermissions method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testSetAndGetPermissionsFolder()
 	{
@@ -142,10 +121,6 @@ class PathTest extends FilesystemTestCase
 
 	/**
 	 * Test setPermissions method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testSetAndGetPermissionsFolderWithFiles()
 	{
@@ -192,18 +167,14 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * Test data for check method.
 	 *
-	 * @return  array
-	 *
-	 * @since   1.4.0
+	 * @return  \Generator
 	 */
-	public function dataCheckValidPaths()
+	public function dataCheckValidPaths(): \Generator
 	{
-		return array(
-			array('/var/foo'),
-			array('/var/foo/bar'),
-			array('/var/fo.o/bar'),
-			array('/var/./bar'),
-		);
+		yield ['/var/foo'];
+		yield ['/var/foo/bar'];
+		yield ['/var/fo.o/bar'];
+		yield ['/var/./bar'];
 	}
 
 	/**
@@ -211,10 +182,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @param   string  $data  Path to check for valid
 	 *
-	 * @return  void
-	 *
 	 * @dataProvider dataCheckValidPaths
-	 * @since   1.4.0
 	 */
 	public function testCheckValidPaths($data)
 	{
@@ -232,22 +200,18 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * Test data for check method exception.
 	 *
-	 * @return  array
-	 *
-	 * @since   1.4.0
+	 * @return  \Generator
 	 */
-	public function dataCheckExceptionPaths()
+	public function dataCheckExceptionPaths(): \Generator
 	{
-		return array(
-			array('../var/foo/bar'),
-			array('/var/../foo/bar'),
-			array('/var/foo../bar'),
-			array('/var/foo/..'),
-			array('/var/foo..bar'),
-			array('/var/foo/..bar'),
-			array('/var/foo/bar..'),
-			array('/var/..foo./bar'),
-		);
+		yield ['../var/foo/bar'];
+		yield ['/var/../foo/bar'];
+		yield ['/var/foo../bar'];
+		yield ['/var/foo/..'];
+		yield ['/var/foo..bar'];
+		yield ['/var/foo/..bar'];
+		yield ['/var/foo/bar..'];
+		yield ['/var/..foo./bar'];
 	}
 
 	/**
@@ -255,36 +219,29 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @param   string  $data  Paths to check.
 	 *
-	 * @return  void
-	 *
 	 * @dataProvider dataCheckExceptionPaths
-	 * @expectedException Joomla\Filesystem\Exception\FilesystemException
-	 * @since   1.4.0
 	 */
 	public function testCheckExceptionPaths($data)
 	{
+		$this->expectException(FilesystemException::class);
+
 		Path::check(__DIR__ . $data);
 	}
 
 	/**
 	 * Data provider for testClean() method.
 	 *
-	 * @return  array
-	 *
-	 * @since   1.0
+	 * @return  \Generator
 	 */
-	public function getCleanData()
+	public function getCleanData(): \Generator
 	{
-		return array(
-			// Input Path, Directory Separator, Expected Output
-			'Nothing to do.' => array('/var/www/foo/bar/baz', '/', '/var/www/foo/bar/baz'),
-			'One backslash.' => array('/var/www/foo\\bar/baz', '/', '/var/www/foo/bar/baz'),
-			'Two and one backslashes.' => array('/var/www\\\\foo\\bar/baz', '/', '/var/www/foo/bar/baz'),
-			'Mixed backslashes and double forward slashes.' => array('/var\\/www//foo\\bar/baz', '/', '/var/www/foo/bar/baz'),
-			'UNC path.' => array('\\\\www\\docroot', '\\', '\\\\www\\docroot'),
-			'UNC path with forward slash.' => array('\\\\www/docroot', '\\', '\\\\www\\docroot'),
-			'UNC path with UNIX directory separator.' => array('\\\\www/docroot', '/', '/www/docroot'),
-		);
+		yield 'Nothing to do.' => ['/var/www/foo/bar/baz', '/', '/var/www/foo/bar/baz'];
+		yield 'One backslash.' => ['/var/www/foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
+		yield 'Two and one backslashes.' => ['/var/www\\\\foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
+		yield 'Mixed backslashes and double forward slashes.' => ['/var\\/www//foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
+		yield 'UNC path.' => ['\\\\www\\docroot', '\\', '\\\\www\\docroot'];
+		yield 'UNC path with forward slash.' => ['\\\\www/docroot', '\\', '\\\\www\\docroot'];
+		yield 'UNC path with UNIX directory separator.' => ['\\\\www/docroot', '/', '/www/docroot'];
 	}
 
 	/**
@@ -294,11 +251,7 @@ class PathTest extends FilesystemTestCase
 	 * @param   string  $ds        Directory Separator
 	 * @param   string  $expected  Expected Output
 	 *
-	 * @return  void
-	 *
-	 * @covers        Joomla\Filesystem\Path::clean
 	 * @dataProvider  getCleanData
-	 * @since      1.0
 	 */
 	public function testClean($input, $ds, $expected)
 	{
@@ -309,24 +262,17 @@ class PathTest extends FilesystemTestCase
 	}
 
 	/**
-	 * Tests the JPath::clean method with an array as an input.
-	 *
-	 * @return  void
-	 *
-	 * @expectedException  InvalidArgumentException
-	 * @since   1.4.0
+	 * Tests the clean method with an array as an input.
 	 */
 	public function testCleanArrayPath()
 	{
+		$this->expectException(\InvalidArgumentException::class);
+
 		Path::clean(array('/path/to/folder'));
 	}
 
 	/**
 	 * Test isOwner method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testIsOwner()
 	{
@@ -345,10 +291,6 @@ class PathTest extends FilesystemTestCase
 
 	/**
 	 * Test find method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
 	 */
 	public function testFind()
 	{
