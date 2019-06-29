@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -397,6 +397,37 @@ class FileTest extends FilesystemTestCase
 		$this->assertStringEqualsFile(
 			$this->testPath . '/' . $name,
 			$data,
+			'The written file should match the given content.'
+		);
+	}
+
+	/**
+	 * Test write method when appending to a file.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.5.0
+	 *
+	 */
+	public function testWriteWithAppend()
+	{
+		$name = 'tempFile.txt';
+		$data = 'Lorem ipsum dolor sit amet';
+		$appendData = PHP_EOL . $data;
+
+		$this->assertTrue(
+			File::write($this->testPath . '/' . $name, $data),
+			'The file was not written.'
+		);
+
+		$this->assertTrue(
+			File::write($this->testPath . '/' . $name, $appendData, false, true),
+			'The file was not appended.'
+		);
+
+		$this->assertStringEqualsFile(
+			$this->testPath . '/' . $name,
+			$data . $appendData,
 			'The written file should match the given content.'
 		);
 	}

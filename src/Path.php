@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Filesystem Package
  *
- * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -287,7 +287,7 @@ class Path
 	 * @param   mixed   $paths  A path string or array of path strings to search in
 	 * @param   string  $file   The file name to look for.
 	 *
-	 * @return  mixed   The full path and file name for the target file, or boolean false if the file is not found in any of the paths.
+	 * @return  string|boolean   The full path and file name for the target file, or boolean false if the file is not found in any of the paths.
 	 *
 	 * @since   1.0
 	 */

@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Filesystem Package
  *
- * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -191,15 +191,16 @@ class File
 	/**
 	 * Write contents to a file
 	 *
-	 * @param   string   $file        The full file path
-	 * @param   string   $buffer      The buffer to write
-	 * @param   boolean  $useStreams  Use streams
+	 * @param   string   $file          The full file path
+	 * @param   string   $buffer        The buffer to write
+	 * @param   boolean  $useStreams    Use streams
+	 * @param   boolean  $appendToFile  Append to the file and not overwrite it.
 	 *
 	 * @return  boolean  True on success
 	 *
 	 * @since   1.0
 	 */
-	public static function write($file, &$buffer, $useStreams = false)
+	public static function write($file, &$buffer, $useStreams = false, $appendToFile = false)
 	{
 		@set_time_limit(ini_get('max_execution_time'));
 
@@ -215,13 +216,18 @@ class File
 
 			// Beef up the chunk size to a meg
 			$stream->set('chunksize', (1024 * 1024));
-
-			$stream->writeFile($file, $buffer);
+			$stream->writeFile($file, $buffer, $appendToFile);
 
 			return true;
 		}
 
 		$file = Path::clean($file);
+
+		// Set the required flag to only append to the file and not overwrite it
+		if ($appendToFile === true)
+		{
+			return \is_int(file_put_contents($file, $buffer, FILE_APPEND));
+		}
 
 		return \is_int(file_put_contents($file, $buffer));
 	}
