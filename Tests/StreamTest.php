@@ -888,7 +888,15 @@ class StreamTest extends FilesystemTestCase
 			$this->object->delete($path . '/' . $name, null, false),
 			'Line:' . __LINE__ . ' File should deleted successfully.'
 		);
-		$this->assertFileNotExists($path . '/' . $name);
+
+		if (method_exists($this, 'assertFileDoesNotExist'))
+		{
+			$this->assertFileDoesNotExist($path . '/' . $name);
+		}
+		else
+		{
+			$this->assertFileNotExists($path . '/' . $name);
+		}
 
 		@unlink($path . '/' . $name);
 	}
