@@ -1,0 +1,50 @@
+---
+kind: pipeline
+name: default
+
+clone:
+
+steps:
+
+  - name: phpcs
+    image: joomlaprojects/docker-images:php7.2
+    commands:
+      - echo $(date)
+      - composer install --no-progress --no-suggest
+      - vendor/bin/phpcs --config-set installed_paths vendor/joomla/coding-standards
+      - vendor/bin/phpcs -p --report=full --extensions=php --standard=ruleset.xml src/
+      - echo $(date)
+
+  - name: php72-unit
+    image: joomlaprojects/docker-images:php7.2
+    commands:
+      - php -v
+      - composer update --no-progress --no-suggest
+      - vendor/bin/phpunit
+
+  - name: php73-unit
+    image: joomlaprojects/docker-images:php7.3
+    commands:
+      - php -v
+      - composer update --no-progress --no-suggest
+      - vendor/bin/phpunit
+
+  - name: php74-unit
+    image: joomlaprojects/docker-images:php7.4
+    commands:
+      - php -v
+      - composer update --no-progress --no-suggest
+      - vendor/bin/phpunit
+
+  - name: php80-unit
+    image: joomlaprojects/docker-images:php8.0
+    failure: ignore
+    commands:
+      - php -v
+      - vendor/bin/phpunit
+
+---
+kind: signature
+hmac: 73dd6ed0ad4d426f015a90c9da60c3619968587b6066a5893c057fef3103fe54
+
+...
