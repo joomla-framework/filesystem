@@ -51,7 +51,7 @@ install:
     - IF %PHP%==1 echo opcache.enable_cli=1 >> php.ini
     - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
     - IF %PHP%==1 php -r "readfile('http://getcomposer.org/installer');" | php
-    - cd C:\projects\joomla-cms
+    - cd C:\projects\filesystem
     - appveyor-retry composer install --no-progress --profile
 
 test_script:
