@@ -334,7 +334,7 @@ class PathTest extends FilesystemTestCase
 	 */
 	public function testResolveThrowsExceptionIfRootIsLeft($path)
 	{
-		$this->expectException(Joomla\Filesystem\Exception\FilesystemException::class);
+		$this->expectException(FilesystemException::class);
 		$this->expectExceptionMessage('Path is outside of the defined root');
 		Path::resolve($path);
 	}
