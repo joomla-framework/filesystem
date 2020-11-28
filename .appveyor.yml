@@ -84,3 +84,5 @@ install:
 test_script:
   - cd C:\projects\filesystem
   - vendor\bin\phpunit
+
+# Force new build
