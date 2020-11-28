@@ -69,17 +69,10 @@ Add `"joomla/filesystem": "2.0.*@dev"` to the require block in your composer.jso
 Alternatively, you can simply run the following from the command line:
 
 ```sh
-composer require joomla/filesystem "2.0.*@dev"
 ```
 
 If you want to include the test sources, use
 
 ```sh
 composer require --prefer-source joomla/filesystem "2.0.*@dev"
-```
-
-If you want to include the test sources, use
-
-```sh
-composer require --prefer-source joomla/filesystem "~1.0"
 ```
