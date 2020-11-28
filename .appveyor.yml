@@ -33,13 +33,10 @@ install:
     - ps: |
         # Check if installation is cached
         if (!(Test-Path c:\tools\php)) {
-          SET PHP_VERSION_STRING=(choco search php --exact --all-versions -r | select-string -pattern $env:php | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1)
-          Echo $PHP_VERSION_STRING
-          SET PHP_VERSION=($PHP_VERSION_STRING -replace '[php|]','')
           If ($env:php -eq "5.6") {
-            appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y --forcex86 php --version $PHP_VERSION
+            appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y --forcex86 php --version $env:php
           } Else {
-            appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version $PHP_VERSION
+            appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version $env:php
           }
 
           Get-ChildItem -Path c:\tools\php
