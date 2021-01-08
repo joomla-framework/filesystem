@@ -232,15 +232,15 @@ class Stream
 		{
 			$scheme = ucfirst($url['scheme']);
 
+			// Map to StringWrapper if required
+			if ($scheme === 'String')
+			{
+				$scheme = 'StringWrapper';
+			}
+
 			// If we're dealing with a Joomla! stream, load it
 			if (Helper::isJoomlaStream($scheme))
 			{
-				// Map to StringWrapper if required
-				if ($scheme === 'String')
-				{
-					$scheme = 'StringWrapper';
-				}
-
 				require_once __DIR__ . '/Stream/' . $scheme . '.php';
 			}
 
