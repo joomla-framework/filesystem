@@ -29,7 +29,7 @@ install:
     - IF EXIST C:\tools\php (SET PHP=0)
     - ps: >-
         If ($env:PHP -eq "1") {
-            appveyor-retry cinst php --version=$env:php_ver_target --package-parameters='""/InstallDir:C:\tools\php""' --ignore-checksums -y --limit-output
+            appveyor-retry cinst php --version=$env:php_ver_target --package-parameters='""/InstallDir:C:\tools\php""' --ignore-checksums -y --no-progress --limit-output
         }
     - cd C:\tools\php
     - IF %PHP%==1 copy php.ini-production php.ini /Y
@@ -48,7 +48,7 @@ install:
     - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
     - IF %PHP%==1 php -r "readfile('http://getcomposer.org/installer');" | php
     - cd C:\projects\filesystem
-    - appveyor-retry composer update --prefer-stable
+    - appveyor-retry composer update --prefer-stable --no-progress
 
 test_script:
   - cd C:\projects\filesystem
