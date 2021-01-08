@@ -259,7 +259,8 @@ class Path
 
 		// Try to find a writable directory
 		$dir = is_writable('/tmp') ? '/tmp' : false;
-		$dir = (!$dir && is_writable($ssp)) ? $ssp : $dir;
+		$dir = !$dir && is_writable('.') ? '.' : $dir;
+		$dir = !$dir && is_writable($ssp) ? $ssp : $dir;
 
 		if ($dir)
 		{
@@ -270,7 +271,7 @@ class Path
 			File::write($test, $blank, false);
 
 			// Test ownership
-			$return = (fileowner($test) == fileowner($path));
+			$return = fileowner($test) === fileowner($path);
 
 			// Delete the test file
 			File::delete($test);
