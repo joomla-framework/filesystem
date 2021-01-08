@@ -50,11 +50,11 @@ install:
     - cd C:\projects\filesystem
     - ps: >-
         If ($env:php_ver_target -ne "8.0.0") {
-            appveyor-retry composer update --prefer-stable --no-progress
+            composer update --prefer-stable --no-progress
         }
     - ps: >-
         If ($env:php_ver_target -eq "8.0.0") {
-            appveyor-retry composer update --prefer-stable --no-progress --ignore-platform-req=php
+            composer update --prefer-stable --no-progress --ignore-platform-req=php
         }
 
 
