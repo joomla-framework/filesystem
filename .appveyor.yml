@@ -48,12 +48,7 @@ install:
     - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
     - IF %PHP%==1 php -r "readfile('http://getcomposer.org/installer');" | php
     - cd C:\projects\filesystem
-    - ps: >-
-        If ($env:PHP -eq "8.0.0") {
-            appveyor-retry composer update --prefer-stable --no-progress --ignore-platform-req
-        } Else {
-            appveyor-retry composer update --prefer-stable --no-progress
-        }
+    - appveyor-retry composer update --prefer-stable --no-progress --ignore-platform-req
 
 test_script:
   - cd C:\projects\filesystem
