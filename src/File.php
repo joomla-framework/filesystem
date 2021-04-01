@@ -91,7 +91,7 @@ class File
 				throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError()));
 			}
 
-			self::invalidateOpcache($dest);
+			self::invalidateFileCache($dest);
 
 			return true;
 		}
@@ -101,7 +101,7 @@ class File
 			throw new FilesystemException(__METHOD__ . ': Copy failed.');
 		}
 
-		self::invalidateOpcache($dest);
+		self::invalidateFileCache($dest);
 
 		return true;
 	}
@@ -141,7 +141,7 @@ class File
 				throw new FilesystemException(__METHOD__ . ': Failed deleting ' . $filename);
 			}
 
-			self::invalidateOpcache($file);
+			self::invalidateFileCache($file);
 		}
 
 		return true;
@@ -183,7 +183,7 @@ class File
 				throw new FilesystemException(__METHOD__ . ': ' . $stream->getError());
 			}
 
-			self::invalidateOpcache($dest);
+			self::invalidateFileCache($dest);
 
 			return true;
 		}
@@ -193,7 +193,7 @@ class File
 			throw new FilesystemException(__METHOD__ . ': Rename failed.');
 		}
 
-		self::invalidateOpcache($dest);
+		self::invalidateFileCache($dest);
 
 		return true;
 	}
@@ -228,7 +228,7 @@ class File
 			$stream->set('chunksize', (1024 * 1024));
 			$stream->writeFile($file, $buffer, $appendToFile);
 
-			self::invalidateOpcache($file);
+			self::invalidateFileCache($file);
 
 			return true;
 		}
@@ -245,7 +245,7 @@ class File
 			$res = \is_int(file_put_contents($file, $buffer));
 		}
 
-		self::invalidateOpcache($file);
+		self::invalidateFileCache($file);
 
 		return $res;
 	}
@@ -284,7 +284,7 @@ class File
 				throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError()));
 			}
 
-			self::invalidateOpcache($dest);
+			self::invalidateFileCache($dest);
 
 			return true;
 		}
@@ -294,7 +294,7 @@ class File
 			// Short circuit to prevent file permission errors
 			if (Path::setPermissions($dest))
 			{
-				self::invalidateOpcache($dest);
+				self::invalidateFileCache($dest);
 
 				return true;
 			}
@@ -312,7 +312,7 @@ class File
 	 *
 	 * @return void
 	 */
-	public static function invalidateOpcache($file)
+	public static function invalidateFileCache($file)
 	{
 		if (function_exists('opcache_invalidate'))
 		{
