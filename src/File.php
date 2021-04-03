@@ -144,7 +144,7 @@ class File
 			self::invalidateFileCache($file);
 
 			/**
-			 * In case of restricted permissions we zap it one way or the other
+			 * In case of restricted permissions we delete it one way or the other
 			 * as long as the owner is either the webserver or the ftp
 			 */
 			if (!@ unlink($file))
