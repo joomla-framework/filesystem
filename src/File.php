@@ -189,6 +189,8 @@ class File
 			return 'Cannot find source file.';
 		}
 
+        self::invalidateFileCache($src);
+
 		if ($useStreams)
 		{
 			$stream = Stream::getStream();
