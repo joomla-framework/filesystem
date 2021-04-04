@@ -189,7 +189,7 @@ class File
 			return 'Cannot find source file.';
 		}
 
-        self::invalidateFileCache($src);
+		self::invalidateFileCache($src);
 
 		if ($useStreams)
 		{
@@ -292,7 +292,7 @@ class File
 			Folder::create($baseDir);
 		}
 
-        self::invalidateFileCache($src);
+		self::invalidateFileCache($src);
 
 		if ($useStreams)
 		{
