@@ -56,12 +56,12 @@ root path of the source which you are patching.
 
 ## Installation via Composer
 
-Add `"joomla/filesystem": "2.0.*@dev"` to the require block in your composer.json and then run `composer install`.
+Add `"joomla/filesystem": "~2.0"` to the require block in your composer.json and then run `composer install`.
 
 ```json
 {
 	"require": {
-		"joomla/filesystem": "2.0.*@dev"
+		"joomla/filesystem": "~2.0"
 	}
 }
 ```
@@ -74,5 +74,5 @@ Alternatively, you can simply run the following from the command line:
 If you want to include the test sources, use
 
 ```sh
-composer require --prefer-source joomla/filesystem "2.0.*@dev"
+composer require --prefer-source joomla/filesystem "~2.0"
 ```
