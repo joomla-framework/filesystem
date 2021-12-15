@@ -9,13 +9,17 @@
 
     <!-- Exclude folders not containing production code -->
     <exclude-pattern>*/.github/*</exclude-pattern>
-    <exclude-pattern>*/.travis/*</exclude-pattern>
 
     <!-- Exclude 3rd party libraries. -->
     <exclude-pattern>*/vendor/*</exclude-pattern>
 
     <rule ref="Joomla">
-        <!-- Required due to methods having underscore prefixes -->
-        <exclude name="Joomla.NamingConventions.ValidFunctionName"/>
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+    </rule>
+
+    <rule ref="Joomla.Classes.InstantiateNewClasses">
+        <properties>
+            <property name="shortArraySyntax" value="true"/>
+        </properties>
     </rule>
 </ruleset>
