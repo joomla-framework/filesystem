@@ -95,12 +95,12 @@ class StreamTest extends FilesystemTestCase
 		);
 
 		$this->assertEquals(
-			dirname(__DIR__) . '/',
+			JPATH_ROOT . '/',
 			TestHelper::getValue($object, 'writeprefix')
 		);
 
 		$this->assertEquals(
-			dirname(__DIR__),
+            JPATH_ROOT,
 			TestHelper::getValue($object, 'readprefix')
 		);
 
@@ -1131,8 +1131,6 @@ class StreamTest extends FilesystemTestCase
 	/**
 	 * Test data for _getFilename test
 	 *
-	 * @return  void
-	 *
 	 * @since   1.4.0
 	 */
 	public function data_getFilename()
@@ -1146,8 +1144,8 @@ class StreamTest extends FilesystemTestCase
 			array('one', 'two', 'foobar', 'w', true, false, 'onefoobar'),
 			array('one', 'two', 'foobar', 'r', true, true, 'twofoobar'),
 			array('one', 'two', 'foobar', 'w', true, true, 'onefoobar'),
-			array('one', 'two', __DIR__ . '/foobar', 'r', true, false, 'two' . DIRECTORY_SEPARATOR . 'Tests/foobar'),
-			array('one', 'two', __DIR__ . '/foobar', 'w', true, false, 'one' . DIRECTORY_SEPARATOR . 'Tests/foobar'),
+			array('one', 'two', JPATH_ROOT . '/foobar', 'r', true, false, 'two/foobar'),
+			array('one', 'two', JPATH_ROOT . '/foobar', 'w', true, false, 'one/foobar'),
 		);
 	}
 
