@@ -95,7 +95,7 @@ class HelperTest extends TestCase
 	 * @return  void
 	 *
 	 * @since   1.4.0
-	 * @covers  Joomla\Filesystem\Helper::isJoomlaStream
+	 * @covers  \Joomla\Filesystem\Helper::isJoomlaStream
 	 */
 	public function testIsJoomlaStream()
 	{

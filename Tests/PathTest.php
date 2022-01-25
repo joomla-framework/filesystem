@@ -298,7 +298,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers        Joomla\Filesystem\Path::clean
+	 * @covers        \Joomla\Filesystem\Path::clean
 	 * @dataProvider  getCleanData
 	 * @since      1.0
 	 */

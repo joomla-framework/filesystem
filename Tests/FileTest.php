@@ -119,7 +119,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers        Joomla\Filesystem\File::makeSafe
+	 * @covers        \Joomla\Filesystem\File::makeSafe
 	 * @dataProvider  dataTestMakeSafe
 	 * @since         1.0
 	 */
