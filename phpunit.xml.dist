@@ -2,11 +2,12 @@
 <phpunit bootstrap="Tests/bootstrap.php" colors="false">
 	<testsuites>
 		<testsuite name="Unit">
-			<directory>Tests</directory>
+			<directory suffix="Test.php" phpVersion="7.1.0" phpVersionOperator="&lt;">/php53</directory>
+			<directory suffix="Test.php" phpVersion="7.1.0" phpVersionOperator="&gt;=">/php71</directory>
 		</testsuite>
 	</testsuites>
-    <php>
-		<env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
+	<php>
+		<env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
 	</php>
 
 	<!--

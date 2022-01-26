@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Filesystem\Tests;
+namespace Joomla\Filesystem\Tests\php53;
 
 use Joomla\Filesystem\File;
 
@@ -491,7 +491,7 @@ class FileTest extends FilesystemTestCase
 	 */
 	public function testUpload()
 	{
-		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
+		include_once dirname(__FILE__, 2) . '/Stubs/PHPUploadStub.php';
 
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -525,7 +525,7 @@ class FileTest extends FilesystemTestCase
 	 */
 	public function testUploadWithStreams()
 	{
-		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
+		include_once dirname(__FILE__, 2) . '/Stubs/PHPUploadStub.php';
 
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -559,7 +559,7 @@ class FileTest extends FilesystemTestCase
 	 */
 	public function testUploadToNestedDirectory()
 	{
-		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
+		include_once dirname(__FILE__, 2) . '/Stubs/PHPUploadStub.php';
 
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';

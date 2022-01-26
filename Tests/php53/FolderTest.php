@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Filesystem\Tests;
+namespace Joomla\Filesystem\Tests\php53;
 
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\File;
