@@ -6,7 +6,6 @@
 
 namespace Joomla\Filesystem\Tests\php71;
 
-use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Tests\FilesystemTestCase as TestCase;
 
 /**
@@ -29,7 +28,7 @@ class FilesystemTestCase extends TestCase
 	 */
 	protected function setUp(): void
 	{
-		parent::doSetUp();
+		$this->doSetUp();
 	}
 
 	/**
@@ -37,6 +36,6 @@ class FilesystemTestCase extends TestCase
 	 */
 	protected function tearDown(): void
 	{
-		parent::doTearDown();
+		$this->doTearDown();
 	}
 }

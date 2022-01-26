@@ -23,18 +23,19 @@ class HelperTest extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testGetSupported()
+	public function testGetSupported(): void
 	{
-		$this->assertTrue(
-			\in_array('String', Helper::getSupported()),
+		$this->assertContains(
+			'String',
+			Helper::getSupported(),
 			'Line:' . __LINE__ . ' Joomla Streams must contain String.'
 		);
 
 		$registeredStreams = stream_get_wrappers();
 
-		$this->assertEquals(
-			\count(array_diff($registeredStreams, Helper::getSupported())),
+		$this->assertCount(
 			0,
+			array_diff($registeredStreams, Helper::getSupported()),
 			'Line:' . __LINE__ . ' getSupported should contains default streams.'
 		);
 	}
@@ -46,13 +47,13 @@ class HelperTest extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testGetTransports()
+	public function testGetTransports(): void
 	{
 		$registeredTransports = stream_get_transports();
 
-		$this->assertEquals(
-			\count(array_diff($registeredTransports, Helper::getTransports())),
+		$this->assertCount(
 			0,
+			array_diff($registeredTransports, Helper::getTransports()),
 			'Line:' . __LINE__ . ' getTransports should contains default transports.'
 		);
 	}
@@ -64,13 +65,13 @@ class HelperTest extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testGetFilters()
+	public function testGetFilters(): void
 	{
 		$registeredFilters = stream_get_filters();
 
-		$this->assertEquals(
-			\count(array_diff($registeredFilters, Helper::getFilters())),
+		$this->assertCount(
 			0,
+			array_diff($registeredFilters, Helper::getFilters()),
 			'Line:' . __LINE__ . ' getFilters should contains default filters.'
 		);
 	}
@@ -82,11 +83,9 @@ class HelperTest extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testGetJStreams()
+	public function testGetJStreams(): void
 	{
-		$streams = Helper::getJStreams();
-
-		$this->assertTrue(\in_array('StringWrapper', Helper::getJStreams()));
+		$this->assertContains('StringWrapper', Helper::getJStreams());
 	}
 
 	/**
@@ -97,7 +96,7 @@ class HelperTest extends TestCase
 	 * @since   1.4.0
 	 * @covers  \Joomla\Filesystem\Helper::isJoomlaStream
 	 */
-	public function testIsJoomlaStream()
+	public function testIsJoomlaStream(): void
 	{
 		$this->assertTrue(
 			Helper::isJoomlaStream('String'),

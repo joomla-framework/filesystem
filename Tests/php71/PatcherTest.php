@@ -64,13 +64,13 @@ class PatcherTest extends TestCase
 	}
 
 	/**
-	 * Convenience method to cleanup before and after test
+	 * Convenience method to clean up before and after test
 	 *
 	 * @return  void
 	 *
 	 * @since   1.0
 	 */
-	private function _cleanupTestFiles()
+	private function _cleanupTestFiles(): void
 	{
 		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/lao2tzu.diff'));
 		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/lao'));
@@ -81,13 +81,13 @@ class PatcherTest extends TestCase
 	/**
 	 * Convenience method to clean up for files test
 	 *
-	 * @param   string  $path  The path to clean
+	 * @param  string  $path  The path to clean
 	 *
 	 * @return  void
 	 *
 	 * @since   1.0
 	 */
-	private function _cleanupFile($path)
+	private function _cleanupFile(string $path): void
 	{
 		if (file_exists($path))
 		{
@@ -109,7 +109,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.0
 	 */
-	public function addData()
+	public function addData(): array
 	{
 		$udiff = 'Index: lao
 ===================================================================
@@ -190,17 +190,17 @@ class PatcherTest extends TestCase
 	/**
 	 * Test Patcher::add add a unified diff string to the patcher
 	 *
-	 * @param   string  $udiff     Unified diff input string
-	 * @param   string  $root      The files root path
-	 * @param   string  $strip     The number of '/' to strip
-	 * @param   array   $expected  The expected array patches
+	 * @param  string  $udiff     Unified diff input string
+	 * @param  string  $root      The files root path
+	 * @param  string  $strip     The number of '/' to strip
+	 * @param  array   $expected  The expected array patches
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider addData
 	 * @since   1.0
 	 */
-	public function testAdd($udiff, $root, $strip, $expected)
+	public function testAdd(string $udiff, string $root, string $strip, array $expected): void
 	{
 		$patcher = Patcher::getInstance()->reset();
 		$patcher->add($udiff, $root, $strip);
@@ -219,7 +219,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testAddFile()
+	public function testAddFile(): void
 	{
 		$udiff = 'Index: lao
 ===================================================================
@@ -270,7 +270,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testReset()
+	public function testReset(): void
 	{
 		$udiff = 'Index: lao
 ===================================================================
@@ -334,7 +334,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.0
 	 */
-	public function applyData()
+	public function applyData(): array
 	{
 		return array(
 			// Test classical feature
@@ -919,20 +919,20 @@ But after they are produced,
 	/**
 	 * Patcher::apply apply the patches
 	 *
-	 * @param   string   $udiff         Unified diff input string
-	 * @param   string   $root          The files root path
-	 * @param   string   $strip         The number of '/' to strip
-	 * @param   array    $sources       The source files
-	 * @param   array    $destinations  The destinations files
-	 * @param   integer  $result        The number of files patched
-	 * @param   mixed    $throw         The exception throw, false for no exception
+	 * @param  string   $udiff         Unified diff input string
+	 * @param  string   $root          The files root path
+	 * @param  string   $strip         The number of '/' to strip
+	 * @param  array    $sources       The source files
+	 * @param  array    $destinations  The destinations files
+	 * @param  integer  $result        The number of files patched
+	 * @param   mixed   $throw         The exception throw, false for no exception
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider applyData
 	 * @since   1.0
 	 */
-	public function testApply($udiff, $root, $strip, $sources, $destinations, $result, $throw)
+	public function testApply(string $udiff, string $root, string $strip, array $sources, array $destinations, int $result, $throw): void
 	{
 		if ($throw)
 		{

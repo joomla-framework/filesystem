@@ -24,7 +24,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testCanChmodFile()
+	public function testCanChmodFile(): void
 	{
 		$this->skipIfUnableToChmod();
 
@@ -48,7 +48,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testCanChmodFolder()
+	public function testCanChmodFolder(): void
 	{
 		$this->skipIfUnableToChmod();
 
@@ -64,7 +64,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testCanChmodNonExistingFile()
+	public function testCanChmodNonExistingFile(): void
 	{
 		$this->skipIfUnableToChmod();
 
@@ -80,7 +80,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testSetAndGetPermissionsFile()
+	public function testSetAndGetPermissionsFile(): void
 	{
 		$this->skipIfUnableToChmod();
 
@@ -118,7 +118,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testSetAndGetPermissionsFolder()
+	public function testSetAndGetPermissionsFolder(): void
 	{
 		$this->skipIfUnableToChmod();
 
@@ -148,7 +148,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testSetAndGetPermissionsFolderWithFiles()
+	public function testSetAndGetPermissionsFolderWithFiles(): void
 	{
 		$this->skipIfUnableToChmod();
 
@@ -197,7 +197,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function dataCheckValidPaths()
+	public function dataCheckValidPaths(): array
 	{
 		return array(
 			array('/var/foo'),
@@ -210,14 +210,14 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * Test checkValidPaths method.
 	 *
-	 * @param   string  $data  Path to check for valid
+	 * @param  string  $data  Path to check for valid
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider dataCheckValidPaths
 	 * @since   1.4.0
 	 */
-	public function testCheckValidPaths($data)
+	public function testCheckValidPaths(string $data): void
 	{
 		if (DIRECTORY_SEPARATOR === '\\')
 		{
@@ -237,7 +237,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function dataCheckExceptionPaths()
+	public function dataCheckExceptionPaths(): array
 	{
 		return array(
 			array('../var/foo/bar'),
@@ -254,16 +254,17 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * Test exceptions in check method.
 	 *
-	 * @param   string  $data  Paths to check.
+	 * @param  string  $data  Paths to check.
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider dataCheckExceptionPaths
-	 * @expectedException Joomla\Filesystem\Exception\FilesystemException
+	 *
 	 * @since   1.4.0
 	 */
-	public function testCheckExceptionPaths($data)
+	public function testCheckExceptionPaths(string $data): void
 	{
+		$this->expectException(FilesystemException::class);
 		Path::check(__DIR__ . $data);
 	}
 
@@ -274,7 +275,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function getCleanData()
+	public function getCleanData(): array
 	{
 		return array(
 			// Input Path, Directory Separator, Expected Output
@@ -292,9 +293,9 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * Tests the clean method.
 	 *
-	 * @param   string  $input     Input Path
-	 * @param   string  $ds        Directory Separator
-	 * @param   string  $expected  Expected Output
+	 * @param  string  $input     Input Path
+	 * @param  string  $ds        Directory Separator
+	 * @param  string  $expected  Expected Output
 	 *
 	 * @return  void
 	 *
@@ -302,7 +303,7 @@ class PathTest extends FilesystemTestCase
 	 * @dataProvider  getCleanData
 	 * @since      1.0
 	 */
-	public function testClean($input, $ds, $expected)
+	public function testClean(string $input, string $ds, string $expected): void
 	{
 		$this->assertEquals(
 			$expected,
@@ -315,11 +316,11 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException  UnexpectedValueException
 	 * @since   1.4.0
 	 */
-	public function testCleanArrayPath()
+	public function testCleanArrayPath(): void
 	{
+		$this->expectException(\UnexpectedValueException::class);
 		Path::clean(array('/path/to/folder'));
 	}
 
@@ -330,7 +331,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testIsOwner()
+	public function testIsOwner(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -352,7 +353,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testFind()
+	public function testFind(): void
 	{
 		$this->assertFalse(
 			Path::find(dirname(__DIR__), 'PathTest.php')
@@ -367,8 +368,8 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * Test resolve method
 	 *
-	 * @param   string  $path            test path
-	 * @param   string  $expectedResult  expected path
+	 * @param  string  $path            test path
+	 * @param  string  $expectedResult  expected path
 	 *
 	 * @return  void
 	 *
@@ -376,18 +377,16 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @dataProvider  getResolveData
 	 */
-	public function testResolve($path, $expectedResult)
+	public function testResolve(string $path, string $expectedResult): void
 	{
 		$this->assertEquals(str_replace("_DS_", DIRECTORY_SEPARATOR, $expectedResult), Path::resolve($path));
 	}
 
 	/**
 	 * Test resolve method
+ *
 
-	 * @param   string  $path            test path
-	 *
-	 * @expectedException         Joomla\Filesystem\Exception\FilesystemException
-	 * @expectedExceptionMessage  Path is outside of the defined root
+	 * @param  string  $path  test path
 	 *
 	 * @return void
 	 *
@@ -395,8 +394,10 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @dataProvider  getResolveExceptionData
 	 */
-	public function testResolveThrowsExceptionIfRootIsLeft($path)
+	public function testResolveThrowsExceptionIfRootIsLeft(string $path): void
 	{
+		$this->expectExceptionMessage("Path is outside of the defined root");
+		$this->expectException(FilesystemException::class);
 		Path::resolve($path);
 	}
 
@@ -407,7 +408,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function getResolveData()
+	public function getResolveData(): array
 	{
 		return array(
 			array("/", "_DS_"),
@@ -439,7 +440,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function getResolveExceptionData()
+	public function getResolveExceptionData(): array
 	{
 		return array(
 			array("../var/www/joomla"),

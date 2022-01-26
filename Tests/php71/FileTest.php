@@ -22,7 +22,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function dataTestStripExt()
+	public function dataTestStripExt(): array
 	{
 		return array(
 			array(
@@ -43,15 +43,15 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test makeSafe method
 	 *
-	 * @param   string  $fileName        The name of the file with extension
-	 * @param   string  $nameWithoutExt  Name without extension
+	 * @param  string  $fileName        The name of the file with extension
+	 * @param  string  $nameWithoutExt  Name without extension
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider  dataTestStripExt
 	 * @since         1.0
 	 */
-	public function testStripExt($fileName, $nameWithoutExt)
+	public function testStripExt(string $fileName, string $nameWithoutExt): void
 	{
 		$this->assertEquals(
 			File::stripExt($fileName),
@@ -67,7 +67,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function dataTestMakeSafe()
+	public function dataTestMakeSafe(): array
 	{
 		return array(
 			array(
@@ -112,10 +112,10 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test makeSafe method.
 	 *
-	 * @param   string  $name        The name of the file to test filtering of
-	 * @param   array   $stripChars  Whether to filter spaces out the name or not
-	 * @param   string  $expected    The expected safe file name
-	 * @param   string  $message     The message to show on failure of test
+	 * @param  string  $name        The name of the file to test filtering of
+	 * @param  array   $stripChars  Whether to filter spaces out the name or not
+	 * @param  string  $expected    The expected safe file name
+	 * @param  string  $message     The message to show on failure of test
 	 *
 	 * @return  void
 	 *
@@ -123,7 +123,7 @@ class FileTest extends FilesystemTestCase
 	 * @dataProvider  dataTestMakeSafe
 	 * @since         1.0
 	 */
-	public function testMakeSafe($name, $stripChars, $expected, $message)
+	public function testMakeSafe(string $name, array $stripChars, string $expected, string $message): void
 	{
 		$this->assertEquals(File::makeSafe($name, $stripChars), $expected, $message);
 	}
@@ -135,7 +135,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCopyWithPathArgPassed()
+	public function testCopyWithPathArgPassed(): void
 	{
 		$name       = 'tempFile';
 		$copiedName = 'tempCopiedFileName';
@@ -165,7 +165,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCopyWithoutPathArgPassed()
+	public function testCopyWithoutPathArgPassed(): void
 	{
 		$name       = 'tempFile';
 		$copiedName = 'tempCopiedFileName';
@@ -195,7 +195,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCopyWithStreams()
+	public function testCopyWithStreams(): void
 	{
 		$name       = 'tempFile';
 		$copiedName = 'tempCopiedFileName';
@@ -223,11 +223,11 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException  \UnexpectedValueException
 	 * @since   1.4.0
 	 */
-	public function testCopySrcDontExist()
+	public function testCopySrcDontExist(): void
 	{
+		$this->expectException(\UnexpectedValueException::class);
 		$name       = 'tempFile';
 		$copiedName = 'tempCopiedFileName';
 
@@ -241,7 +241,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testDeleteForSingleFile()
+	public function testDeleteForSingleFile(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -264,7 +264,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testDeleteForArrayOfFiles()
+	public function testDeleteForArrayOfFiles(): void
 	{
 		$name1 = 'tempFile1';
 		$name2 = 'tempFile2';
@@ -293,7 +293,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveWithPathArgPassed()
+	public function testMoveWithPathArgPassed(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -317,7 +317,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveWithoutPathArgPassed()
+	public function testMoveWithoutPathArgPassed(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -341,7 +341,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveWithStreams()
+	public function testMoveWithStreams(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -366,7 +366,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveSrcDontExist()
+	public function testMoveSrcDontExist(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -384,7 +384,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testWrite()
+	public function testWrite(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -409,7 +409,7 @@ class FileTest extends FilesystemTestCase
 	 * @since   1.5.0
 	 *
 	 */
-	public function testWriteWithAppend()
+	public function testWriteWithAppend(): void
 	{
 		$name = 'tempFile.txt';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -439,7 +439,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testWriteCreatesMissingDirectory()
+	public function testWriteCreatesMissingDirectory(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -463,7 +463,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testWriteWithStreams()
+	public function testWriteWithStreams(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -489,7 +489,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @backupGlobals enabled
 	 */
-	public function testUpload()
+	public function testUpload(): void
 	{
 		include_once dirname(__DIR__) . '/Stubs/PHPUploadStub.php';
 
@@ -523,7 +523,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @backupGlobals enabled
 	 */
-	public function testUploadWithStreams()
+	public function testUploadWithStreams(): void
 	{
 		include_once dirname(__DIR__) . '/Stubs/PHPUploadStub.php';
 
@@ -557,7 +557,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @backupGlobals enabled
 	 */
-	public function testUploadToNestedDirectory()
+	public function testUploadToNestedDirectory(): void
 	{
 		include_once dirname(__DIR__) . '/Stubs/PHPUploadStub.php';
 
