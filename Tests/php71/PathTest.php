@@ -217,7 +217,7 @@ class PathTest extends FilesystemTestCase
 	 * @dataProvider dataCheckValidPaths
 	 * @since   1.4.0
 	 */
-	public function testCheckValidPaths(string $data): void
+	public function testCheckValidPaths($data): void
 	{
 		if (DIRECTORY_SEPARATOR === '\\')
 		{
@@ -262,7 +262,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testCheckExceptionPaths(string $data): void
+	public function testCheckExceptionPaths($data): void
 	{
 		$this->expectException(FilesystemException::class);
 		Path::check(__DIR__ . $data);
@@ -303,7 +303,7 @@ class PathTest extends FilesystemTestCase
 	 * @dataProvider  getCleanData
 	 * @since      1.0
 	 */
-	public function testClean(string $input, string $ds, string $expected): void
+	public function testClean($input, $ds, $expected): void
 	{
 		$this->assertEquals(
 			$expected,
@@ -377,7 +377,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @dataProvider  getResolveData
 	 */
-	public function testResolve(string $path, string $expectedResult): void
+	public function testResolve($path, $expectedResult): void
 	{
 		$this->assertEquals(str_replace("_DS_", DIRECTORY_SEPARATOR, $expectedResult), Path::resolve($path));
 	}
@@ -394,7 +394,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @dataProvider  getResolveExceptionData
 	 */
-	public function testResolveThrowsExceptionIfRootIsLeft(string $path): void
+	public function testResolveThrowsExceptionIfRootIsLeft($path): void
 	{
 		$this->expectExceptionMessage("Path is outside of the defined root");
 		$this->expectException(FilesystemException::class);

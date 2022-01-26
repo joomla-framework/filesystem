@@ -481,7 +481,7 @@ class StreamTest extends FilesystemTestCase
 	 * @dataProvider dataSeek
 	 * @since   1.4.0
 	 */
-	public function testSeek(int $initial, int $offset, int $whence, int $expPos): void
+	public function testSeek($initial, $offset, $whence, $expPos): void
 	{
 		$string = "Lorem ipsum dolor sit amet.\nFoo bar";
 		StringController::createRef('lorem', $string);
@@ -1175,7 +1175,7 @@ class StreamTest extends FilesystemTestCase
 	 * @throws \ReflectionException
 	 * @since        1.4.0
 	 */
-	public function test_getFilename(string $wPrefix, string $rPrefix, string $filename, string $mode, bool $use_prefix, bool $relative, string $expected): void
+	public function test_getFilename($wPrefix, $rPrefix, $filename, $mode, $use_prefix, $relative, $expected): void
 	{
 		TestHelper::setValue($this->object, 'writeprefix', $wPrefix);
 		TestHelper::setValue($this->object, 'readprefix', $rPrefix);

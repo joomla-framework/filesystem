@@ -51,7 +51,7 @@ class FileTest extends FilesystemTestCase
 	 * @dataProvider  dataTestStripExt
 	 * @since         1.0
 	 */
-	public function testStripExt(string $fileName, string $nameWithoutExt): void
+	public function testStripExt($fileName, $nameWithoutExt): void
 	{
 		$this->assertEquals(
 			File::stripExt($fileName),
@@ -123,7 +123,7 @@ class FileTest extends FilesystemTestCase
 	 * @dataProvider  dataTestMakeSafe
 	 * @since         1.0
 	 */
-	public function testMakeSafe(string $name, array $stripChars, string $expected, string $message): void
+	public function testMakeSafe($name, $stripChars, $expected, $message): void
 	{
 		$this->assertEquals(File::makeSafe($name, $stripChars), $expected, $message);
 	}

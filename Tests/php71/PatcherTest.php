@@ -87,7 +87,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.0
 	 */
-	private function _cleanupFile(string $path): void
+	private function _cleanupFile($path): void
 	{
 		if (file_exists($path))
 		{
@@ -200,7 +200,7 @@ class PatcherTest extends TestCase
 	 * @dataProvider addData
 	 * @since   1.0
 	 */
-	public function testAdd(string $udiff, string $root, string $strip, array $expected): void
+	public function testAdd($udiff, $root, $strip, $expected): void
 	{
 		$patcher = Patcher::getInstance()->reset();
 		$patcher->add($udiff, $root, $strip);
@@ -932,7 +932,7 @@ But after they are produced,
 	 * @dataProvider applyData
 	 * @since   1.0
 	 */
-	public function testApply(string $udiff, string $root, string $strip, array $sources, array $destinations, int $result, $throw): void
+	public function testApply($udiff, $root, $strip, $sources, $destinations, $result, $throw): void
 	{
 		if ($throw)
 		{

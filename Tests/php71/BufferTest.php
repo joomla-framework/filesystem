@@ -71,7 +71,7 @@ class BufferTest extends TestCase
 	 * @since   1.4.0
 	 * @dataProvider casesOpen
 	 */
-	public function testStreamOpen(string $path, string $mode, string $options, string $opened_path, string $expected): void
+	public function testStreamOpen($path, $mode, $options, $opened_path, $expected): void
 	{
 		$this->object->stream_open($path, $mode, $options, $opened_path);
 		$this->assertThat(
@@ -114,7 +114,7 @@ class BufferTest extends TestCase
 	 * @since   1.4.0
 	 * @dataProvider casesRead
 	 */
-	public function testStreamRead(string $buffer, string $name, int $position, int $count, bool $expected): void
+	public function testStreamRead($buffer, $name, $position, $count, $expected): void
 	{
 		$this->object->name = $name;
 		$this->object->position = $position;
@@ -160,7 +160,7 @@ class BufferTest extends TestCase
 	 * @since   1.4.0
 	 * @dataProvider casesWrite
 	 */
-	public function testStreamWrite(string $buffer, string $name, int $position, string $write, bool $expected): void
+	public function testStreamWrite($buffer, $name, $position, $write, $expected): void
 	{
 		$this->object->name = $name;
 		$this->object->position = $position;
@@ -229,7 +229,7 @@ class BufferTest extends TestCase
 	 * @since   1.4.0
 	 * @dataProvider casesEof
 	 */
-	public function testStreamEof(string $buffer, string $name, int $position, bool $expected): void
+	public function testStreamEof($buffer, $name, $position, $expected): void
 	{
 		$this->object->name = $name;
 		$this->object->position = $position;
@@ -342,7 +342,7 @@ class BufferTest extends TestCase
 	 * @since   1.4.0
 	 * @dataProvider casesSeek
 	 */
-	public function testStreamSeek(string $buffer, string $name, int $position, int $offset, int $whence, bool $expected, int $expectedPos): void
+	public function testStreamSeek($buffer, $name, $position, $offset, $whence, $expected, $expectedPos): void
 	{
 		$this->object->name = $name;
 		$this->object->position = $position;
