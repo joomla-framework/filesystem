@@ -491,7 +491,7 @@ class FileTest extends FilesystemTestCase
 	 */
 	public function testUpload()
 	{
-		include_once dirname(__FILE__, 2) . '/Stubs/PHPUploadStub.php';
+		include_once dirname(dirname(__FILE__)) . '/Stubs/PHPUploadStub.php';
 
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -525,7 +525,7 @@ class FileTest extends FilesystemTestCase
 	 */
 	public function testUploadWithStreams()
 	{
-		include_once dirname(__FILE__, 2) . '/Stubs/PHPUploadStub.php';
+		include_once dirname(dirname(__FILE__)) . '/Stubs/PHPUploadStub.php';
 
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -559,7 +559,7 @@ class FileTest extends FilesystemTestCase
 	 */
 	public function testUploadToNestedDirectory()
 	{
-		include_once dirname(__FILE__, 2) . '/Stubs/PHPUploadStub.php';
+		include_once dirname(dirname(__FILE__)) . '/Stubs/PHPUploadStub.php';
 
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';

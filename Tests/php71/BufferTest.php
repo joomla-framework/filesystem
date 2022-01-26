@@ -30,7 +30,7 @@ class BufferTest extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 

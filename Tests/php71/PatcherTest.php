@@ -24,7 +24,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		if (!\defined('JPATH_ROOT'))
 		{
@@ -40,7 +40,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.0
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -58,7 +58,7 @@ class PatcherTest extends TestCase
 	 *
 	 * @since   1.0
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		$this->_cleanupTestFiles();
 	}
