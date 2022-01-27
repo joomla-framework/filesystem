@@ -4,8 +4,9 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Filesystem\Tests;
+namespace Joomla\Filesystem\Tests\php71;
 
+use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
@@ -24,7 +25,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCopyWithPathArgPassed()
+	public function testCopyWithPathArgPassed(): void
 	{
 		$name             = 'tempFolder';
 		$copiedFolderName = 'tempCopiedFolderName';
@@ -47,7 +48,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCopyWithoutPathArgPassed()
+	public function testCopyWithoutPathArgPassed(): void
 	{
 		$name             = 'tempFolder';
 		$copiedFolderName = 'tempCopiedFolderName';
@@ -69,7 +70,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCopyWithStreams()
+	public function testCopyWithStreams(): void
 	{
 		$name             = 'tempFolder';
 		$copiedFolderName = 'tempCopiedFolderName';
@@ -91,11 +92,11 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @return void
 	 *
-	 * @expectedException Joomla\Filesystem\Exception\FilesystemException
 	 * @since   1.0
 	 */
-	public function testCopySrcDontExist()
+	public function testCopySrcDontExist(): void
 	{
+		$this->expectException(FilesystemException::class);
 		$name             = 'tempFolder';
 		$copiedFolderName = 'tempCopiedFolderName';
 
@@ -109,7 +110,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCopyDestExistAndForced()
+	public function testCopyDestExistAndForced(): void
 	{
 		$name             = 'tempFolder';
 		$copiedFolderName = 'tempCopiedFolderName';
@@ -135,11 +136,11 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @return void
 	 *
-	 * @expectedException Joomla\Filesystem\Exception\FilesystemException
 	 * @since   1.0
 	 */
-	public function testCopyDestExistAndNotForced()
+	public function testCopyDestExistAndNotForced(): void
 	{
+		$this->expectException(FilesystemException::class);
 		$name             = 'tempFolder';
 		$copiedFolderName = 'tempCopiedFolderName';
 
@@ -163,7 +164,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testCreateNested()
+	public function testCreateNested(): void
 	{
 		$this->assertTrue(
 			Folder::create($this->testPath . '/tempFolder/subTempFolder'),
@@ -176,11 +177,11 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException Joomla\Filesystem\Exception\FilesystemException
 	 * @since   1.0
 	 */
-	public function testCreateInfiniteLoopException()
+	public function testCreateInfiniteLoopException(): void
 	{
+		$this->expectException(FilesystemException::class);
 		Folder::create($this->testPath . '/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z');
 	}
 
@@ -191,7 +192,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testDeleteRecursive()
+	public function testDeleteRecursive(): void
 	{
 		$name = 'tempFolder';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -217,11 +218,11 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException  Joomla\Filesystem\Exception\FilesystemException
 	 * @since   1.0
 	 */
-	public function testDeleteBaseDir()
+	public function testDeleteBaseDir(): void
 	{
+		$this->expectException(FilesystemException::class);
 		Folder::delete('');
 	}
 
@@ -232,7 +233,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveWithPathArgPassed()
+	public function testMoveWithPathArgPassed(): void
 	{
 		$name            = 'tempFolder';
 		$movedFolderName = 'tempMovedFolderName';
@@ -255,7 +256,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveWithoutPathArgPassed()
+	public function testMoveWithoutPathArgPassed(): void
 	{
 		$name            = 'tempFolder';
 		$movedFolderName = 'tempMovedFolderName';
@@ -278,7 +279,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveWithStreams()
+	public function testMoveWithStreams(): void
 	{
 		$this->markTestSkipped('Need to debug internals');
 
@@ -303,7 +304,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveSrcDontExist()
+	public function testMoveSrcDontExist(): void
 	{
 		$name            = 'tempFolder';
 		$movedFolderName = 'tempMovedFolderName';
@@ -321,7 +322,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMoveDestExist()
+	public function testMoveDestExist(): void
 	{
 		$name            = 'tempFolder';
 		$movedFolderName = 'tempMovedFolderName';
@@ -349,7 +350,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFiles()
+	public function testFiles(): void
 	{
 		$name = 'tempFolder';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -386,7 +387,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFilesWithExcludeList()
+	public function testFilesWithExcludeList(): void
 	{
 		$name = 'tempFolder';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -422,7 +423,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFilesWithFullPath()
+	public function testFilesWithFullPath(): void
 	{
 		$name = 'tempFolder';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -459,7 +460,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFilesWithFilter()
+	public function testFilesWithFilter(): void
 	{
 		$name = 'tempFolder';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -495,7 +496,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFilesWithRecursiveFilter()
+	public function testFilesWithRecursiveFilter(): void
 	{
 		$name = 'tempFolder';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -547,7 +548,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFilesWithRecursiveFullPath()
+	public function testFilesWithRecursiveFullPath(): void
 	{
 		$name = 'tempFolder';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -599,11 +600,11 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException  \UnexpectedValueException
 	 * @since   1.4.0
 	 */
-	public function testFilesWithNonexistingDirectory()
+	public function testFilesWithNonexistingDirectory(): void
 	{
+		$this->expectException(\UnexpectedValueException::class);
 		$name = 'tempFolder';
 
 		Folder::files($this->testPath . '/' . $name);
@@ -616,7 +617,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFolders()
+	public function testFolders(): void
 	{
 		$name = 'tempFolder';
 
@@ -641,7 +642,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFoldersWithExcludeList()
+	public function testFoldersWithExcludeList(): void
 	{
 		$name        = 'tempFolder';
 		$excludeName = 'otherFolder';
@@ -672,7 +673,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFoldersWithFullPath()
+	public function testFoldersWithFullPath(): void
 	{
 		$name = 'tempFolder';
 
@@ -697,7 +698,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFoldersWithFilter()
+	public function testFoldersWithFilter(): void
 	{
 		$name        = 'tempFolder';
 		$excludeName = 'otherFolder';
@@ -728,7 +729,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFoldersWithRecursiveFilter()
+	public function testFoldersWithRecursiveFilter(): void
 	{
 		$name        = 'tempFolder';
 		$excludeName = 'otherFolder';
@@ -781,7 +782,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testFoldersWithRecursiveFullPath()
+	public function testFoldersWithRecursiveFullPath(): void
 	{
 		$name        = 'tempFolder';
 		$excludeName = 'otherFolder';
@@ -835,11 +836,11 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException  \UnexpectedValueException
 	 * @since   1.4.0
 	 */
-	public function testFoldersWithNonexistingDirectory()
+	public function testFoldersWithNonexistingDirectory(): void
 	{
+		$this->expectException(\UnexpectedValueException::class);
 		$name = 'tempFolder';
 
 		Folder::folders($this->testPath . '/' . $name);
@@ -852,7 +853,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testListFolderTreeWithEmptyDirectory()
+	public function testListFolderTreeWithEmptyDirectory(): void
 	{
 		$name = 'tempFolder';
 
@@ -875,7 +876,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testListFolderTreeWithASubirectory()
+	public function testListFolderTreeWithASubirectory(): void
 	{
 		$name      = 'tempFolder';
 		$childName = 'subTempFolder';
@@ -912,7 +913,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testListFolderTreeWithMultipleSubirectories()
+	public function testListFolderTreeWithMultipleSubirectories(): void
 	{
 		$name       = 'tempFolder';
 		$childName1 = 'subTempFolder1';
@@ -962,7 +963,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testListFolderTreeWithANestedSubirectory()
+	public function testListFolderTreeWithANestedSubirectory(): void
 	{
 		$name         = 'tempFolder';
 		$childName    = 'subTempFolder';
@@ -1012,7 +1013,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testListFolderTreeWithMultipleNestedSubirectories()
+	public function testListFolderTreeWithMultipleNestedSubirectories(): void
 	{
 		$name          = 'tempFolder';
 		$childName1    = 'subTempFolder1';
@@ -1112,7 +1113,7 @@ class FolderTest extends FilesystemTestCase
 	 *
 	 * @since   1.0
 	 */
-	public function testMakeSafe()
+	public function testMakeSafe(): void
 	{
 		$this->assertSame(
 			'test1/testdirectory',

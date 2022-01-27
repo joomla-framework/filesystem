@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Filesystem\Tests;
+namespace Joomla\Filesystem\Tests\php71;
 
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
@@ -20,8 +20,8 @@ use org\bovigo\vfs\vfsStream;
  */
 class StreamTest extends FilesystemTestCase
 {
-	const WRITE_PREFIX = 'WRITE_PREFIX/';
-	const READ_PREFIX = 'READ_PREFIX/';
+	public const WRITE_PREFIX = 'WRITE_PREFIX/';
+	public const READ_PREFIX = 'READ_PREFIX/';
 
 	/**
 	 * @var    Stream
@@ -37,7 +37,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -50,9 +50,10 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function test__construct()
+	public function test__construct(): void
 	{
 		$object = new Stream('foo', 'bar');
 
@@ -68,7 +69,7 @@ class StreamTest extends FilesystemTestCase
 
 		$this->assertEquals(
 			0,
-			\count(TestHelper::getValue($object, 'contextOptions'))
+			is_array(TestHelper::getValue($object, 'contextOptions')) || TestHelper::getValue($object, 'contextOptions') instanceof \Countable ? \count(TestHelper::getValue($object, 'contextOptions')) : 0
 		);
 
 		$this->assertEquals(
@@ -82,32 +83,33 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function testGetStream()
+	public function testGetStream(): void
 	{
 		$object = Stream::getStream();
 
 		$this->assertInstanceOf(
-			'Joomla\\Filesystem\\Stream',
+			Stream::class,
 			$object,
 			'getStream must return an instance of Joomla\\Filesystem\\Stream'
 		);
 
 		$this->assertEquals(
-			dirname(__DIR__) . '/',
+			JPATH_ROOT . '/',
 			TestHelper::getValue($object, 'writeprefix')
 		);
 
 		$this->assertEquals(
-			dirname(__DIR__),
+            JPATH_ROOT,
 			TestHelper::getValue($object, 'readprefix')
 		);
 
 		$object = Stream::getStream(false);
 
 		$this->assertInstanceOf(
-			'Joomla\\Filesystem\\Stream',
+			Stream::class,
 			$object,
 			'getStream must return an instance of Joomla\\Filesystem\\Stream'
 		);
@@ -128,11 +130,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testOpenNoFilenameException()
+	public function testOpenNoFilenameException(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->open('');
 	}
 
@@ -141,11 +143,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testOpenInvlaidFilenameException()
+	public function testOpenInvlaidFilenameException(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->open('foobar');
 	}
 
@@ -154,11 +156,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testOpenInvlaidStringnameException()
+	public function testOpenInvlaidStringnameException(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->open('string://bbarfoo');
 	}
 
@@ -167,9 +169,10 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function testOpen()
+	public function testOpen(): void
 	{
 		// Test simple file open
 		$name = 'tempFile';
@@ -228,11 +231,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testCloseBeforeOpeningException()
+	public function testCloseBeforeOpeningException(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$object = new Stream;
 
 		$object->close();
@@ -243,11 +246,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testEofNotOpenException()
+	public function testEofNotOpenException(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->eof();
 	}
 
@@ -258,7 +261,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testEof()
+	public function testEof(): void
 	{
 		$string = "Lorem ipsum dolor sit amet";
 		StringController::createRef('lorem', $string);
@@ -284,11 +287,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testFilesizeNotOpen()
+	public function testFilesizeNotOpen(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->filesize();
 	}
 
@@ -299,7 +302,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testFilesize()
+	public function testFilesize(): void
 	{
 		$string = "Lorem ipsum dolor sit amet";
 		StringController::createRef('lorem', $string);
@@ -332,11 +335,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testGetsNotOpen()
+	public function testGetsNotOpen(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->gets();
 	}
 
@@ -347,7 +350,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testGets()
+	public function testGets(): void
 	{
 		$string = "Lorem ipsum dolor sit amet.\nFoo bar";
 		StringController::createRef('lorem', $string);
@@ -373,11 +376,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testGetsInvalidLength()
+	public function testGetsInvalidLength(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$string = "Lorem ipsum dolor sit amet.\nFoo bar";
 		StringController::createRef('lorem', $string);
 		$filename = 'string://lorem';
@@ -394,11 +397,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testReadNotOpen()
+	public function testReadNotOpen(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->read();
 	}
 
@@ -409,7 +412,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testRead()
+	public function testRead(): void
 	{
 		$string = "Lorem ipsum dolor sit amet.\nFoo bar";
 		StringController::createRef('lorem', $string);
@@ -435,11 +438,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testSeekNotOpen()
+	public function testSeekNotOpen(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->seek(0);
 	}
 
@@ -450,7 +453,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function dataSeek()
+	public function dataSeek(): array
 	{
 		return array(
 			array(0, 0, SEEK_SET, 0),
@@ -468,17 +471,17 @@ class StreamTest extends FilesystemTestCase
 	/**
 	 * Test seek method.
 	 *
-	 * @param   int  $initial  Initial position of the pointer
-	 * @param   int  $offset   Offset to seek
-	 * @param   int  $whence   Seek type
-	 * @param   int  $expPos   Expected pointer position
+	 * @param  int  $initial  Initial position of the pointer
+	 * @param  int  $offset   Offset to seek
+	 * @param  int  $whence   Seek type
+	 * @param  int  $expPos   Expected pointer position
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider dataSeek
 	 * @since   1.4.0
 	 */
-	public function testSeek($initial, $offset, $whence, $expPos)
+	public function testSeek($initial, $offset, $whence, $expPos): void
 	{
 		$string = "Lorem ipsum dolor sit amet.\nFoo bar";
 		StringController::createRef('lorem', $string);
@@ -504,11 +507,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testTellNotOpen()
+	public function testTellNotOpen(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->tell();
 	}
 
@@ -517,11 +520,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testWriteNotOpen()
+	public function testWriteNotOpen(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$data = 'foobar';
 		$this->object->write($data);
 	}
@@ -531,11 +534,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testWriteReadonly()
+	public function testWriteReadonly(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
 		$data = 'Lorem ipsum dolor sit amet';
@@ -568,7 +571,7 @@ class StreamTest extends FilesystemTestCase
 	 * @requires PHP 5.4
 	 * @since   1.4.0
 	 */
-	public function testWrite()
+	public function testWrite(): void
 	{
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
@@ -595,11 +598,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testChmodNoFilename()
+	public function testChmodNoFilename(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->skipIfUnableToChmod();
 
 		$this->object->chmod();
@@ -610,7 +613,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 */
-	public function testChmod()
+	public function testChmod(): void
 	{
 		$this->skipIfUnableToChmod();
 
@@ -655,11 +658,11 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
 	 * @since   1.4.0
 	 */
-	public function testGet_meta_dataNotOpen()
+	public function testGet_meta_dataNotOpen(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->object->get_meta_data();
 	}
 
@@ -668,7 +671,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 */
-	public function testGet_meta_data()
+	public function testGet_meta_data(): void
 	{
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
@@ -701,9 +704,10 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function test_buildContext()
+	public function test_buildContext(): void
 	{
 		$contextOptions = array();
 
@@ -737,9 +741,10 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function testSetContextOptions()
+	public function testSetContextOptions(): void
 	{
 		$contextOptions = array(
 			'http' => array(
@@ -762,9 +767,10 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function testAddContextEntry()
+	public function testAddContextEntry(): void
 	{
 		$this->object->addContextEntry('foo', 'bar', 'barfoo');
 		$contextOptions = TestHelper::getValue($this->object, 'contextOptions');
@@ -780,9 +786,10 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function testDeleteContextEntry()
+	public function testDeleteContextEntry(): void
 	{
 		$contextOptions = array(
 			'foo' => array(
@@ -827,7 +834,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testApplyContextToStream()
+	public function testApplyContextToStream(): void
 	{
 		$this->assertFalse($this->object->applyContextToStream());
 
@@ -853,11 +860,12 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function testAppendFilter()
+	public function testAppendFilter(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->assertFalse($this->object->appendFilter("string.rot13"));
 
 		$name = 'tempFile';
@@ -881,8 +889,8 @@ class StreamTest extends FilesystemTestCase
 		);
 
 		$this->assertEquals(
-			\count($filters) + 1,
-			\count(TestHelper::getValue($this->object, 'filters'))
+			(is_array($filters) || $filters instanceof \Countable ? \count($filters) : 0) + 1,
+			is_array(TestHelper::getValue($this->object, 'filters')) || TestHelper::getValue($this->object, 'filters') instanceof \Countable ? \count(TestHelper::getValue($this->object, 'filters')) : 0
 		);
 
 		unlink($filename);
@@ -896,11 +904,12 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @expectedException RuntimeException
+	 * @throws \ReflectionException
 	 * @since   1.4.0
 	 */
-	public function testPrependFilter()
+	public function testPrependFilter(): void
 	{
+		$this->expectException(\RuntimeException::class);
 		$this->assertFalse($this->object->prependFilter("string.rot13"));
 
 		$name = 'tempFile';
@@ -924,8 +933,8 @@ class StreamTest extends FilesystemTestCase
 		);
 
 		$this->assertEquals(
-			\count($filters) + 1,
-			\count(TestHelper::getValue($this->object, 'filters'))
+			(is_array($filters) || $filters instanceof \Countable ? \count($filters) : 0) + 1,
+			is_array(TestHelper::getValue($this->object, 'filters')) || TestHelper::getValue($this->object, 'filters') instanceof \Countable ? \count(TestHelper::getValue($this->object, 'filters')) : 0
 		);
 
 		// Tests for invalid filters
@@ -945,7 +954,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testRemoveFilter()
+	public function testRemoveFilter(): void
 	{
 		// Remove the following lines when you implement this test.
 		$this->markTestIncomplete(
@@ -961,7 +970,7 @@ class StreamTest extends FilesystemTestCase
 	 * @requires PHP 5.4
 	 * @since   1.4.0
 	 */
-	public function testCopy()
+	public function testCopy(): void
 	{
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
@@ -995,7 +1004,7 @@ class StreamTest extends FilesystemTestCase
 	 * @requires PHP 5.4
 	 * @since   1.4.0
 	 */
-	public function testMove()
+	public function testMove(): void
 	{
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
@@ -1025,7 +1034,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testDelete()
+	public function testDelete(): void
 	{
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
@@ -1057,7 +1066,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testUpload()
+	public function testUpload(): void
 	{
 		// Remove the following lines when you implement this test.
 		$this->markTestIncomplete(
@@ -1073,7 +1082,7 @@ class StreamTest extends FilesystemTestCase
 	 * @requires PHP 5.4
 	 * @since   1.4.0
 	 */
-	public function testWriteFile()
+	public function testWriteFile(): void
 	{
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
@@ -1100,7 +1109,7 @@ class StreamTest extends FilesystemTestCase
 	 * @requires PHP 5.4
 	 * @since   1.5.0
 	 */
-	public function testwriteFileWithAppend()
+	public function testwriteFileWithAppend(): void
 	{
 		$name = 'tempFile';
 		$path = vfsStream::url('root');
@@ -1131,11 +1140,9 @@ class StreamTest extends FilesystemTestCase
 	/**
 	 * Test data for _getFilename test
 	 *
-	 * @return  void
-	 *
 	 * @since   1.4.0
 	 */
-	public function data_getFilename()
+	public function data_getFilename(): array
 	{
 		return array(
 			array('', '', 'foobar', 'r', false, false, 'foobar'),
@@ -1146,28 +1153,29 @@ class StreamTest extends FilesystemTestCase
 			array('one', 'two', 'foobar', 'w', true, false, 'onefoobar'),
 			array('one', 'two', 'foobar', 'r', true, true, 'twofoobar'),
 			array('one', 'two', 'foobar', 'w', true, true, 'onefoobar'),
-			array('one', 'two', __DIR__ . '/foobar', 'r', true, false, 'two' . DIRECTORY_SEPARATOR . 'Tests/foobar'),
-			array('one', 'two', __DIR__ . '/foobar', 'w', true, false, 'one' . DIRECTORY_SEPARATOR . 'Tests/foobar'),
+			array('one', 'two', JPATH_ROOT . '/foobar', 'r', true, false, 'two/foobar'),
+			array('one', 'two', JPATH_ROOT . '/foobar', 'w', true, false, 'one/foobar'),
 		);
 	}
 
 	/**
 	 * Test _getFilename method.
 	 *
-	 * @param   string   $wPrefix     Write prefix
-	 * @param   string   $rPrefix     Read prefix
-	 * @param   string   $filename    Filename
-	 * @param   string   $mode        File open mode
-	 * @param   boolean  $use_prefix  Whether to use prefix or not
-	 * @param   boolean  $relative    filename is relative or not
-	 * @param   string   $expected    Expected path
+	 * @param  string   $wPrefix     Write prefix
+	 * @param  string   $rPrefix     Read prefix
+	 * @param  string   $filename    Filename
+	 * @param  string   $mode        File open mode
+	 * @param  boolean  $use_prefix  Whether to use prefix or not
+	 * @param  boolean  $relative    filename is relative or not
+	 * @param  string   $expected    Expected path
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider data_getFilename
-	 * @since   1.4.0
+	 * @throws \ReflectionException
+	 * @since        1.4.0
 	 */
-	public function test_getFilename($wPrefix, $rPrefix, $filename, $mode, $use_prefix, $relative, $expected)
+	public function test_getFilename($wPrefix, $rPrefix, $filename, $mode, $use_prefix, $relative, $expected): void
 	{
 		TestHelper::setValue($this->object, 'writeprefix', $wPrefix);
 		TestHelper::setValue($this->object, 'readprefix', $rPrefix);
@@ -1185,7 +1193,7 @@ class StreamTest extends FilesystemTestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public function testGetFileHandle()
+	public function testGetFileHandle(): void
 	{
 		// Remove the following lines when you implement this test.
 		$this->markTestIncomplete(

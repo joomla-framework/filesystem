@@ -30,7 +30,7 @@ class FilesystemTestCase extends TestCase
 	 * @var    integer
 	 * @since  1.4.0
 	 */
-	private $umask;
+	protected $umask;
 
 	/**
 	 * This method is called before the first test of this test class is run.
@@ -39,7 +39,7 @@ class FilesystemTestCase extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	public static function setUpBeforeClass()
+	public static function doSetUpBeforeClass()
 	{
 		if (!\defined('JPATH_ROOT'))
 		{
@@ -55,7 +55,7 @@ class FilesystemTestCase extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	protected function setUp()
+	protected function doSetUp()
 	{
 		$this->umask    = umask(0);
 		$this->testPath = sys_get_temp_dir() . '/' . microtime(true) . '.' . mt_rand();
@@ -73,7 +73,7 @@ class FilesystemTestCase extends TestCase
 	 *
 	 * @since   1.4.0
 	 */
-	protected function tearDown()
+	protected function doTearDown()
 	{
 		Folder::delete($this->testPath);
 

@@ -191,9 +191,10 @@ class Path
 		{
 			throw new FilesystemException(
 				sprintf(
-					'%1$s() - Snooping out of bounds @ %2$s',
+					'%1$s() - Snooping out of bounds @ %2$s (root %3$s)',
 					__METHOD__,
-					$path
+					$path,
+					JPATH_ROOT
 				),
 				20
 			);

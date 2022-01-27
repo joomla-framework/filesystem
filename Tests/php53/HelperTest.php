@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Filesystem\Tests;
+namespace Joomla\Filesystem\Tests\php53;
 
 use Joomla\Filesystem\Helper;
 use PHPUnit\Framework\TestCase;
@@ -16,75 +16,6 @@ use PHPUnit\Framework\TestCase;
  */
 class HelperTest extends TestCase
 {
-	/**
-	 * Test remotefsize method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
-	 */
-	public function testRemotefsize()
-	{
-		$this->assertFalse(
-			Helper::remotefsize('http://www.joomla.o'),
-			'Line:' . __LINE__ . ' for an invalid remote file path, false should be returned.'
-		);
-
-		$this->assertTrue(
-			is_numeric(Helper::remotefsize('https://www.joomla.org')),
-			'Line:' . __LINE__ . ' for a valid remote file, returned size should be numeric.'
-		);
-
-		$this->assertFalse(
-			Helper::remotefsize('ftppp://ftp.mozilla.org/index.html'),
-			'Line:' . __LINE__ . ' for an invalid remote file path, false should be returned.'
-		);
-
-		// Find a more reliable FTP server to test with
-		if (false)
-		{
-			$this->assertTrue(
-				is_numeric(Helper::remotefsize('ftp://ftp.mozilla.org/index.html')),
-				'Line:' . __LINE__ . ' for a valid remote file, returned size should be numeric.'
-			);
-		}
-	}
-
-	/**
-	 * Test ftpChmod method.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.4.0
-	 */
-	public function testFtpChmod()
-	{
-		$this->assertFalse(
-			Helper::ftpChmod('ftp://ftppp.mozilla.org/index.html', 0777),
-			'Line:' . __LINE__ . ' for an invalid remote file, false should be returned.'
-		);
-
-		$this->assertFalse(
-			Helper::ftpChmod('ftp://ftp.mozilla.org/index.html', 0777),
-			'Line:' . __LINE__ . ' for an inaccessible remote file, false should be returned.'
-		);
-	}
-
-	/**
-	 * Test...
-	 *
-	 * @todo Implement testGetWriteModes().
-	 *
-	 * @return void
-	 */
-	public function testGetWriteModes()
-	{
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-			'This test has not been implemented yet.'
-		);
-	}
-
 	/**
 	 * Test getSupported method.
 	 *
@@ -164,7 +95,7 @@ class HelperTest extends TestCase
 	 * @return  void
 	 *
 	 * @since   1.4.0
-	 * @covers  Joomla\Filesystem\Helper::isJoomlaStream
+	 * @covers  \Joomla\Filesystem\Helper::isJoomlaStream
 	 */
 	public function testIsJoomlaStream()
 	{

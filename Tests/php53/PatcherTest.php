@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Filesystem\Tests;
+namespace Joomla\Filesystem\Tests\php53;
 
 use Joomla\Filesystem\Patcher;
 use Joomla\Filesystem\Path;
@@ -48,7 +48,7 @@ class PatcherTest extends TestCase
 		$this->_cleanupTestFiles();
 
 		// Make some test files and folders
-		mkdir(Path::clean(__DIR__ . '/tmp/patcher'), 0777, true);
+		mkdir(Path::clean(dirname(__FILE__) . '/tmp/patcher'), 0777, true);
 	}
 
 	/**
@@ -72,10 +72,10 @@ class PatcherTest extends TestCase
 	 */
 	private function _cleanupTestFiles()
 	{
-		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/lao2tzu.diff'));
-		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/lao'));
-		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/tzu'));
-		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher'));
+		$this->_cleanupFile(Path::clean(dirname(__FILE__) . '/tmp/patcher/lao2tzu.diff'));
+		$this->_cleanupFile(Path::clean(dirname(__FILE__) . '/tmp/patcher/lao'));
+		$this->_cleanupFile(Path::clean(dirname(__FILE__) . '/tmp/patcher/tzu'));
+		$this->_cleanupFile(Path::clean(dirname(__FILE__) . '/tmp/patcher'));
 	}
 
 	/**
@@ -138,24 +138,24 @@ class PatcherTest extends TestCase
 		return array(
 			array(
 				$udiff,
-				realpath(__DIR__ . '/tmp/patcher'),
+				realpath(dirname(__FILE__) . '/tmp/patcher'),
 				0,
 				array(
 					array(
 						'udiff' => $udiff,
-						'root' => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+						'root' => realpath(dirname(__FILE__) . '/tmp/patcher') . DIRECTORY_SEPARATOR,
 						'strip' => 0
 					)
 				)
 			),
 			array(
 				$udiff,
-				realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+				realpath(dirname(__FILE__) . '/tmp/patcher') . DIRECTORY_SEPARATOR,
 				0,
 				array(
 					array(
 						'udiff' => $udiff,
-						'root' => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+						'root' => realpath(dirname(__FILE__) . '/tmp/patcher') . DIRECTORY_SEPARATOR,
 						'strip' => 0
 					)
 				)
@@ -245,15 +245,15 @@ class PatcherTest extends TestCase
 ';
 
 		// Use of realpath to ensure test works for on all platforms
-		file_put_contents(__DIR__ . '/tmp/patcher/lao2tzu.diff', $udiff);
+		file_put_contents(dirname(__FILE__) . '/tmp/patcher/lao2tzu.diff', $udiff);
 		$patcher = Patcher::getInstance()->reset();
-		$patcher->addFile(__DIR__ . '/tmp/patcher/lao2tzu.diff', realpath(__DIR__ . '/tmp/patcher'));
+		$patcher->addFile(dirname(__FILE__) . '/tmp/patcher/lao2tzu.diff', realpath(dirname(__FILE__) . '/tmp/patcher'));
 
 		$this->assertAttributeEquals(
 			array(
 				array(
 					'udiff' => $udiff,
-					'root' => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+					'root' => realpath(dirname(__FILE__) . '/tmp/patcher') . DIRECTORY_SEPARATOR,
 					'strip' => 0
 				)
 			),
@@ -295,7 +295,7 @@ class PatcherTest extends TestCase
 +The door of all subtleties!
 ';
 		$patcher = Patcher::getInstance()->reset();
-		$patcher->add($udiff, __DIR__ . '/patcher/');
+		$patcher->add($udiff, dirname(__FILE__) . '/patcher/');
 		$this->assertEquals(
 			$patcher->reset(),
 			$patcher,
@@ -361,10 +361,10 @@ class PatcherTest extends TestCase
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(
-					__DIR__ . '/tmp/patcher/lao' =>
+					dirname(__FILE__) . '/tmp/patcher/lao' =>
 					'The Way that can be told of is not the eternal Way;
 The name that can be named is not the eternal name.
 The Nameless is the origin of Heaven and Earth;
@@ -379,7 +379,7 @@ But after they are produced,
 '
 				),
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The Nameless is the origin of Heaven and Earth;
 The named is the mother of all things.
 
@@ -409,10 +409,10 @@ The door of all subtleties!
 -The Way that can be told of is not the eternal Way;
 +The named is the mother of all things.
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(
-					__DIR__ . '/tmp/patcher/lao' =>
+					dirname(__FILE__) . '/tmp/patcher/lao' =>
 					'The Way that can be told of is not the eternal Way;
 The name that can be named is not the eternal name.
 The Nameless is the origin of Heaven and Earth;
@@ -427,7 +427,7 @@ But after they are produced,
 '
 				),
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The named is the mother of all things.
 The name that can be named is not the eternal name.
 The Nameless is the origin of Heaven and Earth;
@@ -469,10 +469,10 @@ But after they are produced,
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				null,
 				array(
-					__DIR__ . '/tmp/patcher/lao' =>
+					dirname(__FILE__) . '/tmp/patcher/lao' =>
 					'The Way that can be told of is not the eternal Way;
 The name that can be named is not the eternal name.
 The Nameless is the origin of Heaven and Earth;
@@ -487,7 +487,7 @@ But after they are produced,
 '
 				),
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The Nameless is the origin of Heaven and Earth;
 The named is the mother of all things.
 
@@ -531,10 +531,10 @@ The door of all subtleties!
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				3,
 				array(
-					__DIR__ . '/tmp/patcher/lao' =>
+					dirname(__FILE__) . '/tmp/patcher/lao' =>
 					'The Way that can be told of is not the eternal Way;
 The name that can be named is not the eternal name.
 The Nameless is the origin of Heaven and Earth;
@@ -549,7 +549,7 @@ But after they are produced,
 '
 				),
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The Nameless is the origin of Heaven and Earth;
 The named is the mother of all things.
 
@@ -591,11 +591,11 @@ The door of all subtleties!
 +The door of all subtleties!
 +
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The Nameless is the origin of Heaven and Earth;
 The named is the mother of all things.
 
@@ -639,10 +639,10 @@ The door of all subtleties!
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The Way that can be told of is not the eternal Way;
 The name that can be named is not the eternal name.
 The Nameless is the origin of Heaven and Earth;
@@ -657,7 +657,7 @@ But after they are produced,
 '
 				),
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The Nameless is the origin of Heaven and Earth;
 The named is the mother of all things.
 
@@ -696,10 +696,10 @@ The door of all subtleties!
 -But after they are produced,
 -  they have different names.
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(
-					__DIR__ . '/tmp/patcher/tzu' =>
+					dirname(__FILE__) . '/tmp/patcher/tzu' =>
 					'The Way that can be told of is not the eternal Way;
 The name that can be named is not the eternal name.
 The Nameless is the origin of Heaven and Earth;
@@ -714,7 +714,7 @@ But after they are produced,
 '
 				),
 				array(
-					__DIR__ . '/tmp/patcher/tzu' => null
+					dirname(__FILE__) . '/tmp/patcher/tzu' => null
 				),
 				1,
 				false
@@ -727,7 +727,7 @@ But after they are produced,
 --- lao	2011-09-21 16:05:45.086909120 +0200
 +++ tzu	2011-09-21 16:05:41.156878938 +0200
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -741,7 +741,7 @@ But after they are produced,
 ===================================================================
 --- lao	2011-09-21 16:05:45.086909120 +0200
 +++ tzu	2011-09-21 16:05:41.156878938 +0200',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -754,7 +754,7 @@ But after they are produced,
 				'Index: lao
 ===================================================================
 --- lao	2011-09-21 16:05:45.086909120 +0200',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -768,7 +768,7 @@ But after they are produced,
 ===================================================================
 --- lao	2011-09-21 16:05:45.086909120 +0200
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -783,7 +783,7 @@ But after they are produced,
 --- lao	2011-09-21 16:05:45.086909120 +0200
 +++ tzu	2011-09-21 16:05:41.156878938 +0200
 @@ -1,11 +1,0 @@',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -802,7 +802,7 @@ But after they are produced,
 +The name that can be named is not the eternal name.
 -The Nameless is the origin of Heaven and Earth;
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -821,7 +821,7 @@ But after they are produced,
 -The name that can be named is not the eternal name.
 +The Nameless is the origin of Heaven and Earth;
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -840,7 +840,7 @@ But after they are produced,
 +The name that can be named is not the eternal name.
 -The Nameless is the origin of Heaven and Earth;
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -872,7 +872,7 @@ But after they are produced,
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(),
 				array(),
@@ -904,10 +904,10 @@ But after they are produced,
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				dirname(__FILE__) . '/tmp/patcher',
 				0,
 				array(
-					__DIR__ . '/tmp/patcher/lao' => ''
+					dirname(__FILE__) . '/tmp/patcher/lao' => ''
 				),
 				array(),
 				1,

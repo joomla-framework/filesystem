@@ -4,9 +4,8 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Filesystem\Tests;
+namespace Joomla\Filesystem\Tests\php53;
 
-use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 
@@ -225,8 +224,8 @@ class PathTest extends FilesystemTestCase
 		}
 
 		$this->assertEquals(
-			Path::clean(__DIR__ . $data),
-			Path::check(__DIR__ . $data)
+			Path::clean(dirname(__FILE__) . $data),
+			Path::check(dirname(__FILE__) . $data)
 		);
 	}
 
@@ -264,7 +263,7 @@ class PathTest extends FilesystemTestCase
 	 */
 	public function testCheckExceptionPaths($data)
 	{
-		Path::check(__DIR__ . $data);
+		Path::check(dirname(__FILE__) . $data);
 	}
 
 	/**
@@ -298,7 +297,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers        Joomla\Filesystem\Path::clean
+	 * @covers        \Joomla\Filesystem\Path::clean
 	 * @dataProvider  getCleanData
 	 * @since      1.0
 	 */
@@ -355,12 +354,12 @@ class PathTest extends FilesystemTestCase
 	public function testFind()
 	{
 		$this->assertFalse(
-			Path::find(dirname(__DIR__), 'PathTest.php')
+			Path::find(dirname(dirname(__FILE__)), 'PathTest.php')
 		);
 
 		$this->assertEquals(
 			__FILE__,
-			Path::find(__DIR__, 'PathTest.php')
+			Path::find(dirname(__FILE__), 'PathTest.php')
 		);
 	}
 
