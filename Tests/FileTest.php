@@ -44,7 +44,7 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @dataProvider  dataTestStripExt
 	 */
-	public function testStripExt($fileName, $nameWithoutExt)
+	public function testStripExt(string $fileName, string $nameWithoutExt): void
 	{
 		$this->assertEquals(
 			File::stripExt($fileName),
@@ -111,10 +111,10 @@ class FileTest extends FilesystemTestCase
 	 * @param   string  $expected    The expected safe file name
 	 * @param   string  $message     The message to show on failure of test
 	 *
-	 * @covers        Joomla\Filesystem\File::makeSafe
+	 * @covers        \Joomla\Filesystem\File::makeSafe
 	 * @dataProvider  dataTestMakeSafe
 	 */
-	public function testMakeSafe($name, $stripChars, $expected, $message)
+	public function testMakeSafe(string $name, array $stripChars, string $expected, string $message): void
 	{
 		$this->assertEquals(File::makeSafe($name, $stripChars), $expected, $message);
 	}
@@ -122,7 +122,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test copy method.
 	 */
-	public function testCopyWithPathArgPassed()
+	public function testCopyWithPathArgPassed(): void
 	{
 		$name       = 'tempFile';
 		$copiedName = 'tempCopiedFileName';
@@ -148,7 +148,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test copy method.
 	 */
-	public function testCopyWithoutPathArgPassed()
+	public function testCopyWithoutPathArgPassed(): void
 	{
 		$name       = 'tempFile';
 		$copiedName = 'tempCopiedFileName';
@@ -174,7 +174,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test copy method using streams.
 	 */
-	public function testCopyWithStreams()
+	public function testCopyWithStreams(): void
 	{
 		$name       = 'tempFile';
 		$copiedName = 'tempCopiedFileName';
@@ -200,7 +200,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test makeCopy method for an exception
 	 */
-	public function testCopySrcDontExist()
+	public function testCopySrcDontExist(): void
 	{
 		$this->expectException(\UnexpectedValueException::class);
 
@@ -213,7 +213,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test delete method.
 	 */
-	public function testDeleteForSingleFile()
+	public function testDeleteForSingleFile(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -232,7 +232,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test delete method.
 	 */
-	public function testDeleteForArrayOfFiles()
+	public function testDeleteForArrayOfFiles(): void
 	{
 		$name1 = 'tempFile1';
 		$name2 = 'tempFile2';
@@ -257,7 +257,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Tests the File::move method.
 	 */
-	public function testMoveWithPathArgPassed()
+	public function testMoveWithPathArgPassed(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -277,7 +277,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Tests the File::move method.
 	 */
-	public function testMoveWithoutPathArgPassed()
+	public function testMoveWithoutPathArgPassed(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -297,7 +297,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Tests the File::move method.
 	 */
-	public function testMoveWithStreams()
+	public function testMoveWithStreams(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -314,11 +314,10 @@ class FileTest extends FilesystemTestCase
 		);
 	}
 
-
 	/**
 	 * Test the File::move method where source file doesn't exist.
 	 */
-	public function testMoveSrcDontExist()
+	public function testMoveSrcDontExist(): void
 	{
 		$name      = 'tempFile';
 		$movedName = 'tempCopiedFileName';
@@ -332,7 +331,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test write method.
 	 */
-	public function testWrite()
+	public function testWrite(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -352,10 +351,10 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test write method when appending to a file.
 	 */
-	public function testWriteWithAppend()
+	public function testWriteWithAppend(): void
 	{
-		$name = 'tempFile.txt';
-		$data = 'Lorem ipsum dolor sit amet';
+		$name       = 'tempFile.txt';
+		$data       = 'Lorem ipsum dolor sit amet';
 		$appendData = PHP_EOL . $data;
 
 		$this->assertTrue(
@@ -378,7 +377,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test write method.
 	 */
-	public function testWriteCreatesMissingDirectory()
+	public function testWriteCreatesMissingDirectory(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -398,7 +397,7 @@ class FileTest extends FilesystemTestCase
 	/**
 	 * Test write method.
 	 */
-	public function testWriteWithStreams()
+	public function testWriteWithStreams(): void
 	{
 		$name = 'tempFile';
 		$data = 'Lorem ipsum dolor sit amet';
@@ -416,32 +415,49 @@ class FileTest extends FilesystemTestCase
 	}
 
 	/**
+	 * Provides the data to test the upload method.
+	 *
+	 * @return  \Generator
+	 */
+	public function dataTestUpload(): \Generator
+	{
+		/*
+		 *  This case describes the happy path
+		 */
+		yield 'valid filename' => [
+			'uploadedFileName' => 'uploadedFileName',
+		];
+
+		/*
+		 *  This case provides a filename longer than the allowed 250 bytes.
+		 *  @see [Comment in the PHP manual](https://www.php.net/manual/en/function.move-uploaded-file.php#103190)
+		 */
+		yield 'too long filename' => [
+			'uploadedFileName' => str_repeat('a', 260),
+		];
+	}
+
+	/**
 	 * Test upload method.
 	 *
 	 * @backupGlobals enabled
+	 * @dataProvider  dataTestUpload
 	 */
-	public function testUpload()
+	public function testUpload(string $uploadedFileName): void
 	{
 		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
 
-		$name = 'tempFile';
-		$data = 'Lorem ipsum dolor sit amet';
-		$uploadedFileName = 'uploadedFileName';
-
-		if (!File::write($this->testPath . '/' . $name, $data))
-		{
-			$this->markTestSkipped('The test file could not be created.');
-		}
+		$tempFile = __DIR__ . '/fixtures/tempFile.txt';
 
 		$_FILES = [
 			'test' => [
 				'name'     => 'test.jpg',
-				'tmp_name' => $this->testPath . '/' . $name,
+				'tmp_name' => $tempFile,
 			],
 		];
 
 		$this->assertTrue(
-			File::upload($this->testPath . '/' . $name, $this->testPath . '/' . $uploadedFileName)
+			File::upload($tempFile, $this->testPath . '/' . $uploadedFileName)
 		);
 	}
 
@@ -450,28 +466,22 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @backupGlobals enabled
 	 */
-	public function testUploadWithStreams()
+	public function testUploadWithStreams(): void
 	{
 		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
 
-		$name = 'tempFile';
-		$data = 'Lorem ipsum dolor sit amet';
+		$tempFile         = __DIR__ . '/fixtures/tempFile.txt';
 		$uploadedFileName = 'uploadedFileName';
-
-		if (!File::write($this->testPath . '/' . $name, $data))
-		{
-			$this->markTestSkipped('The test file could not be created.');
-		}
 
 		$_FILES = [
 			'test' => [
 				'name'     => 'test.jpg',
-				'tmp_name' => $this->testPath . '/' . $name,
+				'tmp_name' => $tempFile,
 			],
 		];
 
 		$this->assertTrue(
-			File::upload($this->testPath . '/' . $name, $this->testPath . '/' . $uploadedFileName, true)
+			File::upload($tempFile, $this->testPath . '/' . $uploadedFileName, true)
 		);
 	}
 
@@ -480,12 +490,12 @@ class FileTest extends FilesystemTestCase
 	 *
 	 * @backupGlobals enabled
 	 */
-	public function testUploadToNestedDirectory()
+	public function testUploadToNestedDirectory(): void
 	{
 		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
 
-		$name = 'tempFile';
-		$data = 'Lorem ipsum dolor sit amet';
+		$name             = 'tempFile';
+		$data             = 'Lorem ipsum dolor sit amet';
 		$uploadedFileName = 'uploadedFileName';
 
 		if (!File::write($this->testPath . '/' . $name . '.txt', $data))
@@ -501,7 +511,10 @@ class FileTest extends FilesystemTestCase
 		];
 
 		$this->assertTrue(
-			File::upload($this->testPath . '/' . $name . '.txt', $this->testPath . '/' . $name . '/' . $uploadedFileName)
+			File::upload(
+				$this->testPath . '/' . $name . '.txt',
+				$this->testPath . '/' . $name . '/' . $uploadedFileName
+			)
 		);
 	}
 }
