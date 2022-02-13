@@ -50,6 +50,9 @@ class File
 		// Remove any trailing dots, as those aren't ever valid file names.
 		$file = rtrim($file, '.');
 
+		// Shorten to maximum length, if necessary
+		$file = self::shortenIfTooLong($file);
+
 		return $file;
 	}
 
@@ -120,7 +123,7 @@ class File
 	 */
 	public static function delete($file)
 	{
-		$files = (array)$file;
+		$files = (array) $file;
 
 		foreach ($files as $file)
 		{
@@ -267,7 +270,7 @@ class File
 	public static function upload($src, $dest, $useStreams = false)
 	{
 		// Ensure that the path is valid and clean
-		$dest = Path::clean(self::shortenIfTooLong($dest));
+		$dest = Path::clean($dest);
 
 		// Create the destination directory if it does not exist
 		$baseDir = \dirname($dest);
@@ -347,12 +350,14 @@ class File
 		if (strlen($info['filename']) > $maxLen)
 		{
 			$path = $info['dirname'] ?? '';
+
 			if ($path > '')
 			{
 				$path .= '/';
 			}
 
 			$ext = $info['extension'] ?? '';
+
 			if ($ext > '')
 			{
 				$ext = '.' . $ext;
