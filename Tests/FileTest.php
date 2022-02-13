@@ -101,6 +101,14 @@ class FileTest extends FilesystemTestCase
 			'.gitignore',
 			'Files starting with a fullstop should be allowed when strip chars parameter is empty',
 		];
+
+		$longName = str_repeat('0123456789abcdef', 16);
+		yield [
+			$longName . '.png',
+			[],
+			substr($longName, 0, 236) . '.png',
+			'Filenames with more than 240 characters should be shortened to 240 characters preserving the extension',
+		];
 	}
 
 	/**
@@ -116,7 +124,7 @@ class FileTest extends FilesystemTestCase
 	 */
 	public function testMakeSafe(string $name, array $stripChars, string $expected, string $message): void
 	{
-		$this->assertEquals(File::makeSafe($name, $stripChars), $expected, $message);
+		$this->assertEquals($expected, File::makeSafe($name, $stripChars), $message);
 	}
 
 	/**
@@ -415,49 +423,32 @@ class FileTest extends FilesystemTestCase
 	}
 
 	/**
-	 * Provides the data to test the upload method.
-	 *
-	 * @return  \Generator
-	 */
-	public function dataTestUpload(): \Generator
-	{
-		/*
-		 *  This case describes the happy path
-		 */
-		yield 'valid filename' => [
-			'uploadedFileName' => 'uploadedFileName',
-		];
-
-		/*
-		 *  This case provides a filename longer than the allowed 250 bytes.
-		 *  @see [Comment in the PHP manual](https://www.php.net/manual/en/function.move-uploaded-file.php#103190)
-		 */
-		yield 'too long filename' => [
-			'uploadedFileName' => str_repeat('a', 260),
-		];
-	}
-
-	/**
 	 * Test upload method.
 	 *
 	 * @backupGlobals enabled
-	 * @dataProvider  dataTestUpload
 	 */
-	public function testUpload(string $uploadedFileName): void
+	public function testUpload(): void
 	{
 		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
 
-		$tempFile = __DIR__ . '/fixtures/tempFile.txt';
+		$name = 'tempFile';
+		$data = 'Lorem ipsum dolor sit amet';
+		$uploadedFileName = 'uploadedFileName';
+
+		if (!File::write($this->testPath . '/' . $name, $data))
+		{
+			$this->markTestSkipped('The test file could not be created.');
+		}
 
 		$_FILES = [
 			'test' => [
 				'name'     => 'test.jpg',
-				'tmp_name' => $tempFile,
+				'tmp_name' => $this->testPath . '/' . $name,
 			],
 		];
 
 		$this->assertTrue(
-			File::upload($tempFile, $this->testPath . '/' . $uploadedFileName)
+			File::upload($this->testPath . '/' . $name, $this->testPath . '/' . $uploadedFileName)
 		);
 	}
 
@@ -470,18 +461,24 @@ class FileTest extends FilesystemTestCase
 	{
 		include_once __DIR__ . '/Stubs/PHPUploadStub.php';
 
-		$tempFile         = __DIR__ . '/fixtures/tempFile.txt';
+		$name = 'tempFile';
+		$data = 'Lorem ipsum dolor sit amet';
 		$uploadedFileName = 'uploadedFileName';
+
+		if (!File::write($this->testPath . '/' . $name, $data))
+		{
+			$this->markTestSkipped('The test file could not be created.');
+		}
 
 		$_FILES = [
 			'test' => [
 				'name'     => 'test.jpg',
-				'tmp_name' => $tempFile,
+				'tmp_name' => $this->testPath . '/' . $name,
 			],
 		];
 
 		$this->assertTrue(
-			File::upload($tempFile, $this->testPath . '/' . $uploadedFileName, true)
+			File::upload($this->testPath . '/' . $name, $this->testPath . '/' . $uploadedFileName, true)
 		);
 	}
 

@@ -349,7 +349,7 @@ class File
 
 		if (strlen($info['filename']) > $maxLen)
 		{
-			$path = $info['dirname'] ?? '';
+			$path = $info['dirname'] === '.' ? '' : $info['dirname'];
 
 			if ($path > '')
 			{
