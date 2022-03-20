@@ -8,6 +8,7 @@ namespace Joomla\Filesystem\Tests\php71;
 
 use Joomla\Filesystem\Patcher;
 use Joomla\Filesystem\Path;
+use Joomla\Test\TestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,6 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PatcherTest extends TestCase
 {
+	const TMP_DIR = __DIR__ . '/tmp/patcher';
+
 	/**
 	 * This method is called before the first test of this test class is run.
 	 *
@@ -48,7 +51,9 @@ class PatcherTest extends TestCase
 		$this->_cleanupTestFiles();
 
 		// Make some test files and folders
-		mkdir(Path::clean(__DIR__ . '/tmp/patcher'), 0777, true);
+		if (!mkdir(self::TMP_DIR, 0777, true)) {
+			throw new \RuntimeException('Unable to create tmp directory');
+		}
 	}
 
 	/**
@@ -75,19 +80,19 @@ class PatcherTest extends TestCase
 		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/lao2tzu.diff'));
 		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/lao'));
 		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher/tzu'));
-		$this->_cleanupFile(Path::clean(__DIR__ . '/tmp/patcher'));
+		$this->_cleanupFile(Path::clean(self::TMP_DIR));
 	}
 
 	/**
 	 * Convenience method to clean up for files test
 	 *
-	 * @param  string  $path  The path to clean
+	 * @param   string  $path  The path to clean
 	 *
 	 * @return  void
 	 *
 	 * @since   1.0
 	 */
-	private function _cleanupFile($path): void
+	private function _cleanupFile(string $path): void
 	{
 		if (file_exists($path))
 		{
@@ -134,28 +139,27 @@ class PatcherTest extends TestCase
 +The door of all subtleties!
 ';
 
-		// Use of realpath to ensure test works for on all platforms
 		return array(
 			array(
 				$udiff,
-				realpath(__DIR__ . '/tmp/patcher'),
+				self::TMP_DIR,
 				0,
 				array(
 					array(
 						'udiff' => $udiff,
-						'root' => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+						'root' => self::TMP_DIR . '/',
 						'strip' => 0
 					)
 				)
 			),
 			array(
 				$udiff,
-				realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+				self::TMP_DIR . '/',
 				0,
 				array(
 					array(
 						'udiff' => $udiff,
-						'root' => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+						'root' => self::TMP_DIR . '/',
 						'strip' => 0
 					)
 				)
@@ -179,7 +183,7 @@ class PatcherTest extends TestCase
 				array(
 					array(
 						'udiff' => $udiff,
-						'root' => DIRECTORY_SEPARATOR,
+						'root' => '/',
 						'strip' => 0
 					)
 				)
@@ -188,26 +192,26 @@ class PatcherTest extends TestCase
 	}
 
 	/**
-	 * Test Patcher::add add a unified diff string to the patcher
+	 * Test add a unified diff string to the patcher
 	 *
-	 * @param  string  $udiff     Unified diff input string
-	 * @param  string  $root      The files root path
-	 * @param  string  $strip     The number of '/' to strip
-	 * @param  array   $expected  The expected array patches
+	 * @param   string       $udiff     Unified diff input string
+	 * @param   string|null  $root      The files root path
+	 * @param   integer      $strip     The number of '/' to strip
+	 * @param   array        $expected  The expected array patches
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider addData
-	 * @since   1.0
+	 * @since        1.0
+	 * @throws       \ReflectionException
 	 */
-	public function testAdd($udiff, $root, $strip, $expected): void
+	public function testAdd(string $udiff, ?string $root, int $strip, array $expected): void
 	{
 		$patcher = Patcher::getInstance()->reset();
 		$patcher->add($udiff, $root, $strip);
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			$expected,
-			'patches',
-			$patcher,
+			TestHelper::getValue($patcher, 'patches'),
 			'Line:' . __LINE__ . ' The patcher cannot add the unified diff string.'
 		);
 	}
@@ -218,6 +222,7 @@ class PatcherTest extends TestCase
 	 * @return  void
 	 *
 	 * @since   1.0
+	 * @throws  \ReflectionException
 	 */
 	public function testAddFile(): void
 	{
@@ -247,28 +252,28 @@ class PatcherTest extends TestCase
 		// Use of realpath to ensure test works for on all platforms
 		file_put_contents(__DIR__ . '/tmp/patcher/lao2tzu.diff', $udiff);
 		$patcher = Patcher::getInstance()->reset();
-		$patcher->addFile(__DIR__ . '/tmp/patcher/lao2tzu.diff', realpath(__DIR__ . '/tmp/patcher'));
+		$patcher->addFile(__DIR__ . '/tmp/patcher/lao2tzu.diff', realpath(self::TMP_DIR));
 
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			array(
 				array(
 					'udiff' => $udiff,
-					'root' => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+					'root' => realpath(self::TMP_DIR) . '/',
 					'strip' => 0
 				)
 			),
-			'patches',
-			$patcher,
+			TestHelper::getValue($patcher, 'patches'),
 			'Line:' . __LINE__ . ' The patcher cannot add the unified diff file.'
 		);
 	}
 
 	/**
-	 * Patcher::reset reset the patcher to its initial state
+	 * Reset the patcher to its initial state
 	 *
 	 * @return  void
 	 *
 	 * @since   1.4.0
+	 * @throws  \ReflectionException
 	 */
 	public function testReset(): void
 	{
@@ -301,28 +306,24 @@ class PatcherTest extends TestCase
 			$patcher,
 			'Line:' . __LINE__ . ' The reset method does not return $this for chaining.'
 		);
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			array(),
-			'sources',
-			$patcher,
+			TestHelper::getValue($patcher, 'sources'),
 			'Line:' . __LINE__ . ' The patcher has not been reset.'
 		);
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			array(),
-			'destinations',
-			$patcher,
+			TestHelper::getValue($patcher, 'destinations'),
 			'Line:' . __LINE__ . ' The patcher has not been reset.'
 		);
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			array(),
-			'removals',
-			$patcher,
+			TestHelper::getValue($patcher, 'removals'),
 			'Line:' . __LINE__ . ' The patcher has not been reset.'
 		);
-		$this->assertAttributeEquals(
+		$this->assertEquals(
 			array(),
-			'patches',
-			$patcher,
+			TestHelper::getValue($patcher, 'patches'),
 			'Line:' . __LINE__ . ' The patcher has not been reset.'
 		);
 	}
@@ -361,7 +362,7 @@ class PatcherTest extends TestCase
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(
 					__DIR__ . '/tmp/patcher/lao' =>
@@ -409,7 +410,7 @@ The door of all subtleties!
 -The Way that can be told of is not the eternal Way;
 +The named is the mother of all things.
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(
 					__DIR__ . '/tmp/patcher/lao' =>
@@ -469,7 +470,7 @@ But after they are produced,
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				null,
 				array(
 					__DIR__ . '/tmp/patcher/lao' =>
@@ -531,7 +532,7 @@ The door of all subtleties!
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				3,
 				array(
 					__DIR__ . '/tmp/patcher/lao' =>
@@ -591,7 +592,7 @@ The door of all subtleties!
 +The door of all subtleties!
 +
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(
@@ -639,7 +640,7 @@ The door of all subtleties!
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(
 					__DIR__ . '/tmp/patcher/tzu' =>
@@ -696,7 +697,7 @@ The door of all subtleties!
 -But after they are produced,
 -  they have different names.
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(
 					__DIR__ . '/tmp/patcher/tzu' =>
@@ -727,7 +728,7 @@ But after they are produced,
 --- lao	2011-09-21 16:05:45.086909120 +0200
 +++ tzu	2011-09-21 16:05:41.156878938 +0200
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -741,7 +742,7 @@ But after they are produced,
 ===================================================================
 --- lao	2011-09-21 16:05:45.086909120 +0200
 +++ tzu	2011-09-21 16:05:41.156878938 +0200',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -754,7 +755,7 @@ But after they are produced,
 				'Index: lao
 ===================================================================
 --- lao	2011-09-21 16:05:45.086909120 +0200',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -768,7 +769,7 @@ But after they are produced,
 ===================================================================
 --- lao	2011-09-21 16:05:45.086909120 +0200
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -783,7 +784,7 @@ But after they are produced,
 --- lao	2011-09-21 16:05:45.086909120 +0200
 +++ tzu	2011-09-21 16:05:41.156878938 +0200
 @@ -1,11 +1,0 @@',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -802,7 +803,7 @@ But after they are produced,
 +The name that can be named is not the eternal name.
 -The Nameless is the origin of Heaven and Earth;
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -821,7 +822,7 @@ But after they are produced,
 -The name that can be named is not the eternal name.
 +The Nameless is the origin of Heaven and Earth;
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -840,7 +841,7 @@ But after they are produced,
 +The name that can be named is not the eternal name.
 -The Nameless is the origin of Heaven and Earth;
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -872,7 +873,7 @@ But after they are produced,
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(),
 				array(),
@@ -904,7 +905,7 @@ But after they are produced,
 +Deeper and more profound,
 +The door of all subtleties!
 ',
-				__DIR__ . '/tmp/patcher',
+				self::TMP_DIR,
 				0,
 				array(
 					__DIR__ . '/tmp/patcher/lao' => ''
@@ -917,34 +918,26 @@ But after they are produced,
 	}
 
 	/**
-	 * Patcher::apply apply the patches
+	 * Apply the patches
 	 *
-	 * @param  string   $udiff         Unified diff input string
-	 * @param  string   $root          The files root path
-	 * @param  string   $strip         The number of '/' to strip
-	 * @param  array    $sources       The source files
-	 * @param  array    $destinations  The destinations files
-	 * @param  integer  $result        The number of files patched
-	 * @param   mixed   $throw         The exception throw, false for no exception
+	 * @param   string        $udiff         Unified diff input string
+	 * @param   string        $root          The files root path
+	 * @param   integer|null  $strip         The number of '/' to strip
+	 * @param   array         $sources       The source files
+	 * @param   array         $destinations  The destinations files
+	 * @param   integer       $result        The number of files patched
+	 * @param   mixed         $throw         The exception throw, false for no exception
 	 *
 	 * @return  void
 	 *
 	 * @dataProvider applyData
-	 * @since   1.0
+	 * @since        1.0
 	 */
-	public function testApply($udiff, $root, $strip, $sources, $destinations, $result, $throw): void
+	public function testApply(string $udiff, string $root, ?int $strip, array $sources, array $destinations, int $result, $throw): void
 	{
 		if ($throw)
 		{
-			// expectException was added in PHPUnit 5.2 and setExpectedException removed in 6.0
-			if (method_exists($this, 'expectException'))
-			{
-				$this->expectException($throw);
-			}
-			else
-			{
-				$this->setExpectedException($throw);
-			}
+			$this->expectException($throw);
 		}
 
 		foreach ($sources as $path => $content)
