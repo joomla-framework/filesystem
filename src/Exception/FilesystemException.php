@@ -8,6 +8,8 @@
 
 namespace Joomla\Filesystem\Exception;
 
+use Joomla\Filesystem\Path;
+
 /**
  * Exception class for handling errors in the Filesystem package
  *
@@ -15,4 +17,12 @@ namespace Joomla\Filesystem\Exception;
  */
 class FilesystemException extends \RuntimeException
 {
+	public function __construct($message = "", $code = 0, \Throwable $previous = null)
+	{
+		parent::__construct(
+			Path::removeRoot($message),
+			$code,
+			$previous
+		);
+	}
 }

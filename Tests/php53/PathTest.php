@@ -445,4 +445,49 @@ class PathTest extends FilesystemTestCase
 			array("/var/../../../www/joomla")
 		);
 	}
+
+	/**
+	 * @return \string[][]
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	public function casesForRemoveRoot()
+	{
+		return array(
+			array(
+				'path'     => '/var/www/html/sub/dir/file.ext',
+				'root'     => '/var/www/html',
+				'expected' => 'sub/dir/file.ext',
+			),
+			array(
+				'path'     => 'C:\\Documents\\Sites\\sub\\dir\\file.ext',
+				'root'     => 'C:\\Documents\\Sites',
+				'expected' => 'sub\\dir\\file.ext',
+			),
+		);
+	}
+
+	/**
+	 * @testdox      Root directory can be removed from messages
+	 *
+	 * @param   string  $path      The original (absolute) path
+	 * @param   string  $root      The leading path to remove
+	 * @param   string  $expected  The expected result
+	 *
+	 * @dataProvider casesForRemoveRoot
+	 *
+	 * @return  void
+	 *
+	 * @since        __DEPLOY_VERSION__
+	 */
+	public function testRemoveRoot($path, $root, $expected)
+	{
+		$prefix = 'A string containing an absolute path ';
+		$suffix = ', followed by more text';
+
+		$this->assertEquals(
+			$prefix . $expected . $suffix,
+			Path::removeRoot($prefix . $path . $suffix, $root)
+		);
+	}
 }
