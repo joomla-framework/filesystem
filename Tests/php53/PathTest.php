@@ -478,7 +478,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @since        __DEPLOY_VERSION__
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function testRemoveRoot($path, $root, $expected)
 	{
