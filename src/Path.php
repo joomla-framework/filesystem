@@ -394,7 +394,7 @@ class Path
 	 * @param   string  $rootDirectory  Optional root directory, defaults to JPATH_ROOT
 	 *
 	 * @return  string
-	 * @since  __DEPLOY_VERSION__
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public static function removeRoot($message, $rootDirectory = JPATH_ROOT)
 	{
