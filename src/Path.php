@@ -377,4 +377,21 @@ class Path
 
 		return $startCharacter . implode(DIRECTORY_SEPARATOR, $parts);
 	}
+
+	/**
+	 * Remove all references to root directory path from a message
+	 *
+	 * @param   string  $message        The message to be cleaned
+	 * @param   string  $rootDirectory  Optional root directory, defaults to JPATH_ROOT
+	 *
+	 * @return  string
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function removeRoot($message, $rootDirectory = JPATH_ROOT)
+	{
+		$rootDirectory = static::clean($rootDirectory);
+		$pattern       = preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $rootDirectory);
+
+		return preg_replace('~' . $pattern . '.~', '', $message);
+	}
 }
