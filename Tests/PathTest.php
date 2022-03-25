@@ -238,7 +238,11 @@ class PathTest extends FilesystemTestCase
 		yield 'Nothing to do.' => ['/var/www/foo/bar/baz', '/', '/var/www/foo/bar/baz'];
 		yield 'One backslash.' => ['/var/www/foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
 		yield 'Two and one backslashes.' => ['/var/www\\\\foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
-		yield 'Mixed backslashes and double forward slashes.' => ['/var\\/www//foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
+		yield 'Mixed backslashes and double forward slashes.' => [
+			'/var\\/www//foo\\bar/baz',
+			'/',
+			'/var/www/foo/bar/baz'
+		];
 		yield 'UNC path.' => ['\\\\www\\docroot', '\\', '\\\\www\\docroot'];
 		yield 'UNC path with forward slash.' => ['\\\\www/docroot', '\\', '\\\\www\\docroot'];
 		yield 'UNC path with UNIX directory separator.' => ['\\\\www/docroot', '/', '/www/docroot'];
@@ -312,7 +316,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   1.4.0
+	 * @since         1.4.0
 	 *
 	 * @dataProvider  getResolveData
 	 */
@@ -324,11 +328,11 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * Test resolve method
 	 *
-	 * @param   string  $path            test path
+	 * @param   string  $path  test path
 	 *
 	 * @return void
 	 *
-	 * @since   1.4.0
+	 * @since         1.4.0
 	 *
 	 * @dataProvider  getResolveExceptionData
 	 */
@@ -394,15 +398,20 @@ class PathTest extends FilesystemTestCase
 	public function casesForRemoveRoot()
 	{
 		return array(
-			array(
+			'linux'   => array(
 				'path'     => '/var/www/html/sub/dir/file.ext',
 				'root'     => '/var/www/html',
-				'expected' => '[...]/sub/dir/file.ext',
+				'expected' => '[ROOT]/sub/dir/file.ext',
 			),
-			array(
+			'windows' => array(
 				'path'     => 'C:\\Documents\\Sites\\sub\\dir\\file.ext',
 				'root'     => 'C:\\Documents\\Sites',
-				'expected' => '[...]\\sub\\dir\\file.ext',
+				'expected' => '[ROOT]\\sub\\dir\\file.ext',
+			),
+			'temp'    => array(
+				'path'     => sys_get_temp_dir() . '\\sub\\dir\\file.ext',
+				'root'     => '',
+				'expected' => '[TMP]\\sub\\dir\\file.ext',
 			),
 		);
 	}
