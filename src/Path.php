@@ -400,7 +400,7 @@ class Path
 
 		$replacements = [
 			$makePattern(static::clean($rootDirectory)) => '[ROOT]',
-			$makePattern(sys_get_temp_dir())                  => '[TMP]',
+			$makePattern(sys_get_temp_dir())            => '[TMP]',
 		];
 
 		return preg_replace(array_keys($replacements), array_values($replacements), $message);
