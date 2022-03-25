@@ -457,12 +457,17 @@ class PathTest extends FilesystemTestCase
 			array(
 				'path'     => '/var/www/html/sub/dir/file.ext',
 				'root'     => '/var/www/html',
-				'expected' => '[...]/sub/dir/file.ext',
+				'expected' => '[ROOT]/sub/dir/file.ext',
 			),
 			array(
 				'path'     => 'C:\\Documents\\Sites\\sub\\dir\\file.ext',
 				'root'     => 'C:\\Documents\\Sites',
-				'expected' => '[...]\\sub\\dir\\file.ext',
+				'expected' => '[ROOT]\\sub\\dir\\file.ext',
+			),
+			array(
+				'path'     => sys_get_temp_dir() . '\\sub\\dir\\file.ext',
+				'root'     => '',
+				'expected' => '[TMP]\\sub\\dir\\file.ext',
 			),
 		);
 	}
