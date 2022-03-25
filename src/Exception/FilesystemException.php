@@ -19,6 +19,13 @@ use Joomla\Filesystem\Path;
  */
 class FilesystemException extends \RuntimeException
 {
+	/**
+	 * Constructor.
+	 *
+	 * @param   string           $message   The message
+	 * @param   integer          $code      The code
+	 * @param   \Throwable|null  $previous  A previous exception
+	 */
 	public function __construct($message = "", $code = 0, \Throwable $previous = null)
 	{
 		parent::__construct(
