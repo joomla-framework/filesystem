@@ -8,6 +8,8 @@
 
 namespace Joomla\Filesystem\Exception;
 
+use Joomla\Filesystem\Path;
+
 /**
  * Exception class for handling errors in the Filesystem package
  *
