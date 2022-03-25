@@ -403,15 +403,23 @@ class Path
 			$rootDirectory = JPATH_ROOT;
 		}
 
-		$makePattern = static function ($dir) {
-			return '~' . preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $dir) . '~';
-		};
-
 		$replacements = array(
-			$makePattern(static::clean($rootDirectory)) => '[ROOT]',
-			$makePattern(sys_get_temp_dir())            => '[TMP]',
+			self::makePattern(static::clean($rootDirectory)) => '[ROOT]',
+			self::makePattern(sys_get_temp_dir())            => '[TMP]',
 		);
 
 		return preg_replace(array_keys($replacements), array_values($replacements), $message);
+	}
+
+	/**
+	 * Turn directoy separators into match classes
+	 *
+	 * @param   string  $dir  A directory name
+	 *
+	 * @return  string
+	 */
+	private static function makePattern($dir)
+	{
+		return '~' . preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $dir) . '~';
 	}
 }
