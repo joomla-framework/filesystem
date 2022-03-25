@@ -401,6 +401,6 @@ class Path
 		$rootDirectory = static::clean($rootDirectory);
 		$pattern       = preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $rootDirectory);
 
-		return preg_replace('~' . $pattern . '.~', '', $message);
+		return preg_replace('~' . $pattern . '~', '[...]', $message);
 	}
 }
