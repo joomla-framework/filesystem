@@ -413,6 +413,16 @@ class PathTest extends FilesystemTestCase
 				'root'     => '',
 				'expected' => '[TMP]\\sub\\dir\\file.ext',
 			),
+			'home' => array(
+				'path'     => '~/projects/sub/dir/file.ext',
+				'root'     => '~/projects',
+				'expected' => '[ROOT]/sub/dir/file.ext',
+			),
+			'win-copy' => array(
+				'path'     => 'C:\\Documents\\Sites~1\\sub\\dir\\file.ext',
+				'root'     => 'C:\\Documents\\Sites~1',
+				'expected' => '[ROOT]\\sub\\dir\\file.ext',
+			),
 		);
 	}
 

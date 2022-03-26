@@ -395,7 +395,7 @@ class Path
 		}
 
 		$makePattern = static function ($dir) {
-			return '~' . preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $dir) . '~';
+			return '~' . str_replace('~', '\\~', preg_replace('~[/\\\\]+~', '.',$dir)) . '~';
 		};
 
 		$replacements = [
