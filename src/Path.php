@@ -423,6 +423,6 @@ class Path
 	 */
 	private static function makePattern($dir)
 	{
-		return '~' . preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $dir) . '~';
+		return '~' . str_replace('~', '\\~', preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $dir)) . '~';
 	}
 }
