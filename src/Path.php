@@ -394,6 +394,7 @@ class Path
 	 * @param   string  $rootDirectory  Optional root directory, defaults to JPATH_ROOT
 	 *
 	 * @return  string
+	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
 	public static function removeRoot($message, $rootDirectory = null)
@@ -412,11 +413,13 @@ class Path
 	}
 
 	/**
-	 * Turn directoy separators into match classes
+	 * Turn directory separators into match classes
 	 *
 	 * @param   string  $dir  A directory name
 	 *
 	 * @return  string
+	 *
+	 * @since   __DEPLOY_VERSION__
 	 */
 	private static function makePattern($dir)
 	{
