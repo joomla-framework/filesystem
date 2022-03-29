@@ -393,7 +393,7 @@ class PathTest extends FilesystemTestCase
 	/**
 	 * @return  \string[][]
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.1
 	 */
 	public function casesForRemoveRoot()
 	{
@@ -437,7 +437,7 @@ class PathTest extends FilesystemTestCase
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.1
 	 */
 	public function testRemoveRoot($path, $root, $expected)
 	{
