@@ -386,4 +386,43 @@ class Path
 
 		return $startCharacter . implode(DIRECTORY_SEPARATOR, $parts);
 	}
+
+	/**
+	 * Remove all references to root directory path and the system tmp path from a message
+	 *
+	 * @param   string  $message        The message to be cleaned
+	 * @param   string  $rootDirectory  Optional root directory, defaults to JPATH_ROOT
+	 *
+	 * @return  string
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public static function removeRoot($message, $rootDirectory = null)
+	{
+		if (empty($rootDirectory))
+		{
+			$rootDirectory = JPATH_ROOT;
+		}
+
+		$replacements = array(
+			self::makePattern(static::clean($rootDirectory)) => '[ROOT]',
+			self::makePattern(sys_get_temp_dir())            => '[TMP]',
+		);
+
+		return preg_replace(array_keys($replacements), array_values($replacements), $message);
+	}
+
+	/**
+	 * Turn directory separators into match classes
+	 *
+	 * @param   string  $dir  A directory name
+	 *
+	 * @return  string
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	private static function makePattern($dir)
+	{
+		return '~' . str_replace('~', '\\~', preg_replace('~[/\\\\]+~', '[/\\\\\\\\]+', $dir)) . '~';
+	}
 }
