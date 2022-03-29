@@ -395,7 +395,7 @@ class Path
 	 *
 	 * @return  string
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.6.2
 	 */
 	public static function removeRoot($message, $rootDirectory = null)
 	{
@@ -419,7 +419,7 @@ class Path
 	 *
 	 * @return  string
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.6.2
 	 */
 	private static function makePattern($dir)
 	{
