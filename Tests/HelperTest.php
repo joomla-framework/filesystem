@@ -25,7 +25,7 @@ class HelperTest extends TestCase
 		);
 
 		$this->assertTrue(
-			is_numeric(Helper::remotefsize('https://www.joomla.org')),
+			is_numeric(Helper::remotefsize('https://www.example.org')),
 			'Line:' . __LINE__ . ' for a valid remote file, returned size should be numeric.'
 		);
 

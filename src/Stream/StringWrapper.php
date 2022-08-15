@@ -176,7 +176,7 @@ class StringWrapper
 	 */
 	public function stream_read($count)
 	{
-		$result = substr($this->currentString, $this->pos, $count);
+		$result = substr($this->currentString, $this->pos ?? 0, $count);
 		$this->pos += $count;
 
 		return $result;
