@@ -1,5 +1,10 @@
 # The Filesystem Package [![Build Status](https://ci.joomla.org/api/badges/joomla-framework/filesystem/status.svg?ref=refs/heads/2.0-dev)](https://ci.joomla.org/joomla-framework/filesystem)
 
+[![Latest Stable Version](https://poser.pugx.org/joomla/filesystem/v/stable)](https://packagist.org/packages/joomla/filesystem)
+[![Total Downloads](https://poser.pugx.org/joomla/filesystem/downloads)](https://packagist.org/packages/joomla/filesystem)
+[![Latest Unstable Version](https://poser.pugx.org/joomla/filesystem/v/unstable)](https://packagist.org/packages/joomla/filesystem)
+[![License](https://poser.pugx.org/joomla/filesystem/license)](https://packagist.org/packages/joomla/filesystem)
+
 ## File upload example
 
 ```php
