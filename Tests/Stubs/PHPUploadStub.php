@@ -1,4 +1,5 @@
 <?php
+
 namespace Joomla\Filesystem;
 
 function move_uploaded_file($filename, $destination)
