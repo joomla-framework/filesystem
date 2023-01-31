@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of the Joomla Framework Filesystem Package
  *
@@ -436,8 +437,10 @@ abstract class Folder
         }
 
         while (($file = readdir($handle)) !== false) {
-            if ($file != '.' && $file != '..' && !\in_array($file, $exclude)
-                && (empty($excludeFilterString) || !preg_match($excludeFilterString, $file))) {
+            if (
+                $file != '.' && $file != '..' && !\in_array($file, $exclude)
+                && (empty($excludeFilterString) || !preg_match($excludeFilterString, $file))
+            ) {
                 // Compute the fullpath
                 $fullpath = Path::clean($path . '/' . $file);
 

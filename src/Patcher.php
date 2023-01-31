@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of the Joomla Framework Filesystem Package
  *
@@ -219,7 +220,7 @@ class Patcher
      * @param   string   $root      The files root path
      * @param   integer  $strip     The number of '/' to strip
      *
-     * @return	Patcher  $this for chaining
+     * @return  Patcher  $this for chaining
      *
      * @since   1.0
      */
@@ -235,7 +236,7 @@ class Patcher
      * @param   string   $root   The files root path
      * @param   integer  $strip  The number of '/' to strip
      *
-     * @return	Patcher  $this for chaining
+     * @return  Patcher  $this for chaining
      *
      * @since   1.0
      */

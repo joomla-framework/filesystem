@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Unit test runner bootstrap file for the Joomla Framework.
  *
