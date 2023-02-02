@@ -7,7 +7,6 @@ clone_folder: C:\projects\filesystem
 ## Build matrix for lowest and highest possible targets
 environment:
   PHPBuild: "x64"
-  VC: "vc15"
   WINCACHE: "2.0.0.8"
   VC: "vs16"
   matrix:
