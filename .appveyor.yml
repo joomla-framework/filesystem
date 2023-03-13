@@ -22,7 +22,7 @@ init:
 install:
     - IF EXIST C:\tools\php (SET PHP=0)
     - ps: >-
-      appveyor-retry cinst php --version=$env:php_ver_target --package-parameters='""/InstallDir:C:\tools\php""' --ignore-checksums -y --no-progress --limit-output
+        appveyor-retry cinst php --version=$env:php_ver_target --package-parameters='""/InstallDir:C:\tools\php""' --ignore-checksums -y --no-progress --limit-output
     - cd C:\tools\php
     - copy php.ini-production php.ini /Y
     - echo date.timezone="UTC" >> php.ini
