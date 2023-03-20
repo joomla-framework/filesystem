@@ -272,19 +272,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         // Decide which context to use:
         switch ($this->processingmethod) {
@@ -352,19 +340,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         switch ($this->processingmethod) {
             case 'gz':
@@ -424,19 +400,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         switch ($this->processingmethod) {
             case 'gz':
@@ -477,19 +441,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         $res = @filesize($this->filename);
 
@@ -533,19 +485,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         switch ($this->processingmethod) {
             case 'gz':
@@ -612,19 +552,7 @@ class Stream
         $retval = false;
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         $remaining = $length;
 
@@ -702,19 +630,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         switch ($this->processingmethod) {
             case 'gz':
@@ -763,19 +679,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         switch ($this->processingmethod) {
             case 'gz':
@@ -853,19 +757,7 @@ class Stream
         $retval = true;
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         $remaining = $length;
         $start     = 0;
@@ -930,19 +822,7 @@ class Stream
         }
 
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         $sch = parse_url($filename, \PHP_URL_SCHEME);
 
@@ -1098,19 +978,7 @@ class Stream
 
         if ($this->fh) {
             // Capture PHP errors
-            if (PHP_VERSION_ID < 70000) {
-                // @Todo Remove this path, when PHP5 support is dropped.
-                set_error_handler(
-                    function () {
-                        return false;
-                    }
-                );
-                @trigger_error('');
-                restore_error_handler();
-            } else {
-                /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-                error_clear_last();
-            }
+            error_clear_last();
 
             $retval = @stream_context_set_option($this->fh, $this->contextOptions);
 
@@ -1151,19 +1019,7 @@ class Stream
 
         if ($this->fh) {
             // Capture PHP errors
-            if (PHP_VERSION_ID < 70000) {
-                // @Todo Remove this path, when PHP5 support is dropped.
-                set_error_handler(
-                    function () {
-                        return false;
-                    }
-                );
-                @trigger_error('');
-                restore_error_handler();
-            } else {
-                /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-                error_clear_last();
-            }
+            error_clear_last();
 
             $res = @stream_filter_append($this->fh, $filtername, $readWrite, $params);
 
@@ -1200,19 +1056,7 @@ class Stream
 
         if ($this->fh) {
             // Capture PHP errors
-            if (PHP_VERSION_ID < 70000) {
-                // @Todo Remove this path, when PHP5 support is dropped.
-                set_error_handler(
-                    function () {
-                        return false;
-                    }
-                );
-                @trigger_error('');
-                restore_error_handler();
-            } else {
-                /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-                error_clear_last();
-            }
+            error_clear_last();
 
             $res = @stream_filter_prepend($this->fh, $filtername, $readWrite, $params);
 
@@ -1246,19 +1090,7 @@ class Stream
     public function removeFilter(&$resource, $byindex = false)
     {
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         if ($byindex) {
             $res = stream_filter_remove($this->filters[$resource]);
@@ -1299,19 +1131,7 @@ class Stream
     public function copy($src, $dest, $context = null, $usePrefix = true, $relative = false)
     {
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         $chmodDest = $this->_getFilename($dest, 'w', $usePrefix, $relative);
 
@@ -1362,19 +1182,7 @@ class Stream
     public function move($src, $dest, $context = null, $usePrefix = true, $relative = false)
     {
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         $src  = $this->_getFilename($src, 'w', $usePrefix, $relative);
         $dest = $this->_getFilename($dest, 'w', $usePrefix, $relative);
@@ -1424,19 +1232,7 @@ class Stream
     public function delete($filename, $context = null, $usePrefix = true, $relative = false)
     {
         // Capture PHP errors
-        if (PHP_VERSION_ID < 70000) {
-            // @Todo Remove this path, when PHP5 support is dropped.
-            set_error_handler(
-                function () {
-                    return false;
-                }
-            );
-            @trigger_error('');
-            restore_error_handler();
-        } else {
-            /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-            error_clear_last();
-        }
+        error_clear_last();
 
         $filename = $this->_getFilename($filename, 'w', $usePrefix, $relative);
 

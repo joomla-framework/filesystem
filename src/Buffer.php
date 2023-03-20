@@ -181,4 +181,6 @@ class Buffer
 }
 
 // Register the stream
+// phpcs:disable PSR1.Files.SideEffects
 stream_wrapper_register('buffer', 'Joomla\\Filesystem\\Buffer');
+// phpcs:enable PSR1.Files.SideEffects
