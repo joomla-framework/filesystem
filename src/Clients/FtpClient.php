@@ -11,6 +11,7 @@ namespace Joomla\Filesystem\Clients;
 
 use Joomla\Filesystem\Exception\FilesystemException;
 
+// phpcs:disable PSR1.Files.SideEffects
 /*
  * Error Codes:
  * - 30 : Unable to connect to host
@@ -43,6 +44,7 @@ if (!\defined('FTP_ASCII')) {
 if (!\defined('FTP_NATIVE')) {
     \define('FTP_NATIVE', (\function_exists('ftp_connect')) ? 1 : 0);
 }
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * FTP client class

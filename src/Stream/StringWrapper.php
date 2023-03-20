@@ -283,6 +283,8 @@ class StringWrapper
     }
 }
 
+// phpcs:disable PSR1.Files.SideEffects
 if (!stream_wrapper_register('string', '\\Joomla\\Filesystem\\Stream\\StringWrapper')) {
     die('\\Joomla\\Filesystem\\Stream\\StringWrapper Wrapper Registration Failed');
 }
+// phpcs:enable PSR1.Files.SideEffects
