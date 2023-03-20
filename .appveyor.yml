@@ -38,6 +38,7 @@ install:
     - echo opcache.enable_cli=1 >> php.ini
     - choco install composer
     - cd C:\projects\filesystem
+    - refreshenv
     - composer update --prefer-stable --no-progress
 
 test_script:
