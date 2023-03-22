@@ -30,7 +30,7 @@ install:
     - echo extension=php_mbstring.dll >> php.ini
     - echo extension=php_fileinfo.dll >> php.ini
     - echo extension=php_ftp.dll >> php.ini
-    - echo extension=php_gd2.dll >> php.ini
+    - echo extension=gd >> php.ini
     - echo extension=php_gmp.dll >> php.ini
     - echo extension=php_pgsql.dll >> php.ini
     - echo extension=php_curl.dll >> php.ini
