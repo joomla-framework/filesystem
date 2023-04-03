@@ -103,12 +103,21 @@ class FileTest extends FilesystemTestCase
             'Files starting with a fullstop should be allowed when strip chars parameter is empty',
         ];
 
-        yield [
-            'Änderüng_âsceñt.txt',
-            [],
-            'Anderung_ascent.txt',
-            'Files with non-ascii characters should be transliterated',
-        ];
+        if (function_exists('transliterator_transliterate') && function_exists('iconv')) {
+            yield [
+                'Änderüng_âsceñt.txt',
+                [],
+                'Anderung_ascent.txt',
+                'Files with non-ascii characters should be transliterated',
+            ];
+        } else {
+            yield [
+                'Änderüng_âsceñt.txt',
+                [],
+                'nderng_scet.txt',
+                'Files with non-ascii characters should be removed when transliteration is not possible',
+            ];
+        }
     }
 
     /**
