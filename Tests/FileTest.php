@@ -40,8 +40,6 @@ class FileTest extends FilesystemTestCase
             'foobar.zip',
             'zip',
         ];
-
-
         yield [
             '.htaccess',
             'htaccess',
