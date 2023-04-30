@@ -44,14 +44,19 @@ class File
      */
     public static function makeSafe($file, array $stripChars = ['#^\.#'])
     {
-        $regex = array_merge(['#(\.){2,}#', '#[^A-Za-z0-9\.\_\- ]#'], $stripChars);
+        // Try transliterating the file name using the native php function
+        if (function_exists('transliterator_transliterate') && function_exists('iconv')) {
+            // Using iconv to ignore characters that can't be transliterated
+            $file = iconv("UTF-8", "ASCII//TRANSLIT//IGNORE", transliterator_transliterate('Any-Latin; Latin-ASCII', $file));
+        }
 
-        $file = preg_replace($regex, '', $file);
+        $regex = array_merge(['#(\.){2,}#', '#[^A-Za-z0-9\.\_\- ]#'], $stripChars);
+        $file  = preg_replace($regex, '', $file);
 
         // Remove any trailing dots, as those aren't ever valid file names.
         $file = rtrim($file, '.');
 
-        return $file;
+        return trim($file);
     }
 
     /**

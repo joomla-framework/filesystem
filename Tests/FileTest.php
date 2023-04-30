@@ -102,6 +102,22 @@ class FileTest extends FilesystemTestCase
             '.gitignore',
             'Files starting with a fullstop should be allowed when strip chars parameter is empty',
         ];
+
+        if (function_exists('transliterator_transliterate') && function_exists('iconv')) {
+            yield [
+                'Änderüng_âsceñt.txt',
+                [],
+                'Anderung_ascent.txt',
+                'Files with non-ascii characters should be transliterated',
+            ];
+        } else {
+            yield [
+                'Änderüng_âsceñt.txt',
+                [],
+                'nderng_scet.txt',
+                'Files with non-ascii characters should be removed when transliteration is not possible',
+            ];
+        }
     }
 
     /**
@@ -117,7 +133,7 @@ class FileTest extends FilesystemTestCase
      */
     public function testMakeSafe($name, $stripChars, $expected, $message)
     {
-        $this->assertEquals(File::makeSafe($name, $stripChars), $expected, $message);
+        $this->assertEquals($expected, File::makeSafe($name, $stripChars), $message);
     }
 
     /**
