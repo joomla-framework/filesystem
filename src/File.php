@@ -31,14 +31,16 @@ class File
 		// String manipulation should be faster than pathinfo() on newer PHP versions.
 		$dot = strrpos($file, '.');
 
-		if ($dot === false) {
+		if ($dot === false)
+		{
 			return '';
 		}
 
 		$ext = substr($file, $dot + 1);
 
 		// Extension cannot contain slashes.
-		if (strpos($ext, '/') !== false || (DIRECTORY_SEPARATOR === '\\' && strpos($ext, '\\') !== false)) {
+		if (strpos($ext, '/') !== false || (DIRECTORY_SEPARATOR === '\\' && strpos($ext, '\\') !== false))
+		{
 			return '';
 		}
 
