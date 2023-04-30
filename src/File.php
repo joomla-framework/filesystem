@@ -209,7 +209,7 @@ class File
      *
      * @since   1.0
      */
-    public static function write($file, &$buffer, $useStreams = false, $appendToFile = false)
+    public static function write($file, $buffer, $useStreams = false, $appendToFile = false)
     {
         @set_time_limit(ini_get('max_execution_time'));
 
