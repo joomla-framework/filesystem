@@ -313,6 +313,7 @@ abstract class Folder
      * @param   boolean  $full           True to return the full path to the file.
      * @param   array    $exclude        Array with names of files which should not be shown in the result.
      * @param   array    $excludeFilter  Array of filter to exclude
+     * @param   boolean  $naturalSort    False for asort, true for natsort
      *
      * @return  array  Files in the given folder.
      *
@@ -325,7 +326,8 @@ abstract class Folder
         $recurse = false,
         $full = false,
         $exclude = ['.svn', 'CVS', '.DS_Store', '__MACOSX'],
-        $excludeFilter = ['^\..*', '.*~']
+        $excludeFilter = ['^\..*', '.*~'],
+        $naturalSort = false
     ) {
         // Check to make sure the path valid and clean
         $path = Path::clean($path);
@@ -351,8 +353,12 @@ abstract class Folder
         // Get the files
         $arr = self::_items($path, $filter, $recurse, $full, $exclude, $excludeFilterString, true);
 
-        // Sort the files
-        asort($arr);
+        // Sort the files based on either natural or alpha method
+        if ($naturalSort) {
+            natsort($arr);
+        } else {
+            asort($arr);
+        }
 
         return array_values($arr);
     }
