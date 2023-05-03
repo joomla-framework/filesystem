@@ -15,6 +15,61 @@ use Joomla\Filesystem\File;
 class FileTest extends FilesystemTestCase
 {
     /**
+     * Provides the data to test the getExt method.
+     *
+     * @return  \Generator
+     */
+    public function dataTestGetExt(): \Generator
+    {
+        yield [
+            'foobar.php',
+            'php',
+        ];
+
+        yield [
+            'foobar..php',
+            'php',
+        ];
+
+        yield [
+            'foobar.php.',
+            '',
+        ];
+
+        yield [
+            'foobar.zip',
+            'zip',
+        ];
+
+        yield [
+            '.htaccess',
+            'htaccess',
+        ];
+
+        yield [
+            'readme',
+            '',
+        ];
+    }
+
+    /**
+     * Test getExt method
+     *
+     * @param   string  $fileName   The name of the file with extension
+     * @param   string  $extension  File extension
+     *
+     * @dataProvider  dataTestGetExt
+     */
+    public function testGetExt($fileName, $extension)
+    {
+        $this->assertEquals(
+            File::getExt($fileName),
+            $extension,
+            'File extension should be returned'
+        );
+    }
+
+    /**
      * Provides the data to test the stripExt method.
      *
      * @return  \Generator
