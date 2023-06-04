@@ -124,7 +124,7 @@ class StreamTest extends FilesystemTestCase
     /**
      * Test open method with invalid filename.
      */
-    public function testOpenInvlaidFilenameException()
+    public function testOpenInvalidFilenameException()
     {
         $this->expectException(\RuntimeException::class);
 
@@ -134,7 +134,7 @@ class StreamTest extends FilesystemTestCase
     /**
      * Test open method with invalid string name.
      */
-    public function testOpenInvlaidStringnameException()
+    public function testOpenInvalidStringnameException()
     {
         $this->expectException(\RuntimeException::class);
 
@@ -398,7 +398,7 @@ class StreamTest extends FilesystemTestCase
     /**
      * Test seek method.
      *
-     * @param   integer  $initial  Intial position of the pointer
+     * @param   integer  $initial  Initial position of the pointer
      * @param   integer  $offset   Offset to seek
      * @param   integer  $whence   Seek type
      * @param   integer  $expPos   Expected pointer position
@@ -836,7 +836,7 @@ class StreamTest extends FilesystemTestCase
     }
 
     /**
-     * Test move mthod.
+     * Test move method.
      */
     public function testMove()
     {
