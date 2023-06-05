@@ -708,7 +708,7 @@ class FolderTest extends FilesystemTestCase
     /**
      * Tests the Folder::listFolderTree method.
      */
-    public function testListFolderTreeWithASubirectory()
+    public function testListFolderTreeWithASubdirectory()
     {
         $name      = 'tempFolder';
         $childName = 'subTempFolder';
@@ -782,7 +782,7 @@ class FolderTest extends FilesystemTestCase
     /**
      * Tests the Folder::listFolderTree method.
      */
-    public function testListFolderTreeWithANestedSubirectory()
+    public function testListFolderTreeWithANestedSubdirectory()
     {
         $name         = 'tempFolder';
         $childName    = 'subTempFolder';

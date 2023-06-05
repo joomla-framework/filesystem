@@ -109,7 +109,7 @@ class HelperTest extends TestCase
     }
 
     /**
-     * Test getJStreams mthod.
+     * Test getJStreams method.
      */
     public function testGetJStreams()
     {
