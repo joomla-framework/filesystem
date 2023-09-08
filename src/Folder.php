@@ -475,10 +475,10 @@ abstract class Folder
 	 */
 	protected static function _items($path, $filter, $recurse, $full, $exclude, $excludeFilterString, $findfiles)
 	{
-        	if (\function_exists('set_time_limit'))
+		if (\function_exists('set_time_limit'))
 		{
 			set_time_limit(ini_get('max_execution_time'));
-        	}
+		}
 
 		$arr = [];
 
