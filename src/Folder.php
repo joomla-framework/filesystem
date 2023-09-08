@@ -238,10 +238,10 @@ abstract class Folder
 	 */
 	public static function delete($path)
 	{
-        	if (\function_exists('set_time_limit'))
+		if (\function_exists('set_time_limit'))
 		{
 			set_time_limit(ini_get('max_execution_time'));
-        	}
+		}
 
 		// Sanity check
 		if (!$path)
