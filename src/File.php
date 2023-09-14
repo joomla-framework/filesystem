@@ -50,6 +50,9 @@ class File
 		// Remove any trailing dots, as those aren't ever valid file names.
 		$file = rtrim($file, '.');
 
+		// Shorten to maximum length, if necessary
+		$file = self::shortenIfTooLong($file);
+
 		return $file;
 	}
 
@@ -94,7 +97,9 @@ class File
 
 			if (!$stream->copy($src, $dest, null, false))
 			{
-				throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError()));
+				throw new FilesystemException(
+					sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError())
+				);
 			}
 
 			self::invalidateFileCache($dest);
@@ -290,7 +295,9 @@ class File
 
 			if (!$stream->upload($src, $dest, null, false))
 			{
-				throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError()));
+				throw new FilesystemException(
+					sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, $stream->getError())
+				);
 			}
 
 			self::invalidateFileCache($dest);
@@ -333,5 +340,41 @@ class File
 				opcache_invalidate($file, true);
 			}
 		}
+	}
+
+	/**
+	 * Shorten a filename to a maximum allowed length
+	 *
+	 * The directory name is not changed.
+	 *
+	 * @param   string  $filename  The filename
+	 * @param   int     $maxLen    The maximum length including extension. Defaults to 240.
+	 *
+	 * @return string The original filename, if it is shorter than the maximum length, a shortened filename otherwise.
+	 */
+	private static function shortenIfTooLong(string $filename, int $maxLen = 240): string
+	{
+		$info = pathinfo($filename);
+
+		if (strlen($info['filename']) > $maxLen)
+		{
+			$path = $info['dirname'] === '.' ? '' : $info['dirname'];
+
+			if ($path > '')
+			{
+				$path .= '/';
+			}
+
+			$ext = $info['extension'] ?? '';
+
+			if ($ext > '')
+			{
+				$ext = '.' . $ext;
+			}
+
+			$filename = $path . substr($info['filename'], 0, $maxLen - strlen($ext)) . $ext;
+		}
+
+		return $filename;
 	}
 }
