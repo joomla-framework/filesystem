@@ -1109,7 +1109,7 @@ class FtpClient
         // Close the data connection port [Data transfer complete]
         fclose($this->dataconn);
 
-        // Verify that the server recieved the transfer
+        // Verify that the server received the transfer
         if (!$this->_verifyResponse(226)) {
             throw new FilesystemException(
                 sprintf('%1$s: Transfer failed.  Server response: %2$s [Expected: 226].  Path sent: %3$s', __METHOD__, $this->response, $remote)
