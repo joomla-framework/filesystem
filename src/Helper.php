@@ -250,7 +250,7 @@ class Helper
         if (!$streams) {
             $files = new \DirectoryIterator(__DIR__ . '/Stream');
 
-            /** @var $file \DirectoryIterator */
+            /** @var \DirectoryIterator $file */
             foreach ($files as $file) {
                 // Only load for php files.
                 if (!$file->isFile() || $file->getExtension() != 'php') {

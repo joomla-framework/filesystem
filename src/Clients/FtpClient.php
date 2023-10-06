@@ -56,7 +56,7 @@ class FtpClient
     /**
      * Socket resource
      *
-     * @var    resource
+     * @var    \FTP\Connection
      * @since  1.0
      */
     private $conn;
