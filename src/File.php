@@ -239,8 +239,7 @@ class File
      */
     public static function write($file, $buffer, $useStreams = false, $appendToFile = false)
     {
-        if (\function_exists('set_time_limit'))
-        {
+        if (\function_exists('set_time_limit')) {
             set_time_limit(ini_get('max_execution_time'));
         }
 

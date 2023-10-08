@@ -34,8 +34,7 @@ abstract class Folder
      */
     public static function copy($src, $dest, $path = '', $force = false, $useStreams = false)
     {
-        if (\function_exists('set_time_limit'))
-        {
+        if (\function_exists('set_time_limit')) {
             set_time_limit(ini_get('max_execution_time'));
         }
 
@@ -211,8 +210,7 @@ abstract class Folder
      */
     public static function delete($path)
     {
-        if (\function_exists('set_time_limit'))
-        {
+        if (\function_exists('set_time_limit')) {
             set_time_limit(ini_get('max_execution_time'));
         }
 
@@ -439,8 +437,7 @@ abstract class Folder
      */
     protected static function _items($path, $filter, $recurse, $full, $exclude, $excludeFilterString, $findfiles)
     {
-        if (\function_exists('set_time_limit'))
-        {
+        if (\function_exists('set_time_limit')) {
             set_time_limit(ini_get('max_execution_time'));
         }
 
