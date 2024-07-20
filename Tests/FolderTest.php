@@ -8,8 +8,8 @@
 namespace Joomla\Filesystem\Tests;
 
 use Joomla\Filesystem\Exception\FilesystemException;
-use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
 /**
