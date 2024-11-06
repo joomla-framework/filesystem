@@ -277,38 +277,33 @@ class Helper
     {
         return \in_array($streamname, self::getJStreams());
     }
-
-
     /**
-     * Calculates the maximum upload file size and returns string with unit or the size in bytes
+     * Calculates the maximum upload file size and returns string with the size in bytes
      *
-     * @param   bool  $unitOutput  This parameter determines whether the return value should be a string with a unit
+     * @return  int The maximum upload size of files with the appropriate in bytes
      *
-     * @return  float|string The maximum upload size of files with the appropriate unit or in bytes
-     *
-     * @since   3.1
      */
-    public static function fileUploadMaxSize($unitOutput = true)
+    public static function getFileUploadMaxSize()
     {
-        static $max_size    = false;
-        static $output_type = true;
+        $maxSize   = self::parseSize(\ini_get('post_max_size'));
+        $uploadMax = self::parseSize(\ini_get('upload_max_filesize'));
 
-        if ($max_size === false || $output_type != $unitOutput) {
-            $max_size   = self::parseSize(\ini_get('post_max_size'));
-            $upload_max = self::parseSize(\ini_get('upload_max_filesize'));
-
-            if ($upload_max > 0 && ($upload_max < $max_size || $max_size == 0)) {
-                $max_size = $upload_max;
-            }
-
-            if ($unitOutput == true) {
-                $max_size = self::parseSizeUnit($max_size);
-            }
-
-            $output_type = $unitOutput;
+        if ($uploadMax > 0 && ($uploadMax < $maxSize || $maxSize === 0)) {
+            $maxSize = $uploadMax;
         }
 
-        return $max_size;
+        return $maxSize;
+    }
+
+    /**
+     * Calculates the maximum upload file size and returns string with the size in bytes
+     *
+     * @return  int The maximum upload size of files with the appropriate in bytes
+     *
+     */
+    public static function getFileUploadMaxSizeWithUnit()
+    {
+        return self::parseBytesUnit(self::getFileUploadMaxSize());
     }
 
     /**
@@ -335,17 +330,17 @@ class Helper
     }
 
     /**
-     * Creates the rounded size of the size with the appropriate unit
+     * Creates the rounded byte count of the bytes with the appropriate unit
      *
-     * @param   float  $maxSize  The maximum size which is allowed for the uploads
+     * @param   float  $bytes  The bytes
      *
-     * @return  string String with the size and the appropriate unit
+     * @return  string String with the bytes and the appropriate unit
      *
      * @since   3.1
      */
-    private static function parseSizeUnit($maxSize)
+    public static function parseBytesUnit($bytes)
     {
-        $base     = log($maxSize) / log(1024);
+        $base     = log($bytes) / log(1024);
         $suffixes = ['', 'k', 'M', 'G', 'T'];
 
         return round(pow(1024, $base - floor($base)), 0) . $suffixes[floor($base)];
