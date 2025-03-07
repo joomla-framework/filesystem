@@ -277,4 +277,72 @@ class Helper
     {
         return \in_array($streamname, self::getJStreams());
     }
+    /**
+     * Calculates the maximum upload file size and returns string with the size in bytes
+     *
+     * @return  int The maximum upload size of files with the appropriate in bytes
+     *
+     */
+    public static function getFileUploadMaxSize()
+    {
+        $maxSize   = self::parseSize(\ini_get('post_max_size'));
+        $uploadMax = self::parseSize(\ini_get('upload_max_filesize'));
+
+        if ($uploadMax > 0 && ($uploadMax < $maxSize || $maxSize === 0)) {
+            $maxSize = $uploadMax;
+        }
+
+        return $maxSize;
+    }
+
+    /**
+     * Calculates the maximum upload file size and returns string with the size in bytes
+     *
+     * @return  int The maximum upload size of files with the appropriate in bytes
+     *
+     */
+    public static function getFileUploadMaxSizeWithUnit()
+    {
+        return self::parseBytesUnit(self::getFileUploadMaxSize());
+    }
+
+    /**
+     * Returns the size in bytes without the unit for the comparison
+     *
+     * @param   string  $size  The size which is received from the PHP settings
+     *
+     * @return  float The size in bytes without the unit
+     *
+     * @since   3.1
+     */
+    private static function parseSize($size)
+    {
+        $unit = preg_replace('/[^bkmgtpezy]/i', '', $size);
+        $size = preg_replace('/[^0-9\.]/', '', $size);
+
+        $return = round($size);
+
+        if ($unit) {
+            $return = round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+        }
+
+        return $return;
+    }
+
+    /**
+     * Creates the rounded byte count of the bytes with the appropriate unit
+     *
+     * @param   float  $bytes  The bytes
+     *
+     * @return  string String with the bytes and the appropriate unit
+     *
+     * @since   3.1
+     */
+    public static function parseBytesUnit($bytes)
+    {
+        $base     = log($bytes) / log(1024);
+        $suffixes = ['', 'k', 'M', 'G', 'T'];
+
+        return round(pow(1024, $base - floor($base)), 0) . $suffixes[floor($base)];
+    }
 }
