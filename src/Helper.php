@@ -282,6 +282,7 @@ class Helper
      *
      * @return  int The maximum upload size of files with the appropriate in bytes
      *
+     * @since   3.1
      */
     public static function getFileUploadMaxSize()
     {
@@ -300,6 +301,7 @@ class Helper
      *
      * @return  int The maximum upload size of files with the appropriate in bytes
      *
+     * @since   3.1
      */
     public static function getFileUploadMaxSizeWithUnit()
     {
