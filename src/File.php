@@ -302,6 +302,8 @@ class File
             Folder::create($baseDir);
         }
 
+        self::invalidateFileCache($src);
+
         if ($useStreams) {
             $stream = Stream::getStream();
 
