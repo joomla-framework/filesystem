@@ -163,13 +163,19 @@ class File
             // on Windows, even if the parent folder is writable
             @chmod($file, 0777);
 
-            // In case of restricted permissions we zap it one way or the other
-            // as long as the owner is either the webserver or the ftp
+            /**
+             * Invalidate the OPCache for the file before actually deleting it
+             * @link https://www.php.net/manual/en/function.opcache-invalidate.php#116372
+             */
+            self::invalidateFileCache($file);
+
+            /**
+             * In case of restricted permissions we zap it one way or the other
+             * as long as the owner is either the webserver or the ftp
+             */
             if (!@ unlink($file)) {
                 throw new FilesystemException(__METHOD__ . ': Failed deleting ' . $filename);
             }
-
-            self::invalidateFileCache($file);
         }
 
         return true;
