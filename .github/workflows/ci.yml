@@ -103,7 +103,7 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php_version }}
-                  extensions: openssl, mbstring, fileinfo
+                  extensions: openssl, mbstring, fileinfo, ftp
             - name: Install Composer dependencies
               run: |
                   git config --global --add safe.directory $GITHUB_WORKSPACE
