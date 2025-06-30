@@ -1,4 +1,4 @@
-# The Filesystem Package [![Build Status](https://ci.joomla.org/api/badges/joomla-framework/filesystem/status.svg?ref=refs/heads/3.x-dev)](https://ci.joomla.org/joomla-framework/filesystem)
+# The Filesystem Package [![Build Status](https://github.com/joomla-framework/filesystem/actions/workflows/ci.yml/badge.svg?branch=3.x-dev)](https://github.com/joomla-framework/filesystem)
 
 [![Latest Stable Version](https://poser.pugx.org/joomla/filesystem/v/stable)](https://packagist.org/packages/joomla/filesystem)
 [![Total Downloads](https://poser.pugx.org/joomla/filesystem/downloads)](https://packagist.org/packages/joomla/filesystem)
