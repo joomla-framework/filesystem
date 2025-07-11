@@ -14,7 +14,7 @@ jobs:
     composer:
         name: Install PHP dependencies
         runs-on: ubuntu-latest
-        container: joomlaprojects/docker-images:php8.1
+        container: joomlaprojects/docker-images:php8.3
         steps:
             - uses: actions/checkout@v4
             - uses: actions/cache@v4
@@ -32,7 +32,7 @@ jobs:
     code-style-php:
         name: Check PHP code style
         runs-on: ubuntu-latest
-        container: joomlaprojects/docker-images:php8.1
+        container: joomlaprojects/docker-images:php8.3
         needs: [composer]
         steps:
             - uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
     tests-unit-lowest:
         name: Run Unit tests
         runs-on: ubuntu-latest
-        container: joomlaprojects/docker-images:php8.1
+        container: joomlaprojects/docker-images:php8.3
         needs: [code-style-php]
         steps:
             - uses: actions/checkout@v4
