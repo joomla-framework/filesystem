@@ -19,6 +19,12 @@ use Joomla\Filesystem\Exception\FilesystemException;
 class File
 {
     /**
+     * @var    boolean  true if OPCache enabled, and we have permission to invalidate files
+     * @since  3.2.0
+     */
+    protected static $canFlushFileCache;
+
+    /**
      * Gets the extension of a file name
      *
      * @param   string  $file  The file name
@@ -133,7 +139,7 @@ class File
         }
 
         if (!@ copy($src, $dest)) {
-            throw new FilesystemException(__METHOD__ . ': Copy failed.');
+            throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, 'Copy failed'));
         }
 
         self::invalidateFileCache($dest);
@@ -159,17 +165,25 @@ class File
             $file     = Path::clean($file);
             $filename = basename($file);
 
-            // Try making the file writable first. If it's read-only, it can't be deleted
-            // on Windows, even if the parent folder is writable
+            /**
+             * Try making the file writable first. If it's read-only, it can't be deleted
+             * on Windows, even if the parent folder is writable
+             */
             @chmod($file, 0777);
 
-            // In case of restricted permissions we zap it one way or the other
-            // as long as the owner is either the webserver or the ftp
+            /**
+             * Invalidate the OPCache for the file before actually deleting it
+             * @link https://www.php.net/manual/en/function.opcache-invalidate.php#116372
+             */
+            self::invalidateFileCache($file);
+
+            /**
+             * In case of restricted permissions we zap it one way or the other
+             * as long as the owner is either the webserver or the ftp
+             */
             if (!@ unlink($file)) {
                 throw new FilesystemException(__METHOD__ . ': Failed deleting ' . $filename);
             }
-
-            self::invalidateFileCache($file);
         }
 
         return true;
@@ -199,6 +213,8 @@ class File
         if (!is_readable($src)) {
             return 'Cannot find source file.';
         }
+
+        self::invalidateFileCache($src);
 
         if ($useStreams) {
             $stream = Stream::getStream();
@@ -294,6 +310,8 @@ class File
             Folder::create($baseDir);
         }
 
+        self::invalidateFileCache($src);
+
         if ($useStreams) {
             $stream = Stream::getStream();
 
@@ -321,7 +339,7 @@ class File
     }
 
     /**
-     * Invalidate any opcache for a newly written file immediately, if opcache* functions exist and if this was a PHP file.
+     * Invalidate any opcache immediately for a file if opcache* functions are enabled and the file is a PHP file.
      *
      * @param   string  $file  The path to the file just written to, to flush from opcache
      *
@@ -329,13 +347,29 @@ class File
      */
     public static function invalidateFileCache($file)
     {
-        if (function_exists('opcache_invalidate')) {
-            $info = pathinfo($file);
+        /**
+         * Check if we can invalidate the opcache. This is the case if
+         * - opcache is enabled, and
+         * - the opcache_invalidate function is available, and
+         * - calling opcache_invalidate is not restricted by opcache.restrict_api
+         *   or it is restricted to allow the currently executing script
+         */
+        if (!isset(static::$canFlushFileCache)) {
+            static::$canFlushFileCache
+                = ini_get('opcache.enable')
+                && \function_exists('opcache_invalidate')
+                && (!ini_get('opcache.restrict_api') || str_starts_with(realpath($_SERVER['SCRIPT_FILENAME']), ini_get('opcache.restrict_api')));
+        }
 
-            if (isset($info['extension']) && $info['extension'] === 'php') {
-                // Force invalidation to be absolutely sure the opcache is cleared for this file.
-                opcache_invalidate($file, true);
-            }
+        if (!static::$canFlushFileCache) {
+            return;
+        }
+
+        $info = pathinfo($file);
+
+        if (isset($info['extension']) && $info['extension'] === 'php') {
+            // Force invalidation to be absolutely sure the opcache is cleared for this file.
+            opcache_invalidate($file, true);
         }
     }
 }
