@@ -1,0 +1,11 @@
+## Updating from v3 to v4
+
+The following changes were made to the Filesystem package between v3 and v4.
+
+### Minimum supported PHP version raised
+
+All Framework packages now require PHP 8.3 or newer.
+
+### `StringController::_getArray()` was removed
+
+The deprecated method `StringController::_getArray()` was removed. Use `StringController::getArray()` instead.
