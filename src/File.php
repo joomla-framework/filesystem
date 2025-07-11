@@ -139,7 +139,7 @@ class File
         }
 
         if (!@ copy($src, $dest)) {
-            throw new FilesystemException(__METHOD__ . ': Copy failed.');
+            throw new FilesystemException(sprintf('%1$s(%2$s, %3$s): %4$s', __METHOD__, $src, $dest, 'Copy failed'));
         }
 
         self::invalidateFileCache($dest);
