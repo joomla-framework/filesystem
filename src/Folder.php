@@ -90,6 +90,8 @@ abstract class Folder
                         }
                     }
 
+                    File::invalidateFileCache($dfid);
+
                     break;
             }
         }
