@@ -8,6 +8,7 @@
 namespace Joomla\Filesystem\Tests;
 
 use Joomla\Filesystem\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test class for Joomla\Filesystem\File.
@@ -17,38 +18,40 @@ class FileTest extends FilesystemTestCase
     /**
      * Provides the data to test the getExt method.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function dataTestGetExt(): \Generator
+    public static function dataTestGetExt(): array
     {
-        yield [
-            'foobar.php',
-            'php',
-        ];
+        return [
+            [
+                'foobar.php',
+                'php',
+            ],
 
-        yield [
-            'foobar..php',
-            'php',
-        ];
+            [
+                'foobar..php',
+                'php',
+            ],
 
-        yield [
-            'foobar.php.',
-            '',
-        ];
+            [
+                'foobar.php.',
+                '',
+            ],
 
-        yield [
-            'foobar.zip',
-            'zip',
-        ];
+            [
+                'foobar.zip',
+                'zip',
+            ],
 
-        yield [
-            '.htaccess',
-            'htaccess',
-        ];
+            [
+                '.htaccess',
+                'htaccess',
+            ],
 
-        yield [
-            'readme',
-            '',
+            [
+                'readme',
+                '',
+            ],
         ];
     }
 
@@ -57,9 +60,8 @@ class FileTest extends FilesystemTestCase
      *
      * @param   string  $fileName   The name of the file with extension
      * @param   string  $extension  File extension
-     *
-     * @dataProvider  dataTestGetExt
      */
+    #[DataProvider('dataTestGetExt')]
     public function testGetExt($fileName, $extension)
     {
         $this->assertEquals(
@@ -72,23 +74,25 @@ class FileTest extends FilesystemTestCase
     /**
      * Provides the data to test the stripExt method.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function dataTestStripExt(): \Generator
+    public static function dataTestStripExt(): array
     {
-        yield [
-            'foobar.php',
-            'foobar',
-        ];
+        return [
+            [
+                'foobar.php',
+                'foobar',
+            ],
 
-        yield [
-            'foobar..php',
-            'foobar.',
-        ];
+            [
+                'foobar..php',
+                'foobar.',
+            ],
 
-        yield [
-            'foobar.php.',
-            'foobar.php',
+            [
+                'foobar.php.',
+                'foobar.php',
+            ],
         ];
     }
 
@@ -97,9 +101,8 @@ class FileTest extends FilesystemTestCase
      *
      * @param   string  $fileName        The name of the file with extension
      * @param   string  $nameWithoutExt  Name without extension
-     *
-     * @dataProvider  dataTestStripExt
      */
+    #[DataProvider('dataTestStripExt')]
     public function testStripExt($fileName, $nameWithoutExt)
     {
         $this->assertEquals(
@@ -112,67 +115,71 @@ class FileTest extends FilesystemTestCase
     /**
      * Provides the data to test the makeSafe method.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function dataTestMakeSafe(): \Generator
+    public static function dataTestMakeSafe(): array
     {
-        yield [
-            'joomla.',
-            ['#^\.#'],
-            'joomla',
-            'There should be no fullstop on the end of a filename',
-        ];
+        $return = [
+            [
+                'joomla.',
+                ['#^\.#'],
+                'joomla',
+                'There should be no fullstop on the end of a filename',
+            ],
 
-        yield [
-            'Test j00mla_5-1.html',
-            ['#^\.#'],
-            'Test j00mla_5-1.html',
-            'Alphanumeric symbols, dots, dashes, spaces and underscores should not be filtered',
-        ];
+            [
+                'Test j00mla_5-1.html',
+                ['#^\.#'],
+                'Test j00mla_5-1.html',
+                'Alphanumeric symbols, dots, dashes, spaces and underscores should not be filtered',
+            ],
 
-        yield [
-            'Test j00mla_5-1.html',
-            ['#^\.#', '/\s+/'],
-            'Testj00mla_5-1.html',
-            'Using strip chars parameter here to strip all spaces',
-        ];
+            [
+                'Test j00mla_5-1.html',
+                ['#^\.#', '/\s+/'],
+                'Testj00mla_5-1.html',
+                'Using strip chars parameter here to strip all spaces',
+            ],
 
-        yield [
-            'joomla.php!.',
-            ['#^\.#'],
-            'joomla.php',
-            'Non-alphanumeric symbols should be filtered to avoid disguising file extensions',
-        ];
+            [
+                'joomla.php!.',
+                ['#^\.#'],
+                'joomla.php',
+                'Non-alphanumeric symbols should be filtered to avoid disguising file extensions',
+            ],
 
-        yield [
-            'joomla.php.!',
-            ['#^\.#'],
-            'joomla.php',
-            'Non-alphanumeric symbols should be filtered to avoid disguising file extensions',
-        ];
+            [
+                'joomla.php.!',
+                ['#^\.#'],
+                'joomla.php',
+                'Non-alphanumeric symbols should be filtered to avoid disguising file extensions',
+            ],
 
-        yield [
-            '.gitignore',
-            [],
-            '.gitignore',
-            'Files starting with a fullstop should be allowed when strip chars parameter is empty',
+            [
+                '.gitignore',
+                [],
+                '.gitignore',
+                'Files starting with a fullstop should be allowed when strip chars parameter is empty',
+            ],
         ];
 
         if (function_exists('transliterator_transliterate') && function_exists('iconv')) {
-            yield [
+            $return[] = [
                 'Änderüng_âsceñt.txt',
                 [],
                 'Anderung_ascent.txt',
                 'Files with non-ascii characters should be transliterated',
             ];
         } else {
-            yield [
+            $return[] = [
                 'Änderüng_âsceñt.txt',
                 [],
                 'nderng_scet.txt',
                 'Files with non-ascii characters should be removed when transliteration is not possible',
             ];
         }
+
+        return $return;
     }
 
     /**
@@ -184,8 +191,8 @@ class FileTest extends FilesystemTestCase
      * @param   string  $message     The message to show on failure of test
      *
      * @covers        Joomla\Filesystem\File::makeSafe
-     * @dataProvider  dataTestMakeSafe
      */
+    #[DataProvider('dataTestMakeSafe')]
     public function testMakeSafe($name, $stripChars, $expected, $message)
     {
         $this->assertEquals($expected, File::makeSafe($name, $stripChars), $message);

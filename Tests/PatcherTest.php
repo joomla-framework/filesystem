@@ -10,6 +10,7 @@ namespace Joomla\Filesystem\Tests;
 use Joomla\Filesystem\Patcher;
 use Joomla\Filesystem\Path;
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -90,9 +91,9 @@ class PatcherTest extends TestCase
     /**
      * Data provider for testAdd
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function addData(): \Generator
+    public static function addData(): array
     {
         $udiff = 'Index: lao
 ===================================================================
@@ -117,55 +118,57 @@ class PatcherTest extends TestCase
 +The door of all subtleties!
 ';
 
-        // Use of realpath to ensure test works for on all platforms
-        yield [
-            $udiff,
-            realpath(__DIR__ . '/tmp/patcher'),
-            0,
+        return [
+            // Use of realpath to ensure test works for on all platforms
             [
+                $udiff,
+                realpath(__DIR__ . '/tmp/patcher'),
+                0,
                 [
-                    'udiff' => $udiff,
-                    'root'  => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
-                    'strip' => 0,
+                    [
+                        'udiff' => $udiff,
+                        'root'  => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+                        'strip' => 0,
+                    ],
                 ],
             ],
-        ];
 
-        yield [
-            $udiff,
-            realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
-            0,
             [
+                $udiff,
+                realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+                0,
                 [
-                    'udiff' => $udiff,
-                    'root'  => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
-                    'strip' => 0,
+                    [
+                        'udiff' => $udiff,
+                        'root'  => realpath(__DIR__ . '/tmp/patcher') . DIRECTORY_SEPARATOR,
+                        'strip' => 0,
+                    ],
                 ],
             ],
-        ];
 
-        yield [
-            $udiff,
-            null,
-            0,
             [
+                $udiff,
+                null,
+                0,
                 [
-                    'udiff' => $udiff,
-                    'root'  => '',
-                    'strip' => 0,
+                    [
+                        'udiff' => $udiff,
+                        'root'  => '',
+                        'strip' => 0,
+                    ],
                 ],
             ],
-        ];
 
-        yield [
-            $udiff,
-            '',
-            0,
             [
+                $udiff,
+                '',
+                0,
                 [
-                    'udiff' => $udiff,
-                    'root'  => DIRECTORY_SEPARATOR,
-                    'strip' => 0,
+                    [
+                        'udiff' => $udiff,
+                        'root'  => DIRECTORY_SEPARATOR,
+                        'strip' => 0,
+                    ],
                 ],
             ],
         ];
@@ -178,9 +181,8 @@ class PatcherTest extends TestCase
      * @param   string  $root      The files root path
      * @param   string  $strip     The number of '/' to strip
      * @param   array   $expected  The expected array patches
-     *
-     * @dataProvider addData
      */
+    #[DataProvider('addData')]
     public function testAdd($udiff, $root, $strip, $expected)
     {
         $patcher = Patcher::getInstance()->reset();
@@ -297,556 +299,558 @@ class PatcherTest extends TestCase
     /**
      * Data provider for testApply
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function applyData(): \Generator
+    public static function applyData(): array
     {
-        yield 'Test classical feature' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,7 +1,6 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
- The Nameless is the origin of Heaven and Earth;
--The Named is the mother of all things.
-+The named is the mother of all things.
-+
- Therefore let there always be non-being,
-   so we may see their subtlety,
- And let there always be being,
-@@ -9,4 +8,7 @@
- The two are the same,
- But after they are produced,
-   they have different names.
-+They both may be called deep and profound.
-+Deeper and more profound,
-+The door of all subtleties!
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [
-                __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
-The name that can be named is not the eternal name.
-The Nameless is the origin of Heaven and Earth;
-The Named is the mother of all things.
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-',
+        return [
+            'Test classical feature' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,7 +1,6 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+     The Nameless is the origin of Heaven and Earth;
+    -The Named is the mother of all things.
+    +The named is the mother of all things.
+    +
+     Therefore let there always be non-being,
+       so we may see their subtlety,
+     And let there always be being,
+    @@ -9,4 +8,7 @@
+     The two are the same,
+     But after they are produced,
+       they have different names.
+    +They both may be called deep and profound.
+    +Deeper and more profound,
+    +The door of all subtleties!
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [
+                    __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
+    The name that can be named is not the eternal name.
+    The Nameless is the origin of Heaven and Earth;
+    The Named is the mother of all things.
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    ',
+                ],
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
+    The named is the mother of all things.
+
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    They both may be called deep and profound.
+    Deeper and more profound,
+    The door of all subtleties!
+    ',
+                ],
+                1,
+                false,
             ],
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
-The named is the mother of all things.
 
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-They both may be called deep and profound.
-Deeper and more profound,
-The door of all subtleties!
-',
+            'Test truncated hunk' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1 +1 @@
+    -The Way that can be told of is not the eternal Way;
+    +The named is the mother of all things.
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [
+                    __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
+    The name that can be named is not the eternal name.
+    The Nameless is the origin of Heaven and Earth;
+    The Named is the mother of all things.
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    ',
+                ],
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The named is the mother of all things.
+    The name that can be named is not the eternal name.
+    The Nameless is the origin of Heaven and Earth;
+    The Named is the mother of all things.
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    ',
+                ],
+                1,
+                false,
             ],
-            1,
-            false,
-        ];
 
-        yield 'Test truncated hunk' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1 +1 @@
--The Way that can be told of is not the eternal Way;
-+The named is the mother of all things.
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [
-                __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
-The name that can be named is not the eternal name.
-The Nameless is the origin of Heaven and Earth;
-The Named is the mother of all things.
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-',
+            'Test strip is null' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,7 +1,6 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+     The Nameless is the origin of Heaven and Earth;
+    -The Named is the mother of all things.
+    +The named is the mother of all things.
+    +
+     Therefore let there always be non-being,
+       so we may see their subtlety,
+     And let there always be being,
+    @@ -9,4 +8,7 @@
+     The two are the same,
+     But after they are produced,
+       they have different names.
+    +They both may be called deep and profound.
+    +Deeper and more profound,
+    +The door of all subtleties!
+    ',
+                __DIR__ . '/tmp/patcher',
+                null,
+                [
+                    __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
+    The name that can be named is not the eternal name.
+    The Nameless is the origin of Heaven and Earth;
+    The Named is the mother of all things.
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    ',
+                ],
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
+    The named is the mother of all things.
+
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    They both may be called deep and profound.
+    Deeper and more profound,
+    The door of all subtleties!
+    ',
+                ],
+                1,
+                false,
             ],
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The named is the mother of all things.
-The name that can be named is not the eternal name.
-The Nameless is the origin of Heaven and Earth;
-The Named is the mother of all things.
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-',
+
+            'Test strip is different of 0' => [
+                'Index: lao
+    ===================================================================
+    --- /path/to/lao	2011-09-21 16:05:45.086909120 +0200
+    +++ /path/to/tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,7 +1,6 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+     The Nameless is the origin of Heaven and Earth;
+    -The Named is the mother of all things.
+    +The named is the mother of all things.
+    +
+     Therefore let there always be non-being,
+       so we may see their subtlety,
+     And let there always be being,
+    @@ -9,4 +8,7 @@
+     The two are the same,
+     But after they are produced,
+       they have different names.
+    +They both may be called deep and profound.
+    +Deeper and more profound,
+    +The door of all subtleties!
+    ',
+                __DIR__ . '/tmp/patcher',
+                3,
+                [
+                    __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
+    The name that can be named is not the eternal name.
+    The Nameless is the origin of Heaven and Earth;
+    The Named is the mother of all things.
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    ',
+                ],
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
+    The named is the mother of all things.
+
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    They both may be called deep and profound.
+    Deeper and more profound,
+    The door of all subtleties!
+    ',
+                ],
+                1,
+                false,
             ],
-            1,
-            false,
-        ];
 
-        yield 'Test strip is null' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,7 +1,6 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
- The Nameless is the origin of Heaven and Earth;
--The Named is the mother of all things.
-+The named is the mother of all things.
-+
- Therefore let there always be non-being,
-   so we may see their subtlety,
- And let there always be being,
-@@ -9,4 +8,7 @@
- The two are the same,
- But after they are produced,
-   they have different names.
-+They both may be called deep and profound.
-+Deeper and more profound,
-+The door of all subtleties!
-',
-            __DIR__ . '/tmp/patcher',
-            null,
-            [
-                __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
-The name that can be named is not the eternal name.
-The Nameless is the origin of Heaven and Earth;
-The Named is the mother of all things.
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-',
+            'Test create file' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -0,0 +1,14 @@
+    +The Nameless is the origin of Heaven and Earth;
+    +The named is the mother of all things.
+    +
+    +Therefore let there always be non-being,
+    +  so we may see their subtlety,
+    +And let there always be being,
+    +  so we may see their outcome.
+    +The two are the same,
+    +But after they are produced,
+    +  they have different names.
+    +They both may be called deep and profound.
+    +Deeper and more profound,
+    +The door of all subtleties!
+    +
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
+    The named is the mother of all things.
+
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    They both may be called deep and profound.
+    Deeper and more profound,
+    The door of all subtleties!
+    ',
+                ],
+                1,
+                false,
             ],
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
-The named is the mother of all things.
 
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-They both may be called deep and profound.
-Deeper and more profound,
-The door of all subtleties!
-',
+            'Test patch itself' => [
+                'Index: lao
+    ===================================================================
+    --- tzu	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,7 +1,6 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+     The Nameless is the origin of Heaven and Earth;
+    -The Named is the mother of all things.
+    +The named is the mother of all things.
+    +
+     Therefore let there always be non-being,
+       so we may see their subtlety,
+     And let there always be being,
+    @@ -9,4 +8,7 @@
+     The two are the same,
+     But after they are produced,
+       they have different names.
+    +They both may be called deep and profound.
+    +Deeper and more profound,
+    +The door of all subtleties!
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The Way that can be told of is not the eternal Way;
+    The name that can be named is not the eternal name.
+    The Nameless is the origin of Heaven and Earth;
+    The Named is the mother of all things.
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    ',
+                ],
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
+    The named is the mother of all things.
+
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    They both may be called deep and profound.
+    Deeper and more profound,
+    The door of all subtleties!
+    ',
+                ],
+                1,
+                false,
             ],
-            1,
-            false,
-        ];
 
-        yield 'Test strip is different of 0' => [
-            'Index: lao
-===================================================================
---- /path/to/lao	2011-09-21 16:05:45.086909120 +0200
-+++ /path/to/tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,7 +1,6 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
- The Nameless is the origin of Heaven and Earth;
--The Named is the mother of all things.
-+The named is the mother of all things.
-+
- Therefore let there always be non-being,
-   so we may see their subtlety,
- And let there always be being,
-@@ -9,4 +8,7 @@
- The two are the same,
- But after they are produced,
-   they have different names.
-+They both may be called deep and profound.
-+Deeper and more profound,
-+The door of all subtleties!
-',
-            __DIR__ . '/tmp/patcher',
-            3,
-            [
-                __DIR__ . '/tmp/patcher/lao' => 'The Way that can be told of is not the eternal Way;
-The name that can be named is not the eternal name.
-The Nameless is the origin of Heaven and Earth;
-The Named is the mother of all things.
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-',
+            'Test delete' => [
+                'Index: lao
+    ===================================================================
+    --- tzu	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,11 +1,0 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+    -The Nameless is the origin of Heaven and Earth;
+    -The Named is the mother of all things.
+    -Therefore let there always be non-being,
+    -  so we may see their subtlety,
+    -And let there always be being,
+    -  so we may see their outcome.
+    -The two are the same,
+    -But after they are produced,
+    -  they have different names.
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => 'The Way that can be told of is not the eternal Way;
+    The name that can be named is not the eternal name.
+    The Nameless is the origin of Heaven and Earth;
+    The Named is the mother of all things.
+    Therefore let there always be non-being,
+      so we may see their subtlety,
+    And let there always be being,
+      so we may see their outcome.
+    The two are the same,
+    But after they are produced,
+      they have different names.
+    ',
+                ],
+                [
+                    __DIR__ . '/tmp/patcher/tzu' => null,
+                ],
+                1,
+                false,
             ],
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
-The named is the mother of all things.
 
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-They both may be called deep and profound.
-Deeper and more profound,
-The door of all subtleties!
-',
+            'Test unexpected eof after header 1' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
             ],
-            1,
-            false,
-        ];
 
-        yield 'Test create file' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -0,0 +1,14 @@
-+The Nameless is the origin of Heaven and Earth;
-+The named is the mother of all things.
-+
-+Therefore let there always be non-being,
-+  so we may see their subtlety,
-+And let there always be being,
-+  so we may see their outcome.
-+The two are the same,
-+But after they are produced,
-+  they have different names.
-+They both may be called deep and profound.
-+Deeper and more profound,
-+The door of all subtleties!
-+
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
-The named is the mother of all things.
-
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-They both may be called deep and profound.
-Deeper and more profound,
-The door of all subtleties!
-',
+            'Test unexpected eof after header 2' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
             ],
-            1,
-            false,
-        ];
 
-        yield 'Test patch itself' => [
-            'Index: lao
-===================================================================
---- tzu	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,7 +1,6 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
- The Nameless is the origin of Heaven and Earth;
--The Named is the mother of all things.
-+The named is the mother of all things.
-+
- Therefore let there always be non-being,
-   so we may see their subtlety,
- And let there always be being,
-@@ -9,4 +8,7 @@
- The two are the same,
- But after they are produced,
-   they have different names.
-+They both may be called deep and profound.
-+Deeper and more profound,
-+The door of all subtleties!
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The Way that can be told of is not the eternal Way;
-The name that can be named is not the eternal name.
-The Nameless is the origin of Heaven and Earth;
-The Named is the mother of all things.
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-',
+            'Test unexpected eof in header' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
             ],
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The Nameless is the origin of Heaven and Earth;
-The named is the mother of all things.
 
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-They both may be called deep and profound.
-Deeper and more profound,
-The door of all subtleties!
-',
+            'Test invalid diff in header' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
             ],
-            1,
-            false,
-        ];
 
-        yield 'Test delete' => [
-            'Index: lao
-===================================================================
---- tzu	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,11 +1,0 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
--The Nameless is the origin of Heaven and Earth;
--The Named is the mother of all things.
--Therefore let there always be non-being,
--  so we may see their subtlety,
--And let there always be being,
--  so we may see their outcome.
--The two are the same,
--But after they are produced,
--  they have different names.
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [
-                __DIR__ . '/tmp/patcher/tzu' => 'The Way that can be told of is not the eternal Way;
-The name that can be named is not the eternal name.
-The Nameless is the origin of Heaven and Earth;
-The Named is the mother of all things.
-Therefore let there always be non-being,
-  so we may see their subtlety,
-And let there always be being,
-  so we may see their outcome.
-The two are the same,
-But after they are produced,
-  they have different names.
-',
+            'Test unexpected eof after hunk 1' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,11 +1,0 @@',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
             ],
-            [
-                __DIR__ . '/tmp/patcher/tzu' => null,
+
+            'Test unexpected eof after hunk 2' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,11 +1,11 @@
+    +The Way that can be told of is not the eternal Way;
+    +The name that can be named is not the eternal name.
+    -The Nameless is the origin of Heaven and Earth;
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
             ],
-            1,
-            false,
-        ];
 
-        yield 'Test unexpected eof after header 1' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test unexpected eof after header 2' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test unexpected eof in header' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test invalid diff in header' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test unexpected eof after hunk 1' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,11 +1,0 @@',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test unexpected eof after hunk 2' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,11 +1,11 @@
-+The Way that can be told of is not the eternal Way;
-+The name that can be named is not the eternal name.
--The Nameless is the origin of Heaven and Earth;
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test unexpected remove line' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,1 +1,1 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
-+The Nameless is the origin of Heaven and Earth;
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test unexpected add line' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,1 +1,1 @@
-+The Way that can be told of is not the eternal Way;
-+The name that can be named is not the eternal name.
--The Nameless is the origin of Heaven and Earth;
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test unexisting source' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,7 +1,6 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
- The Nameless is the origin of Heaven and Earth;
--The Named is the mother of all things.
-+The named is the mother of all things.
-+
- Therefore let there always be non-being,
-   so we may see their subtlety,
- And let there always be being,
-@@ -9,4 +8,7 @@
- The two are the same,
- But after they are produced,
-   they have different names.
-+They both may be called deep and profound.
-+Deeper and more profound,
-+The door of all subtleties!
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [],
-            [],
-            1,
-            \RuntimeException::class,
-        ];
-
-        yield 'Test failed verify' => [
-            'Index: lao
-===================================================================
---- lao	2011-09-21 16:05:45.086909120 +0200
-+++ tzu	2011-09-21 16:05:41.156878938 +0200
-@@ -1,7 +1,6 @@
--The Way that can be told of is not the eternal Way;
--The name that can be named is not the eternal name.
- The Nameless is the origin of Heaven and Earth;
--The Named is the mother of all things.
-+The named is the mother of all things.
-+
- Therefore let there always be non-being,
-   so we may see their subtlety,
- And let there always be being,
-@@ -9,4 +8,7 @@
- The two are the same,
- But after they are produced,
-   they have different names.
-+They both may be called deep and profound.
-+Deeper and more profound,
-+The door of all subtleties!
-',
-            __DIR__ . '/tmp/patcher',
-            0,
-            [
-                __DIR__ . '/tmp/patcher/lao' => '',
+            'Test unexpected remove line' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,1 +1,1 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+    +The Nameless is the origin of Heaven and Earth;
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
             ],
-            [],
-            1,
-            \RuntimeException::class,
+
+            'Test unexpected add line' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,1 +1,1 @@
+    +The Way that can be told of is not the eternal Way;
+    +The name that can be named is not the eternal name.
+    -The Nameless is the origin of Heaven and Earth;
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
+            ],
+
+            'Test unexisting source' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,7 +1,6 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+     The Nameless is the origin of Heaven and Earth;
+    -The Named is the mother of all things.
+    +The named is the mother of all things.
+    +
+     Therefore let there always be non-being,
+       so we may see their subtlety,
+     And let there always be being,
+    @@ -9,4 +8,7 @@
+     The two are the same,
+     But after they are produced,
+       they have different names.
+    +They both may be called deep and profound.
+    +Deeper and more profound,
+    +The door of all subtleties!
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [],
+                [],
+                1,
+                \RuntimeException::class,
+            ],
+
+            'Test failed verify' => [
+                'Index: lao
+    ===================================================================
+    --- lao	2011-09-21 16:05:45.086909120 +0200
+    +++ tzu	2011-09-21 16:05:41.156878938 +0200
+    @@ -1,7 +1,6 @@
+    -The Way that can be told of is not the eternal Way;
+    -The name that can be named is not the eternal name.
+     The Nameless is the origin of Heaven and Earth;
+    -The Named is the mother of all things.
+    +The named is the mother of all things.
+    +
+     Therefore let there always be non-being,
+       so we may see their subtlety,
+     And let there always be being,
+    @@ -9,4 +8,7 @@
+     The two are the same,
+     But after they are produced,
+       they have different names.
+    +They both may be called deep and profound.
+    +Deeper and more profound,
+    +The door of all subtleties!
+    ',
+                __DIR__ . '/tmp/patcher',
+                0,
+                [
+                    __DIR__ . '/tmp/patcher/lao' => '',
+                ],
+                [],
+                1,
+                \RuntimeException::class,
+            ],
         ];
     }
 
@@ -860,9 +864,8 @@ But after they are produced,
      * @param   array    $destinations  The destinations files
      * @param   integer  $result        The number of files patched
      * @param   mixed    $throw         The exception throw, false for no exception
-     *
-     * @dataProvider applyData
      */
+    #[DataProvider('applyData')]
     public function testApply($udiff, $root, $strip, $sources, $destinations, $result, $throw)
     {
         if ($throw) {

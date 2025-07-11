@@ -10,6 +10,7 @@ namespace Joomla\Filesystem\Tests;
 use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests for the Joomla\Filesystem\Path class.
@@ -165,23 +166,24 @@ class PathTest extends FilesystemTestCase
     /**
      * Test data for check method.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function dataCheckValidPaths(): \Generator
+    public static function dataCheckValidPaths(): array
     {
-        yield ['/var/foo'];
-        yield ['/var/foo/bar'];
-        yield ['/var/fo.o/bar'];
-        yield ['/var/./bar'];
+        return [
+            ['/var/foo'],
+            ['/var/foo/bar'],
+            ['/var/fo.o/bar'],
+            ['/var/./bar'],
+        ];
     }
 
     /**
      * Test checkValidPaths method.
      *
      * @param   string  $data  Path to check for valid
-     *
-     * @dataProvider dataCheckValidPaths
      */
+    #[DataProvider('dataCheckValidPaths')]
     public function testCheckValidPaths($data)
     {
         if (DIRECTORY_SEPARATOR === '\\') {
@@ -197,27 +199,28 @@ class PathTest extends FilesystemTestCase
     /**
      * Test data for check method exception.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function dataCheckExceptionPaths(): \Generator
+    public static function dataCheckExceptionPaths(): array
     {
-        yield ['../var/foo/bar'];
-        yield ['/var/../foo/bar'];
-        yield ['/var/foo../bar'];
-        yield ['/var/foo/..'];
-        yield ['/var/foo..bar'];
-        yield ['/var/foo/..bar'];
-        yield ['/var/foo/bar..'];
-        yield ['/var/..foo./bar'];
+        return [
+            ['../var/foo/bar'],
+            ['/var/../foo/bar'],
+            ['/var/foo../bar'],
+            ['/var/foo/..'],
+            ['/var/foo..bar'],
+            ['/var/foo/..bar'],
+            ['/var/foo/bar..'],
+            ['/var/..foo./bar'],
+        ];
     }
 
     /**
      * Test exceptions in check method.
      *
      * @param   string  $data  Paths to check.
-     *
-     * @dataProvider dataCheckExceptionPaths
      */
+    #[DataProvider('dataCheckExceptionPaths')]
     public function testCheckExceptionPaths($data)
     {
         $this->expectException(FilesystemException::class);
@@ -228,21 +231,23 @@ class PathTest extends FilesystemTestCase
     /**
      * Data provider for testClean() method.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function getCleanData(): \Generator
+    public static function getCleanData(): array
     {
-        yield 'Nothing to do.' => ['/var/www/foo/bar/baz', '/', '/var/www/foo/bar/baz'];
-        yield 'One backslash.' => ['/var/www/foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
-        yield 'Two and one backslashes.' => ['/var/www\\\\foo\\bar/baz', '/', '/var/www/foo/bar/baz'];
-        yield 'Mixed backslashes and double forward slashes.' => [
-            '/var\\/www//foo\\bar/baz',
-            '/',
-            '/var/www/foo/bar/baz',
+        return [
+            'Nothing to do.' => ['/var/www/foo/bar/baz', '/', '/var/www/foo/bar/baz'],
+            'One backslash.' => ['/var/www/foo\\bar/baz', '/', '/var/www/foo/bar/baz'],
+            'Two and one backslashes.' => ['/var/www\\\\foo\\bar/baz', '/', '/var/www/foo/bar/baz'],
+            'Mixed backslashes and double forward slashes.' => [
+                '/var\\/www//foo\\bar/baz',
+                '/',
+                '/var/www/foo/bar/baz',
+            ],
+            'UNC path.' => ['\\\\www\\docroot', '\\', '\\\\www\\docroot'],
+            'UNC path with forward slash.' => ['\\\\www/docroot', '\\', '\\\\www\\docroot'],
+            'UNC path with UNIX directory separator.' => ['\\\\www/docroot', '/', '/www/docroot'],
         ];
-        yield 'UNC path.' => ['\\\\www\\docroot', '\\', '\\\\www\\docroot'];
-        yield 'UNC path with forward slash.' => ['\\\\www/docroot', '\\', '\\\\www\\docroot'];
-        yield 'UNC path with UNIX directory separator.' => ['\\\\www/docroot', '/', '/www/docroot'];
     }
 
     /**
@@ -251,9 +256,8 @@ class PathTest extends FilesystemTestCase
      * @param   string  $input     Input Path
      * @param   string  $ds        Directory Separator
      * @param   string  $expected  Expected Output
-     *
-     * @dataProvider  getCleanData
      */
+    #[DataProvider('getCleanData')]
     public function testClean($input, $ds, $expected)
     {
         $this->assertEquals(
@@ -316,6 +320,7 @@ class PathTest extends FilesystemTestCase
      *
      * @dataProvider  getResolveData
      */
+    #[DataProvider('getResolveData')]
     public function testResolve($path, $expectedResult)
     {
         $this->assertEquals(str_replace("_DS_", DIRECTORY_SEPARATOR, $expectedResult), Path::resolve($path));
@@ -332,6 +337,7 @@ class PathTest extends FilesystemTestCase
      *
      * @dataProvider  getResolveExceptionData
      */
+    #[DataProvider('getResolveExceptionData')]
     public function testResolveThrowsExceptionIfRootIsLeft($path)
     {
         $this->expectException(FilesystemException::class);
@@ -346,7 +352,7 @@ class PathTest extends FilesystemTestCase
      *
      * @since   1.0
      */
-    public function getResolveData()
+    public static function getResolveData(): array
     {
         return [
             ["/", "_DS_"],
@@ -378,7 +384,7 @@ class PathTest extends FilesystemTestCase
      *
      * @since   1.0
      */
-    public function getResolveExceptionData()
+    public static function getResolveExceptionData(): array
     {
         return [
             ["../var/www/joomla"],
@@ -387,11 +393,11 @@ class PathTest extends FilesystemTestCase
     }
 
     /**
-     * @return  \string[][]
+     * @return  array
      *
      * @since   2.0.1
      */
-    public function casesForRemoveRoot()
+    public static function casesForRemoveRoot(): array
     {
         return [
             'linux' => [
@@ -429,12 +435,11 @@ class PathTest extends FilesystemTestCase
      * @param   string  $root      The leading path to remove
      * @param   string  $expected  The expected result
      *
-     * @dataProvider casesForRemoveRoot
-     *
      * @return  void
      *
      * @since   2.0.1
      */
+    #[DataProvider('casesForRemoveRoot')]
     public function testRemoveRoot($path, $root, $expected)
     {
         $prefix = 'A string containing an absolute path ';
