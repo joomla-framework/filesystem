@@ -13,6 +13,7 @@ use Joomla\Filesystem\Stream;
 use Joomla\Filesystem\Support\StringController;
 use Joomla\Test\TestHelper;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test class for Joomla\Filesystem\Stream.
@@ -380,19 +381,21 @@ class StreamTest extends FilesystemTestCase
     /**
      * Test data for seek test.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function dataSeek(): \Generator
+    public static function dataSeek(): array
     {
-        yield [0, 0, SEEK_SET, 0];
-        yield [0, 0, SEEK_CUR, 0];
-        yield [0, 0, SEEK_END, 35];
-        yield [0, 5, SEEK_SET, 5];
-        yield [0, 5, SEEK_CUR, 5];
-        yield [0, 5, SEEK_END, 30];
-        yield [5, 5, SEEK_SET, 5];
-        yield [5, 5, SEEK_CUR, 10];
-        yield [5, 5, SEEK_END, 30];
+        return [
+            [0, 0, SEEK_SET, 0],
+            [0, 0, SEEK_CUR, 0],
+            [0, 0, SEEK_END, 35],
+            [0, 5, SEEK_SET, 5],
+            [0, 5, SEEK_CUR, 5],
+            [0, 5, SEEK_END, 30],
+            [5, 5, SEEK_SET, 5],
+            [5, 5, SEEK_CUR, 10],
+            [5, 5, SEEK_END, 30],
+        ];
     }
 
     /**
@@ -402,9 +405,8 @@ class StreamTest extends FilesystemTestCase
      * @param   integer  $offset   Offset to seek
      * @param   integer  $whence   Seek type
      * @param   integer  $expPos   Expected pointer position
-     *
-     * @dataProvider dataSeek
      */
+    #[DataProvider('dataSeek')]
     public function testSeek($initial, $offset, $whence, $expPos)
     {
         $string = "Lorem ipsum dolor sit amet.\nFoo bar";
@@ -944,20 +946,22 @@ class StreamTest extends FilesystemTestCase
     /**
      * Test data for _getFilename test
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function data_getFilename(): \Generator
+    public static function data_getFilename(): array
     {
-        yield ['', '', 'foobar', 'r', false, false, 'foobar'];
-        yield ['', '', 'foobar', 'r', false, true, 'foobar'];
-        yield ['', '', 'foobar', 'w', false, false, 'foobar'];
-        yield ['', '', 'foobar', 'w', false, true, 'foobar'];
-        yield ['one', 'two', 'foobar', 'r', true, false, 'twofoobar'];
-        yield ['one', 'two', 'foobar', 'w', true, false, 'onefoobar'];
-        yield ['one', 'two', 'foobar', 'r', true, true, 'twofoobar'];
-        yield ['one', 'two', 'foobar', 'w', true, true, 'onefoobar'];
-        yield ['one', 'two', __DIR__ . '/foobar', 'r', true, false, 'two' . DIRECTORY_SEPARATOR . 'Tests/foobar'];
-        yield ['one', 'two', __DIR__ . '/foobar', 'w', true, false, 'one' . DIRECTORY_SEPARATOR . 'Tests/foobar'];
+        return [
+            ['', '', 'foobar', 'r', false, false, 'foobar'],
+            ['', '', 'foobar', 'r', false, true, 'foobar'],
+            ['', '', 'foobar', 'w', false, false, 'foobar'],
+            ['', '', 'foobar', 'w', false, true, 'foobar'],
+            ['one', 'two', 'foobar', 'r', true, false, 'twofoobar'],
+            ['one', 'two', 'foobar', 'w', true, false, 'onefoobar'],
+            ['one', 'two', 'foobar', 'r', true, true, 'twofoobar'],
+            ['one', 'two', 'foobar', 'w', true, true, 'onefoobar'],
+            ['one', 'two', __DIR__ . '/foobar', 'r', true, false, 'two' . DIRECTORY_SEPARATOR . 'Tests/foobar'],
+            ['one', 'two', __DIR__ . '/foobar', 'w', true, false, 'one' . DIRECTORY_SEPARATOR . 'Tests/foobar'],
+        ];
     }
 
     /**
@@ -970,9 +974,8 @@ class StreamTest extends FilesystemTestCase
      * @param   boolean  $use_prefix  Whether to use prefix or not
      * @param   boolean  $relative    filename is relative or not
      * @param   string   $expected    Expected path
-     *
-     * @dataProvider data_getFilename
      */
+    #[DataProvider('data_getFilename')]
     public function test_getFilename($wPrefix, $rPrefix, $filename, $mode, $use_prefix, $relative, $expected)
     {
         TestHelper::setValue($this->object, 'writeprefix', $wPrefix);

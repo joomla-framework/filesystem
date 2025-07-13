@@ -17,24 +17,6 @@ use PHPUnit\Framework\TestCase;
 class StringControllerTest extends TestCase
 {
     /**
-     * Test _getArray method.
-     */
-    public function test_getArray()
-    {
-        $strings = ['foo' => 'bar'];
-
-        TestHelper::setValue(new StringController(), 'strings', $strings);
-
-        $this->assertEquals(
-            $strings,
-            StringController::_getArray()
-        );
-
-        // Clean up static variable
-        TestHelper::setValue(new StringController(), 'strings', []);
-    }
-
-    /**
      * Test createRef method.
      */
     public function testCreateRef()
@@ -43,7 +25,7 @@ class StringControllerTest extends TestCase
 
         StringController::createRef('bar', $string);
 
-        $strings = StringController::_getArray();
+        $strings = StringController::getArray();
 
         $this->assertEquals(
             $string,

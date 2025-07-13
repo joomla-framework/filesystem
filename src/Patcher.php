@@ -84,7 +84,7 @@ class Patcher
     /**
      * Singleton instance of this class
      *
-     * @var    Patcher
+     * @var    ?Patcher
      * @since  1.0
      */
     protected static $instance;
@@ -325,11 +325,11 @@ class Patcher
      *
      * The internal array pointer of $lines is on the next line after the finding
      *
-     * @param   array   $lines    The udiff array of lines
-     * @param   string  $srcLine  The beginning of the patch for the source file
-     * @param   string  $srcSize  The size of the patch for the source file
-     * @param   string  $dstLine  The beginning of the patch for the destination file
-     * @param   string  $dstSize  The size of the patch for the destination file
+     * @param   array    $lines    The udiff array of lines
+     * @param   integer  $srcLine  The beginning of the patch for the source file
+     * @param   integer  $srcSize  The size of the patch for the source file
+     * @param   integer  $dstLine  The beginning of the patch for the destination file
+     * @param   integer  $dstSize  The size of the patch for the destination file
      *
      * @return  boolean  TRUE in case of success, false in case of failure
      *
@@ -370,13 +370,13 @@ class Patcher
     /**
      * Apply the patch
      *
-     * @param   array   $lines    The udiff array of lines
-     * @param   string  $src      The source file
-     * @param   string  $dst      The destination file
-     * @param   string  $srcLine  The beginning of the patch for the source file
-     * @param   string  $srcSize  The size of the patch for the source file
-     * @param   string  $dstLine  The beginning of the patch for the destination file
-     * @param   string  $dstSize  The size of the patch for the destination file
+     * @param   array    $lines    The udiff array of lines
+     * @param   string   $src      The source file
+     * @param   string   $dst      The destination file
+     * @param   integer  $srcLine  The beginning of the patch for the source file
+     * @param   integer  $srcSize  The size of the patch for the source file
+     * @param   integer  $dstLine  The beginning of the patch for the destination file
+     * @param   integer  $dstSize  The size of the patch for the destination file
      *
      * @return  void
      *
@@ -430,7 +430,7 @@ class Patcher
                 if ($srcSize > 0) {
                     $srcLines = & $this->getSource($src);
 
-                    if (!isset($srcLines)) {
+                    if (!$srcLines) {
                         throw new \RuntimeException(
                             'Unexisting source file: ' . Path::removeRoot($src)
                         );

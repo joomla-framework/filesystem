@@ -1,0 +1,253 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Loose comparison using \=\= between false and true will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Method Joomla\\Filesystem\\Clients\\FtpClient\:\:listDetails\(\) should return array\<string\> but returns list\<array\<string, int\|string\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Method Joomla\\Filesystem\\Clients\\FtpClient\:\:listDetails\(\) should return array\<string\> but returns string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Method Joomla\\Filesystem\\Clients\\FtpClient\:\:listNames\(\) should return string but returns array\.$#'
+			identifier: return.type
+			count: 2
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Method Joomla\\Filesystem\\Clients\\FtpClient\:\:listNames\(\) should return string but returns array\<int, string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fclose expects resource, FTP\\Connection given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fgets expects resource, FTP\\Connection given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fwrite expects resource, FTP\\Connection given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#2 \$port of method Joomla\\Filesystem\\Clients\\FtpClient\:\:connect\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#4 \$mode of function ftp_fget expects 0\|1, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#4 \$mode of function ftp_fput expects 0\|1, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#4 \$mode of function ftp_get expects 0\|1, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter \#4 \$mode of function ftp_put expects 0\|1, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Parameter &\$buffer by\-ref type of method Joomla\\Filesystem\\Clients\\FtpClient\:\:read\(\) expects string, string\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Property Joomla\\Filesystem\\Clients\\FtpClient\:\:\$conn \(FTP\\Connection\) does not accept resource\|false\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Property Joomla\\Filesystem\\Clients\\FtpClient\:\:\$responseCode \(int\) does not accept string\.$#'
+			identifier: assign.propertyType
+			count: 2
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: '#^Call to an undefined method Joomla\\Filesystem\\Stream\:\:getError\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: src/File.php
+
+		-
+			message: '#^Method Joomla\\Filesystem\\File\:\:move\(\) should return bool but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/File.php
+
+		-
+			message: '#^Parameter \#1 \$seconds of function set_time_limit expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/File.php
+
+		-
+			message: '#^Static property Joomla\\Filesystem\\File\:\:\$canFlushFileCache \(bool\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
+			count: 1
+			path: src/File.php
+
+		-
+			message: '#^Constant JPATH_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: src/Folder.php
+
+		-
+			message: '#^Parameter \#1 \$seconds of function set_time_limit expects int, string given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Folder.php
+
+		-
+			message: '#^Parameter \#3 \$path of static method Joomla\\Filesystem\\Folder\:\:copy\(\) expects string, null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Folder.php
+
+		-
+			message: '#^Binary operation "\*" between string\|null and int\<1, max\> results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: '#^Method Joomla\\Filesystem\\Helper\:\:getFileUploadMaxSize\(\) should return int but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: '#^Method Joomla\\Filesystem\\Helper\:\:getFileUploadMaxSizeWithUnit\(\) should return int but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: '#^Parameter \#1 \$num of function round expects float\|int, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: '#^Parameter \#2 \$associative of function get_headers expects bool, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: '#^Variable \$m might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: '#^Variable \$root in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: '#^Binary operation "&" between non\-empty\-string and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Path.php
+
+		-
+			message: '#^Binary operation "&" between non\-empty\-string and 2 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Path.php
+
+		-
+			message: '#^Binary operation "&" between non\-empty\-string and 4 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Path.php
+
+		-
+			message: '#^Call to function is_string\(\) with non\-empty\-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Path.php
+
+		-
+			message: '#^Constant JPATH_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: src/Path.php
+
+		-
+			message: '#^Constant JPATH_ROOT not found\.$#'
+			identifier: constant.notFound
+			count: 4
+			path: src/Stream.php
+
+		-
+			message: '#^Invalid array key type resource\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 2
+			path: src/Stream.php

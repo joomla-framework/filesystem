@@ -10,6 +10,7 @@ namespace Joomla\Filesystem\Tests\Stream;
 use Joomla\Filesystem\Stream\StringWrapper;
 use Joomla\Filesystem\Support\StringController;
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -224,26 +225,28 @@ class StringWrapperTest extends TestCase
     /**
      * Test data for test of stream_seek method.
      *
-     * @return  \Generator
+     * @return  array
      */
-    public function dataStream_seek(): \Generator
+    public static function dataStream_seek(): array
     {
-        yield [0, 0, 0, SEEK_SET, 0, true];
-        yield [0, 0, 0, SEEK_CUR, 0, true];
-        yield [0, 0, 0, SEEK_END, 0, true];
-        yield [0, 0, 7, SEEK_SET, 0, false];
-        yield [0, 0, 7, SEEK_CUR, 0, false];
-        yield [0, 0, 7, SEEK_END, 0, false];
-        yield [0, 5, 0, SEEK_SET, 0, true];
-        yield [0, 5, 0, SEEK_CUR, 0, true];
-        yield [0, 5, 0, SEEK_END, 5, true];
-        yield [0, 5, 2, SEEK_SET, 2, true];
-        yield [0, 5, 2, SEEK_CUR, 2, true];
-        yield [0, 5, 2, SEEK_END, 3, true];
-        yield [2, 5, 2, SEEK_SET, 2, true];
-        yield [2, 5, 2, SEEK_CUR, 4, true];
-        yield [2, 5, 2, SEEK_END, 3, true];
-        yield [2, 5, 5, SEEK_CUR, 2, false];
+        return [
+            [0, 0, 0, SEEK_SET, 0, true],
+            [0, 0, 0, SEEK_CUR, 0, true],
+            [0, 0, 0, SEEK_END, 0, true],
+            [0, 0, 7, SEEK_SET, 0, false],
+            [0, 0, 7, SEEK_CUR, 0, false],
+            [0, 0, 7, SEEK_END, 0, false],
+            [0, 5, 0, SEEK_SET, 0, true],
+            [0, 5, 0, SEEK_CUR, 0, true],
+            [0, 5, 0, SEEK_END, 5, true],
+            [0, 5, 2, SEEK_SET, 2, true],
+            [0, 5, 2, SEEK_CUR, 2, true],
+            [0, 5, 2, SEEK_END, 3, true],
+            [2, 5, 2, SEEK_SET, 2, true],
+            [2, 5, 2, SEEK_CUR, 4, true],
+            [2, 5, 2, SEEK_END, 3, true],
+            [2, 5, 5, SEEK_CUR, 2, false],
+        ];
     }
 
     /**
@@ -255,9 +258,8 @@ class StringWrapperTest extends TestCase
      * @param   integer  $whence     Seek type
      * @param   integer  $expPos     Expected pointer position
      * @param   integer  $expReturn  Expected return value
-     *
-     * @dataProvider dataStream_seek
      */
+    #[DataProvider('dataStream_seek')]
     public function testStream_seek($currPos, $currLen, $offset, $whence, $expPos, $expReturn)
     {
         TestHelper::setValue($this->object, 'pos', $currPos);
