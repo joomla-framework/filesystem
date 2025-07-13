@@ -1,0 +1,286 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\Clients\\\\FtpClient\\:\\:listDetails\\(\\) should return array\\<string\\> but returns array\\<int\\<0, max\\>, array\\<string, int\\|string\\>\\>\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\Clients\\\\FtpClient\\:\\:listDetails\\(\\) should return array\\<string\\> but returns string\\|null\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\Clients\\\\FtpClient\\:\\:listNames\\(\\) should return string but returns array\\.$#"
+			count: 2
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\Clients\\\\FtpClient\\:\\:listNames\\(\\) should return string but returns array\\<int, string\\>\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, FTP\\\\Connection given\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fgets expects resource, FTP\\\\Connection given\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fwrite expects resource, FTP\\\\Connection given\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Parameter \\#2 \\$port of method Joomla\\\\Filesystem\\\\Clients\\\\FtpClient\\:\\:connect\\(\\) expects int, string given\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Clients\\\\FtpClient\\:\\:\\$conn \\(FTP\\\\Connection\\) does not accept resource\\|false\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Clients\\\\FtpClient\\:\\:\\$responseCode \\(int\\) does not accept string\\.$#"
+			count: 2
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Ternary operator condition is always false\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Clients/FtpClient.php
+
+		-
+			message: "#^Call to an undefined method Joomla\\\\Filesystem\\\\Stream\\:\\:getError\\(\\)\\.$#"
+			count: 3
+			path: src/File.php
+
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\File\\:\\:move\\(\\) should return bool but returns string\\.$#"
+			count: 1
+			path: src/File.php
+
+		-
+			message: "#^Parameter \\#1 \\$seconds of function set_time_limit expects int, string given\\.$#"
+			count: 1
+			path: src/File.php
+
+		-
+			message: "#^Static property Joomla\\\\Filesystem\\\\File\\:\\:\\$canFlushFileCache \\(bool\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: src/File.php
+
+		-
+			message: "#^Constant JPATH_ROOT not found\\.$#"
+			count: 1
+			path: src/Folder.php
+
+		-
+			message: "#^Parameter \\#1 \\$seconds of function set_time_limit expects int, string given\\.$#"
+			count: 3
+			path: src/Folder.php
+
+		-
+			message: "#^Parameter \\#3 \\$path of static method Joomla\\\\Filesystem\\\\Folder\\:\\:copy\\(\\) expects string, null given\\.$#"
+			count: 1
+			path: src/Folder.php
+
+		-
+			message: "#^Binary operation \"\\*\" between string\\|null and int\\<1, max\\> results in an error\\.$#"
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\Helper\\:\\:getFileUploadMaxSize\\(\\) should return int but returns float\\.$#"
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\Helper\\:\\:getFileUploadMaxSizeWithUnit\\(\\) should return int but returns string\\.$#"
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: "#^Parameter \\#1 \\$num of function round expects float\\|int, string\\|null given\\.$#"
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: "#^Parameter \\#2 \\$associative of function get_headers expects bool, int given\\.$#"
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between float and 0 will always evaluate to false\\.$#"
+			count: 1
+			path: src/Helper.php
+
+		-
+			message: "#^Static property Joomla\\\\Filesystem\\\\Patcher\\:\\:\\$instance \\(Joomla\\\\Filesystem\\\\Patcher\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: "#^Variable \\$m might not be defined\\.$#"
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: "#^Variable \\$root in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: "#^Variable \\$srcLines in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: "#^Variable \\$srcLines might not be defined\\.$#"
+			count: 1
+			path: src/Patcher.php
+
+		-
+			message: "#^Binary operation \"&\" between non\\-empty\\-string and 1 results in an error\\.$#"
+			count: 1
+			path: src/Path.php
+
+		-
+			message: "#^Binary operation \"&\" between non\\-empty\\-string and 2 results in an error\\.$#"
+			count: 1
+			path: src/Path.php
+
+		-
+			message: "#^Binary operation \"&\" between non\\-empty\\-string and 4 results in an error\\.$#"
+			count: 1
+			path: src/Path.php
+
+		-
+			message: "#^Constant JPATH_ROOT not found\\.$#"
+			count: 1
+			path: src/Path.php
+
+		-
+			message: "#^Variable \\$filemode in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 2
+			path: src/Path.php
+
+		-
+			message: "#^Variable \\$foldermode in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Path.php
+
+		-
+			message: "#^Constant JPATH_ROOT not found\\.$#"
+			count: 4
+			path: src/Stream.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 4
+			path: src/Stream.php
+
+		-
+			message: "#^Invalid array key type resource\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Method Joomla\\\\Filesystem\\\\Stream\\:\\:getFileHandle\\(\\) should return Joomla\\\\Filesystem\\\\File but returns resource\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 8
+			path: src/Stream.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Parameter \\#2 \\$context of function unlink expects resource\\|null, string given\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Parameter \\#3 \\$context of function copy expects resource\\|null, string given\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Parameter \\#3 \\$context of function rename expects resource\\|null, string given\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Parameter \\#3 \\$use_include_path of function gzopen expects int, bool given\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Parameter \\#4 \\$context of function fopen expects resource\\|null, string given\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Stream\\:\\:\\$context \\(string\\) does not accept null\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Stream\\:\\:\\$context \\(string\\) does not accept resource\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Stream\\:\\:\\$fh \\(resource\\) does not accept null\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Stream\\:\\:\\$filename \\(string\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: src/Stream.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 2
+			path: src/Stream.php
+
+		-
+			message: "#^Binary operation \"\\-\" between string and int results in an error\\.$#"
+			count: 1
+			path: src/Stream/StringWrapper.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Stream\\\\StringWrapper\\:\\:\\$len \\(string\\) does not accept int\\<0, max\\>\\.$#"
+			count: 1
+			path: src/Stream/StringWrapper.php
+
+		-
+			message: "#^Property Joomla\\\\Filesystem\\\\Stream\\\\StringWrapper\\:\\:\\$pos \\(int\\) on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/Stream/StringWrapper.php
