@@ -47,7 +47,7 @@ class StringWrapper
     /**
      * Enter description here ...
      *
-     * @var   string
+     * @var    string
      * @since  1.3.0
      */
     protected $options;
@@ -55,7 +55,7 @@ class StringWrapper
     /**
      * Enter description here ...
      *
-     * @var   string
+     * @var    string
      * @since  1.3.0
      */
     protected $openedPath;
@@ -63,7 +63,7 @@ class StringWrapper
     /**
      * Current position
      *
-     * @var   integer
+     * @var    ?integer
      * @since  1.3.0
      */
     protected $pos;
@@ -71,7 +71,7 @@ class StringWrapper
     /**
      * Length of the string
      *
-     * @var   string
+     * @var    integer
      * @since  1.3.0
      */
     protected $len;

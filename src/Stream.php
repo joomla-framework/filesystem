@@ -56,7 +56,7 @@ class Stream
     /**
      * Filename
      *
-     * @var    string
+     * @var    ?string
      * @since  1.0
      */
     protected $filename;
@@ -98,7 +98,7 @@ class Stream
     /**
      * File Handle
      *
-     * @var    resource
+     * @var    ?resource
      * @since  1.0
      */
     protected $fh;
@@ -114,7 +114,7 @@ class Stream
     /**
      * Context to use when opening the connection
      *
-     * @var    string
+     * @var    ?resource
      * @since  1.0
      */
     protected $context;
@@ -278,7 +278,7 @@ class Stream
         switch ($this->processingmethod) {
             // Gzip doesn't support contexts or streams
             case 'gz':
-                $this->fh = gzopen($filename, $mode, $useIncludePath);
+                $this->fh = gzopen($filename, $mode, $useIncludePath ? 1 : 0);
 
                 break;
 
@@ -1168,11 +1168,11 @@ class Stream
     /**
      * Moves a file
      *
-     * @param   string    $src        The file path to move from.
-     * @param   string    $dest       The file path to move to.
-     * @param   resource  $context    A valid context resource (optional) created with stream_context_create.
-     * @param   boolean   $usePrefix  Controls the use of a prefix (optional).
-     * @param   boolean   $relative   Determines if the filename given is relative. Relative paths do not have JPATH_ROOT stripped.
+     * @param   string     $src        The file path to move from.
+     * @param   string     $dest       The file path to move to.
+     * @param   ?resource  $context    A valid context resource (optional) created with stream_context_create.
+     * @param   boolean    $usePrefix  Controls the use of a prefix (optional).
+     * @param   boolean    $relative   Determines if the filename given is relative. Relative paths do not have JPATH_ROOT stripped.
      *
      * @return  boolean
      *
@@ -1370,7 +1370,7 @@ class Stream
     /**
      * Return the internal file handle
      *
-     * @return  File handler
+     * @return  ?resource handler
      *
      * @since   1.0
      */
