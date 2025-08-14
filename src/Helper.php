@@ -286,8 +286,8 @@ class Helper
      */
     public static function getFileUploadMaxSize()
     {
-        $maxSize   = self::parseSize(\ini_get('post_max_size'));
-        $uploadMax = self::parseSize(\ini_get('upload_max_filesize'));
+        $maxSize   = (int) self::parseSize(\ini_get('post_max_size'));
+        $uploadMax = (int) self::parseSize(\ini_get('upload_max_filesize'));
 
         if ($uploadMax > 0 && ($uploadMax < $maxSize || $maxSize === 0)) {
             $maxSize = $uploadMax;
