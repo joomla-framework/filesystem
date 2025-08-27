@@ -555,7 +555,7 @@ abstract class Folder
      *
      * @return  boolean  True if path is a folder
      */
-    public static function exists($path): bool
+    public static function exists(string $path): bool
     {
         return is_dir(Path::clean($path));
     }

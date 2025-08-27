@@ -381,7 +381,7 @@ class File
      * @return  boolean  True if path is a file
      *
      */
-    public static function exists($file): bool
+    public static function exists(string $file): bool
     {
         return is_file(Path::clean($file));
     }
