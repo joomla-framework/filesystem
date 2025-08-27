@@ -921,4 +921,35 @@ class FolderTest extends FilesystemTestCase
             Folder::makeSafe('test1/testdirectory')
         );
     }
+
+
+    /**
+     * Test exists method.
+     */
+    public function testExistsForExistingFolder()
+    {
+        $name = 'tempFolder';
+
+        if (!Folder::create($this->testPath . '/' . $name)) {
+            $this->markTestSkipped('The test directory could not be created.');
+        }
+
+        $this->assertTrue(
+            Folder::exists($this->testPath . '/' . $name),
+            'The folder exists.'
+        );
+    }
+
+    /**
+     * Test exists method.
+     */
+    public function testExistsForNonexistingFolder()
+    {
+        $name = 'nonExistingTempFolder';
+
+        $this->assertFalse(
+            Folder::exists($this->testPath . '/' . $name),
+            'The folder does not exists.'
+        );
+    }
 }

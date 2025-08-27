@@ -547,4 +547,16 @@ abstract class Folder
 
         return preg_replace($regex, '', $path);
     }
+
+    /**
+     * Wrapper for the standard is_dir function
+     *
+     * @param   string  $path  Folder path
+     *
+     * @return  boolean  True if path is a folder
+     */
+    public static function exists(string $path): bool
+    {
+        return is_dir(Path::clean($path));
+    }
 }
