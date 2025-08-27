@@ -372,4 +372,17 @@ class File
             opcache_invalidate($file, true);
         }
     }
+
+    /**
+     * Wrapper for the standard file_exists function
+     *
+     * @param   string  $file  File path
+     *
+     * @return  boolean  True if path is a file
+     *
+     */
+    public static function exists(string $file): bool
+    {
+        return is_file(Path::clean($file));
+    }
 }

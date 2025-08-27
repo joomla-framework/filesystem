@@ -571,4 +571,35 @@ class FileTest extends FilesystemTestCase
             File::upload($this->testPath . '/' . $name . '.txt', $this->testPath . '/' . $name . '/' . $uploadedFileName)
         );
     }
+
+    /**
+     * Test exists method.
+     */
+    public function testExistsForExistingFile()
+    {
+        $name = 'tempFile';
+        $data = 'Lorem ipsum dolor sit amet';
+
+        if (!File::write($this->testPath . '/' . $name, $data)) {
+            $this->markTestSkipped('The test file could not be created.');
+        }
+
+        $this->assertTrue(
+            File::exists($this->testPath . '/' . $name),
+            'The file exists.'
+        );
+    }
+
+    /**
+     * Test exists method.
+     */
+    public function testExistsForNonexistingFile()
+    {
+        $name = 'nonExistingTempFile';
+
+        $this->assertFalse(
+            File::exists($this->testPath . '/' . $name),
+            'The file does not exists.'
+        );
+    }
 }
