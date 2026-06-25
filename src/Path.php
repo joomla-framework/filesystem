@@ -150,6 +150,11 @@ class Path
      */
     public static function check($path, $basePath = '')
     {
+        // If a JPATH_ROOT constant is defined, it's used as fallback basePath
+        if ($basePath == '' && defined('JPATH_ROOT')) {
+            $basePath = JPATH_ROOT;
+        }
+
         if (strpos($path, '..') !== false) {
             throw new FilesystemException(
                 sprintf(
