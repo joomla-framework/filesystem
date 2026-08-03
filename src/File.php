@@ -25,7 +25,7 @@ class File
      * @since 3.3.0
      */
     public const FORBIDDEN_FILE_EXTENSIONS = [
-        'php', 'phps', 'pht', 'phtml', 'php3', 'php4', 'php5', 'php6', 'php7', 'asp',
+        'php', 'phps', 'pht', 'phtml', 'php3', 'php4', 'php5', 'php6', 'php7', 'asp', 'shtml',
         'php8', 'php9', 'phar', 'inc', 'pl', 'cgi', 'fcgi', 'java', 'jar', 'py', 'aspx',
     ];
 
