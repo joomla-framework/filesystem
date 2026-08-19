@@ -240,7 +240,7 @@ class Path
         $ssp = ini_get('session.save_path');
 
         // Try to find a writable directory
-        $dir = is_writable('/tmp') ? '/tmp' : false;
+        $dir = is_writable(sys_get_temp_dir()) ? sys_get_temp_dir() : false;
         $dir = !$dir && is_writable('.') ? '.' : $dir;
         $dir = !$dir && is_writable($ssp) ? $ssp : $dir;
 
