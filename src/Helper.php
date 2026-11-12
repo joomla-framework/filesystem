@@ -342,9 +342,16 @@ class Helper
      */
     public static function parseBytesUnit($bytes)
     {
-        $base     = log($bytes) / log(1024);
+        // log() is not defined for 0 and negative numbers
+        if ($bytes <= 0) {
+            return '0';
+        }
+
         $suffixes = ['', 'k', 'M', 'G', 'T'];
 
-        return round(pow(1024, $base - floor($base)), 0) . $suffixes[floor($base)];
+        // Use the largest unit we have for anything bigger
+        $exponent = (int) min(max(floor(log($bytes, 1024)), 0), \count($suffixes) - 1);
+
+        return round($bytes / pow(1024, $exponent), 0) . $suffixes[$exponent];
     }
 }

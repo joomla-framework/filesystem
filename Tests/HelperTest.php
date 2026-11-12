@@ -8,6 +8,7 @@
 namespace Joomla\Filesystem\Tests;
 
 use Joomla\Filesystem\Helper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -58,6 +59,36 @@ class HelperTest extends TestCase
             Helper::ftpChmod('ftp://ftp.mozilla.org/index.html', 0777),
             'Line:' . __LINE__ . ' for an inaccessible remote file, false should be returned.'
         );
+    }
+
+    /**
+     * Test data for parseBytesUnit method.
+     *
+     * @return  array
+     */
+    public static function dataParseBytesUnit(): array
+    {
+        return [
+            'zero'              => [0, '0'],
+            'bytes'             => [512, '512'],
+            'kilobytes'         => [2048, '2k'],
+            'megabytes rounded' => [1.5 * 1024 * 1024, '2M'],
+            'gigabytes'         => [8 * 1024 ** 3, '8G'],
+            'terabytes'         => [1024 ** 4, '1T'],
+            'petabyte'          => [1024 ** 5, '1024T'],
+        ];
+    }
+
+    /**
+     * Test parseBytesUnit method.
+     *
+     * @param   float   $bytes     The number of bytes
+     * @param   string  $expected  The expected result
+     */
+    #[DataProvider('dataParseBytesUnit')]
+    public function testParseBytesUnit($bytes, string $expected)
+    {
+        $this->assertSame($expected, Helper::parseBytesUnit($bytes));
     }
 
     /**
