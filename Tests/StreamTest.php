@@ -113,6 +113,34 @@ class StreamTest extends FilesystemTestCase
     }
 
     /**
+     * Tests getStream method and writing through streams without the JPATH_ROOT constant.
+     */
+    public function testGetStreamWithoutJpathRoot()
+    {
+        $script = tempnam(sys_get_temp_dir(), 'jfs');
+        file_put_contents(
+            $script,
+            '<?php
+            require ' . var_export(dirname(__DIR__) . '/vendor/autoload.php', true) . ';
+            $stream = Joomla\Filesystem\Stream::getStream();
+            $file   = tempnam(sys_get_temp_dir(), "jfs");
+            Joomla\Filesystem\File::write($file, "written", true);
+            echo file_get_contents($file), "\n";
+            unlink($file);
+            echo var_export(defined("JPATH_ROOT"), true);'
+        );
+
+        $process = proc_open([PHP_BINARY, $script], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        $output  = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+        unlink($script);
+
+        $this->assertSame("written\nfalse", str_replace("\r\n", "\n", $output));
+    }
+
+    /**
      * Test open method with no filename.
      */
     public function testOpenNoFilenameException()
