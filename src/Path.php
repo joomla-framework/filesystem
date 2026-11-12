@@ -356,25 +356,36 @@ class Path
      * Remove all references to root directory path and the system tmp path from a message
      *
      * @param   string  $message        The message to be cleaned
-     * @param   string  $rootDirectory  Optional root directory, defaults to JPATH_ROOT
+     * @param   string  $rootDirectory  Optional root directory, defaults to JPATH_ROOT if that constant is defined
      *
      * @return  string
      * @since   2.0.1
      */
     public static function removeRoot($message, $rootDirectory = null)
     {
-        if (empty($rootDirectory)) {
+        if (empty($rootDirectory) && \defined('JPATH_ROOT')) {
             $rootDirectory = JPATH_ROOT;
         }
 
+        // Match the directory literally, with any kind and number of separators between its segments
         $makePattern = static function ($dir) {
-            return '~' . str_replace('~', '\\~', preg_replace('~[/\\\\]+~', '.', $dir)) . '~';
+            $segments = array_map(
+                static function ($segment) {
+                    return preg_quote($segment, '~');
+                },
+                preg_split('~[/\\\\]+~', $dir)
+            );
+
+            return '~' . implode('[/\\\\]+', $segments) . '~';
         };
 
-        $replacements = [
-            $makePattern(static::clean($rootDirectory)) => '[ROOT]',
-            $makePattern(sys_get_temp_dir())            => '[TMP]',
-        ];
+        $replacements = [];
+
+        if (!empty($rootDirectory)) {
+            $replacements[$makePattern(static::clean($rootDirectory))] = '[ROOT]';
+        }
+
+        $replacements[$makePattern(sys_get_temp_dir())] = '[TMP]';
 
         return preg_replace(array_keys($replacements), array_values($replacements), $message);
     }
