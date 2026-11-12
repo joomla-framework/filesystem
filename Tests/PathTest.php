@@ -425,6 +425,21 @@ class PathTest extends FilesystemTestCase
                 'root'     => 'C:\\Documents\\Sites~1',
                 'expected' => '[ROOT]\\sub\\dir\\file.ext',
             ],
+            'brackets' => [
+                'path'     => '/var/[www/sub/file.ext',
+                'root'     => '/var/[www',
+                'expected' => '[ROOT]/sub/file.ext',
+            ],
+            'parentheses' => [
+                'path'     => 'C:\\Program Files (x86)\\app\\sub\\file.ext',
+                'root'     => 'C:\\Program Files (x86)\\app',
+                'expected' => '[ROOT]\\sub\\file.ext',
+            ],
+            'dot' => [
+                'path'     => '/var/wwwXhtml/sub/file.ext',
+                'root'     => '/var/www.html',
+                'expected' => '/var/wwwXhtml/sub/file.ext',
+            ],
         ];
     }
 
@@ -449,5 +464,32 @@ class PathTest extends FilesystemTestCase
             $prefix . $expected . $suffix,
             Path::removeRoot($prefix . $path . $suffix, $root)
         );
+    }
+
+    /**
+     * @testdox  Messages and exceptions work without the JPATH_ROOT constant
+     *
+     * @return  void
+     */
+    public function testRemoveRootWithoutJpathRoot()
+    {
+        $script = tempnam(sys_get_temp_dir(), 'jfs');
+        file_put_contents(
+            $script,
+            '<?php
+            require ' . var_export(dirname(__DIR__) . '/vendor/autoload.php', true) . ';
+            echo Joomla\Filesystem\Path::removeRoot("in " . sys_get_temp_dir() . "/file"), "\n";
+            echo (new Joomla\Filesystem\Exception\FilesystemException("Failed"))->getMessage(), "\n";
+            echo var_export(defined("JPATH_ROOT"), true);'
+        );
+
+        $process = proc_open([PHP_BINARY, $script], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        $output  = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+        unlink($script);
+
+        $this->assertSame("in [TMP]/file\nFailed\nfalse", str_replace("\r\n", "\n", $output));
     }
 }
