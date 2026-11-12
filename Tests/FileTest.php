@@ -393,6 +393,8 @@ class FileTest extends FilesystemTestCase
         $name      = 'tempFile';
         $movedName = 'tempCopiedFileName';
 
+        $this->expectUserDeprecationMessageMatches('/File::move\(\) returns an error message if the source file cannot be read/');
+
         $this->assertSame(
             'Cannot find source file.',
             File::move($name, $movedName, $this->testPath)

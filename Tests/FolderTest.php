@@ -112,6 +112,7 @@ class FolderTest extends FilesystemTestCase
     public function testCopyDestExistAndNotForced()
     {
         $this->expectException(FilesystemException::class);
+        $this->expectExceptionMessage('Destination folder already exists');
 
         $name             = 'tempFolder';
         $copiedFolderName = 'tempCopiedFolderName';
@@ -248,6 +249,8 @@ class FolderTest extends FilesystemTestCase
         $name            = 'tempFolder';
         $movedFolderName = 'tempMovedFolderName';
 
+        $this->expectUserDeprecationMessageMatches('/Folder::move\(\) returns an error message on failure/');
+
         $this->assertSame(
             'Cannot find source folder',
             Folder::move($name, $movedFolderName, $this->testPath)
@@ -273,6 +276,8 @@ class FolderTest extends FilesystemTestCase
         if (!Folder::create($this->testPath . '/' . $movedFolderName)) {
             $this->markTestSkipped('The test directory could not be created.');
         }
+
+        $this->expectUserDeprecationMessageMatches('/Folder::move\(\) returns an error message on failure/');
 
         $this->assertSame(
             'Folder already exists',
