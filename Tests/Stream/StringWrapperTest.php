@@ -285,4 +285,34 @@ class StringWrapperTest extends TestCase
             $this->object->stream_flush()
         );
     }
+
+    /**
+     * Test that the wrapper can be used through fopen() without deprecation notices.
+     */
+    public function testUseThroughFopenWithoutDeprecations()
+    {
+        $string = 'hello';
+        StringController::createRef('jfs-test', $string);
+        $deprecations = [];
+
+        set_error_handler(
+            static function ($errno, $errstr) use (&$deprecations) {
+                $deprecations[] = $errstr;
+
+                return true;
+            },
+            E_DEPRECATED | E_USER_DEPRECATED
+        );
+
+        try {
+            $handle  = fopen('string://jfs-test', 'r');
+            $content = fread($handle, 10);
+            fclose($handle);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame('hello', $content);
+        $this->assertSame([], $deprecations);
+    }
 }

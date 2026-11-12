@@ -21,6 +21,14 @@ use Joomla\Filesystem\Support\StringController;
 class StringWrapper
 {
     /**
+     * The stream context, set by PHP
+     *
+     * @var    resource|null
+     * @since  __DEPLOY_VERSION__
+     */
+    public $context;
+
+    /**
      * The current string
      *
      * @var   string

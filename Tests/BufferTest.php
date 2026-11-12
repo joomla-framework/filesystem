@@ -328,4 +328,41 @@ class BufferTest extends TestCase
             $this->object->position
         );
     }
+
+    /**
+     * Test that the buffer can be used through fopen() without deprecation notices.
+     */
+    public function testUseThroughFopenWithoutDeprecations()
+    {
+        $deprecations = [];
+
+        set_error_handler(
+            static function ($errno, $errstr) use (&$deprecations) {
+                $deprecations[] = $errstr;
+
+                return true;
+            },
+            E_DEPRECATED | E_USER_DEPRECATED
+        );
+
+        try {
+            $handle = fopen('buffer://jfs-test', 'w+');
+            fwrite($handle, 'hello');
+            rewind($handle);
+            $content = fread($handle, 10);
+            $eof     = feof($handle);
+            fclose($handle);
+
+            $handle = fopen('buffer://jfs-empty', 'r');
+            $empty  = fread($handle, 10);
+            fclose($handle);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame('hello', $content);
+        $this->assertTrue($eof);
+        $this->assertSame('', $empty);
+        $this->assertSame([], $deprecations);
+    }
 }
