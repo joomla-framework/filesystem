@@ -155,7 +155,8 @@ class Path
             $basePath = JPATH_ROOT;
         }
 
-        if (strpos($path, '..') !== false) {
+        // Reject ".." as a path segment, but not as part of a name such as "file..txt"
+        if (preg_match('#(^|[/\\\\])\.\.([/\\\\]|$)#', $path)) {
             throw new FilesystemException(
                 sprintf(
                     '%s() - Use of relative paths not permitted',
@@ -168,7 +169,7 @@ class Path
         $path = static::clean($path);
 
         // If a base path is defined then check the cleaned path is not outside of root
-        if (($basePath != '') && strpos($path, static::clean($basePath)) !== 0) {
+        if (($basePath != '') && !static::isBelow($path, $basePath)) {
             throw new FilesystemException(
                 sprintf(
                     '%1$s() - Snooping out of bounds @ %2$s',
@@ -180,6 +181,46 @@ class Path
         }
 
         return $path;
+    }
+
+    /**
+     * Checks whether a path is the given root directory or inside of it.
+     *
+     * Both paths are cleaned and compared segment by segment, so a sibling directory whose name merely starts with
+     * the name of the root (e.g. /var/www/site_backup for the root /var/www/site) is not inside the root. Paths
+     * containing a ".." segment are never considered to be inside. The comparison is lexical: symbolic links are not
+     * followed, use realpath() first if that matters. On Windows the comparison is case-insensitive.
+     *
+     * @param   string  $path  The path to check.
+     * @param   string  $root  The root directory.
+     *
+     * @return  boolean  True if $path is $root or a path below it.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function isBelow(string $path, string $root): bool
+    {
+        $path = static::clean($path);
+        $root = static::clean($root);
+
+        if ($path === '' || $root === '' || preg_match('#(^|[/\\\\])\.\.([/\\\\]|$)#', $path)) {
+            return false;
+        }
+
+        if (\DIRECTORY_SEPARATOR === '\\') {
+            $path = strtolower($path);
+            $root = strtolower($root);
+        }
+
+        $trimmedRoot = str_ends_with($root, '://') ? $root : rtrim($root, '/\\');
+
+        if ($path === $trimmedRoot) {
+            return true;
+        }
+
+        $separator = str_ends_with($trimmedRoot, '://') ? '' : \DIRECTORY_SEPARATOR;
+
+        return str_starts_with($path, $trimmedRoot . $separator);
     }
 
     /**
@@ -301,7 +342,7 @@ class Path
              * non-registered directories are not accessible via directory
              * traversal attempts.
              */
-            if (file_exists($fullname) && substr($fullname, 0, \strlen($path)) == $path) {
+            if ($path !== false && $fullname !== false && file_exists($fullname) && static::isBelow($fullname, $path)) {
                 return $fullname;
             }
         }

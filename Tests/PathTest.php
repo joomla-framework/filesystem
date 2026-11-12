@@ -175,6 +175,13 @@ class PathTest extends FilesystemTestCase
             ['/var/foo/bar'],
             ['/var/fo.o/bar'],
             ['/var/./bar'],
+            ['/var/foo../bar'],
+            ['/var/foo..bar'],
+            ['/var/foo/..bar'],
+            ['/var/foo/bar..'],
+            ['/var/..foo./bar'],
+            ['/var/foo/file..txt'],
+            ['../var/foo/bar'],
         ];
     }
 
@@ -204,14 +211,11 @@ class PathTest extends FilesystemTestCase
     public static function dataCheckExceptionPaths(): array
     {
         return [
-            ['../var/foo/bar'],
+            ['/../var/foo/bar'],
             ['/var/../foo/bar'],
-            ['/var/foo../bar'],
             ['/var/foo/..'],
-            ['/var/foo..bar'],
-            ['/var/foo/..bar'],
-            ['/var/foo/bar..'],
-            ['/var/..foo./bar'],
+            ['/var/foo/../bar'],
+            ['/var/foo\\..\\bar'],
         ];
     }
 
@@ -226,6 +230,62 @@ class PathTest extends FilesystemTestCase
         $this->expectException(FilesystemException::class);
 
         Path::check(__DIR__ . $data);
+    }
+
+    /**
+     * Test that check() does not accept a sibling directory whose name starts with the base path.
+     */
+    public function testCheckRejectsSiblingDirectory()
+    {
+        $this->expectException(FilesystemException::class);
+
+        Path::check('/var/www/site_backup/x', '/var/www/site');
+    }
+
+    /**
+     * Test that check() accepts names containing two dots.
+     */
+    public function testCheckAcceptsDotsInNames()
+    {
+        $this->assertSame(Path::clean('/var/foo..bar/www'), Path::check('/var/foo..bar/www', '/var'));
+    }
+
+    /**
+     * Test data for isBelow method.
+     *
+     * @return  array
+     */
+    public static function dataIsBelow(): array
+    {
+        return [
+            'same directory'          => ['/var/www/site', '/var/www/site', true],
+            'trailing separator'      => ['/var/www/site/', '/var/www/site', true],
+            'child'                   => ['/var/www/site/x', '/var/www/site', true],
+            'root with separator'     => ['/var/www/site/x', '/var/www/site/', true],
+            'mixed separators'        => ['/var/www\\site\\x', '/var/www/site', true],
+            'filesystem root'         => ['/var', '/', true],
+            'stream'                  => ['vfs://root/x', 'vfs://root', true],
+            'sibling'                 => ['/var/www/site_backup/x', '/var/www/site', false],
+            'sibling without child'   => ['/var/www/site_backup', '/var/www/site', false],
+            'parent'                  => ['/var/www', '/var/www/site', false],
+            'parent segment'          => ['/var/www/site/../site_backup', '/var/www/site', false],
+            'dots in name'            => ['/var/www/site/a..b', '/var/www/site', true],
+            'empty root'              => ['/var/www', '', false],
+            'empty path'              => ['', '/var/www', false],
+        ];
+    }
+
+    /**
+     * Test isBelow method.
+     *
+     * @param   string   $path      The path to check
+     * @param   string   $root      The root directory
+     * @param   boolean  $expected  The expected result
+     */
+    #[DataProvider('dataIsBelow')]
+    public function testIsBelow(string $path, string $root, bool $expected)
+    {
+        $this->assertSame($expected, Path::isBelow($path, $root));
     }
 
     /**
@@ -306,6 +366,26 @@ class PathTest extends FilesystemTestCase
             __FILE__,
             Path::find(__DIR__, 'PathTest.php')
         );
+    }
+
+    /**
+     * Test that find() does not return files from a sibling directory whose name starts with the search path.
+     */
+    public function testFindRejectsSiblingDirectory()
+    {
+        $base = sys_get_temp_dir() . '/jfs-find-' . getmypid();
+        mkdir($base . '/site', 0777, true);
+        mkdir($base . '/site_backup');
+        file_put_contents($base . '/site_backup/secret', 'secret');
+
+        try {
+            $this->assertFalse(Path::find([$base . '/site'], '../site_backup/secret'));
+        } finally {
+            unlink($base . '/site_backup/secret');
+            rmdir($base . '/site_backup');
+            rmdir($base . '/site');
+            rmdir($base);
+        }
     }
 
     /**
