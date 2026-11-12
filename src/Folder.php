@@ -52,7 +52,7 @@ abstract class Folder
         }
 
         if (is_dir(Path::clean($dest)) && !$force) {
-            throw new FilesystemException('Destination folder not found', -1);
+            throw new FilesystemException('Destination folder already exists', -1);
         }
 
         // Make sure the destination exists
@@ -278,9 +278,11 @@ abstract class Folder
      * @param   string   $path        An optional base path to prefix to the file names.
      * @param   boolean  $useStreams  Optionally use streams.
      *
-     * @return  string|boolean  Error message on false or boolean true on success.
+     * @return  string|boolean  Error message on false or boolean true on success. Returning the error message is
+     *                          deprecated, 5.0 will throw a FilesystemException instead.
      *
      * @since   1.0
+     * @throws  FilesystemException
      */
     public static function move($src, $dest, $path = '', $useStreams = false)
     {
@@ -290,11 +292,11 @@ abstract class Folder
         }
 
         if (!is_dir(Path::clean($src))) {
-            return 'Cannot find source folder';
+            return self::deprecatedMoveError('Cannot find source folder');
         }
 
         if (is_dir(Path::clean($dest))) {
-            return 'Folder already exists';
+            return self::deprecatedMoveError('Folder already exists');
         }
 
         if ($useStreams) {
@@ -304,10 +306,32 @@ abstract class Folder
         }
 
         if (!@rename($src, $dest)) {
-            return 'Rename failed';
+            return self::deprecatedMoveError('Rename failed');
         }
 
         return true;
+    }
+
+    /**
+     * Triggers the deprecation of the error messages returned by move() and returns the message.
+     *
+     * @param   string  $message  The error message
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private static function deprecatedMoveError(string $message): string
+    {
+        trigger_deprecation(
+            'joomla/filesystem',
+            '__DEPLOY_VERSION__',
+            '%s::move() returns an error message on failure. In 5.0 it will throw a %s instead.',
+            self::class,
+            FilesystemException::class
+        );
+
+        return $message;
     }
 
     /**

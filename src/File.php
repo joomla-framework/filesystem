@@ -208,7 +208,8 @@ class File
      * @param   string   $path        An optional base path to prefix to the file names
      * @param   boolean  $useStreams  True to use streams
      *
-     * @return  boolean  True on success
+     * @return  boolean|string  True on success, an error message if the source file cannot be read. Returning the
+     *                          error message is deprecated, 5.0 will throw a FilesystemException instead.
      *
      * @since   1.0
      * @throws  FilesystemException
@@ -222,6 +223,14 @@ class File
 
         // Check src path
         if (!is_readable($src)) {
+            trigger_deprecation(
+                'joomla/filesystem',
+                '__DEPLOY_VERSION__',
+                '%s() returns an error message if the source file cannot be read. In 5.0 it will throw a %s instead.',
+                __METHOD__,
+                FilesystemException::class
+            );
+
             return 'Cannot find source file.';
         }
 
