@@ -1426,6 +1426,14 @@ class FtpClient
             throw new FilesystemException(__METHOD__ . ': Not connected to the control port.');
         }
 
+        /*
+         * A line break in an argument (e.g. a path) would end the command and send the rest as further commands,
+         * and a null byte would truncate it
+         */
+        if (strpbrk($cmd, "\r\n\0") !== false) {
+            throw new FilesystemException(__METHOD__ . ': The command contains a line break or a null byte.');
+        }
+
         // Send the command to the server
         if (!fwrite($this->conn, $cmd . "\r\n")) {
             throw new FilesystemException(sprintf('%1$s: Unable to send command: %2$s', __METHOD__, $cmd));
@@ -1549,8 +1557,19 @@ class FtpClient
             );
         }
 
+        /*
+         * Connect to the server we are talking to, not to the address in the reply: a malicious or compromised
+         * server could otherwise make us connect to any host, e.g. in the internal network.
+         */
+        $ip   = $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4];
+        $peer = stream_socket_get_name($this->conn, true);
+
+        if ($peer !== false && strrpos($peer, ':') !== false) {
+            $ip = substr($peer, 0, strrpos($peer, ':'));
+        }
+
         // This is pretty simple - store it for later use ;).
-        $this->pasv = ['ip' => $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4], 'port' => $match[5] * 256 + $match[6]];
+        $this->pasv = ['ip' => $ip, 'port' => $match[5] * 256 + $match[6]];
 
         // Connect, assuming we've got a connection.
         $this->dataconn = @fsockopen($this->pasv['ip'], $this->pasv['port'], $errno, $err, $this->timeout);
