@@ -14,6 +14,8 @@ namespace Joomla\Filesystem;
  *
  * @link   http://sourceforge.net/projects/phppatcher/ This has been derived from the PhpPatcher version 0.1.1 written by Giuseppe Mazzotta
  * @since  1.0
+ *
+ * @deprecated  5.0 Will be removed without replacement. Apply patches with "git apply" or "patch" instead.
  */
 class Patcher
 {
@@ -109,6 +111,13 @@ class Patcher
      */
     public static function getInstance()
     {
+        trigger_deprecation(
+            'joomla/filesystem',
+            '__DEPLOY_VERSION__',
+            'The %s class is deprecated and will be removed in 5.0 without replacement. Apply patches with "git apply" or "patch" instead.',
+            self::class
+        );
+
         if (!isset(static::$instance)) {
             static::$instance = new static();
         }
