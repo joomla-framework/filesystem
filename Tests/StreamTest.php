@@ -7,6 +7,7 @@
 
 namespace Joomla\Filesystem\Tests;
 
+use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 use Joomla\Filesystem\Stream;
@@ -985,5 +986,57 @@ class StreamTest extends FilesystemTestCase
             $expected,
             $this->object->_getFilename($filename, $mode, $use_prefix, $relative)
         );
+    }
+
+    /**
+     * Test that closing a written stream does not fail for wrappers that do not support chmod().
+     */
+    public function testCloseWrittenMemoryStream()
+    {
+        $object = new Stream();
+        $object->open('php://memory', 'w');
+        $buffer = 'data';
+        $object->write($buffer);
+
+        $this->assertTrue($object->close());
+    }
+
+    /**
+     * Test that writeFile() works for wrappers that do not support chmod().
+     */
+    public function testWriteFileToMemoryStream()
+    {
+        $object = new Stream();
+        $buffer = 'data';
+
+        $this->assertTrue($object->writeFile('php://memory', $buffer));
+    }
+
+    /**
+     * Test that a failing chmod() of a plain file still raises an exception.
+     */
+    public function testChmodOfMissingFileStillThrows()
+    {
+        $this->expectException(FilesystemException::class);
+
+        @(new Stream())->chmod(sys_get_temp_dir() . '/jfs-missing-' . getmypid() . '/file');
+    }
+
+    /**
+     * Test that the destructor does not throw when closing the stream fails.
+     */
+    public function testDestructorDoesNotThrow()
+    {
+        $object = new Stream();
+        $object->open('php://temp', 'w');
+        $buffer = 'data';
+        $object->write($buffer);
+
+        // Make the chmod() after closing fail for a plain file name
+        TestHelper::setValue($object, 'filename', sys_get_temp_dir() . '/jfs-missing-' . getmypid() . '/file');
+
+        unset($object);
+
+        $this->assertTrue(true, 'The destructor must not throw');
     }
 }
