@@ -555,6 +555,16 @@ class File
                     if ($fp !== false) {
                         $data = '';
 
+                        /*
+                         * The bytes kept from the previous chunk must be enough to find the longest string we search
+                         * for when it straddles a read boundary
+                         */
+                        $overlap = max(10, \strlen('__HALT_COMPILER()'));
+
+                        foreach ((array) $options['forbidden_extensions'] as $ext) {
+                            $overlap = max($overlap, \strlen('.' . $ext));
+                        }
+
                         while (!feof($fp)) {
                             $data .= @fread($fp, 131072);
 
@@ -637,7 +647,7 @@ class File
                              * This makes sure that we don't accidentally skip a <?php tag if it's across
                              * a read boundary, even on multibyte strings
                              */
-                            $data = substr($data, -10);
+                            $data = substr($data, -$overlap);
                         }
 
                         fclose($fp);

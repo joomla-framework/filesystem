@@ -602,4 +602,52 @@ class FileTest extends FilesystemTestCase
             'The file does not exists.'
         );
     }
+
+    /**
+     * Data provider for testIsSafeFileFindsContentAcrossChunkBoundaries
+     *
+     * @return  array
+     */
+    public static function dataContentAcrossChunkBoundaries(): array
+    {
+        return [
+            'phar stub at the start'             => ['file.txt', 100, '__HALT_COMPILER(); ?>', []],
+            'phar stub across the boundary'      => ['file.txt', 131060, '__HALT_COMPILER(); ?>', []],
+            'long extension across the boundary' => [
+                'file.zip',
+                131057,
+                'evil.phpbackdoor',
+                ['forbidden_extensions' => ['phpbackdoor']],
+            ],
+        ];
+    }
+
+    /**
+     * Test that isSafeFile() finds suspicious content that straddles the boundary between two read chunks.
+     *
+     * @param   string   $name     The name of the uploaded file
+     * @param   integer  $offset   The position of the suspicious content in the file
+     * @param   string   $content  The suspicious content
+     * @param   array    $options  The scanner options
+     */
+    #[DataProvider('dataContentAcrossChunkBoundaries')]
+    public function testIsSafeFileFindsContentAcrossChunkBoundaries(string $name, int $offset, string $content, array $options)
+    {
+        $tmpName = tempnam(sys_get_temp_dir(), 'jfs');
+        file_put_contents($tmpName, str_repeat('A', $offset) . $content . str_repeat('A', 100));
+
+        $descriptor = [
+            'name'     => $name,
+            'type'     => '',
+            'tmp_name' => $tmpName,
+            'error'    => 0,
+            'size'     => filesize($tmpName),
+        ];
+
+        try {
+            $this->assertFalse(File::isSafeFile($descriptor, $options));
+        } finally {
+            unlink($tmpName);
+        }
+    }
 }
