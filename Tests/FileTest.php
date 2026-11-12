@@ -602,4 +602,51 @@ class FileTest extends FilesystemTestCase
             'The file does not exists.'
         );
     }
+
+    /**
+     * Data provider for testIsSafeFileRejectsServerConfigurationFiles
+     *
+     * @return  array
+     */
+    public static function dataServerConfigurationFiles(): array
+    {
+        return [
+            '.htaccess'                => ['.htaccess', 'AddType application/x-httpd-php .jpg', [], false],
+            '.user.ini'                => ['.user.ini', 'auto_prepend_file=x.jpg', [], false],
+            'upper case'               => ['WEB.CONFIG', '<configuration/>', [], false],
+            'trailing dot'             => ['.htaccess.', 'AddType application/x-httpd-php .jpg', [], false],
+            'php.ini'                  => ['php.ini', 'auto_prepend_file=x.jpg', [], false],
+            'ordinary file'            => ['htaccess.txt', 'Just text', [], true],
+            'check disabled by option' => ['.htaccess', 'Options -Indexes', ['forbidden_filenames' => []], true],
+        ];
+    }
+
+    /**
+     * Test that isSafeFile() rejects web server and PHP configuration files.
+     *
+     * @param   string   $name      The name of the uploaded file
+     * @param   string   $content   The content of the file
+     * @param   array    $options   The scanner options
+     * @param   boolean  $expected  The expected result
+     */
+    #[DataProvider('dataServerConfigurationFiles')]
+    public function testIsSafeFileRejectsServerConfigurationFiles(string $name, string $content, array $options, bool $expected)
+    {
+        $tmpName = tempnam(sys_get_temp_dir(), 'jfs');
+        file_put_contents($tmpName, $content);
+
+        $descriptor = [
+            'name'     => $name,
+            'type'     => '',
+            'tmp_name' => $tmpName,
+            'error'    => 0,
+            'size'     => filesize($tmpName),
+        ];
+
+        try {
+            $this->assertSame($expected, File::isSafeFile($descriptor, $options));
+        } finally {
+            unlink($tmpName);
+        }
+    }
 }

@@ -30,6 +30,16 @@ class File
     ];
 
     /**
+     * An array containing a list of file names of web server and PHP configuration files,
+     * which can make the server execute otherwise harmless files
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    public const FORBIDDEN_FILE_NAMES = [
+        '.htaccess', '.htpasswd', '.user.ini', 'php.ini', 'web.config',
+    ];
+
+    /**
      * @var    boolean  true if OPCache enabled, and we have permission to invalidate files
      * @since  3.2.0
      */
@@ -420,6 +430,7 @@ class File
      *
      * The options you can define are:
      * null_byte                   Prevent files with a null byte in their name (buffer overflow attack)
+     * forbidden_filenames         Do not allow files with these names (case-insensitive), e.g. .htaccess
      * forbidden_extensions        Do not allow these strings anywhere in the file's extension
      * php_tag_in_content          Do not allow `<?php` tag in content
      * phar_stub_in_content        Do not allow the `__HALT_COMPILER()` phar stub in content
@@ -444,6 +455,9 @@ class File
 
             // Null byte in file name
             'null_byte' => true,
+
+            // Server configuration files (e.g. .htaccess, .user.ini)
+            'forbidden_filenames' => self::FORBIDDEN_FILE_NAMES,
 
             // Forbidden string in extension (e.g. php matched .php, .xxx.php, .php.xxx and so on)
             'forbidden_extensions' => self::FORBIDDEN_FILE_EXTENSIONS,
@@ -518,6 +532,18 @@ class File
             for ($i = 0; $i < $len; $i++) {
                 $tempName     = array_shift($tempNames);
                 $intendedName = array_shift($intendedNames);
+
+                // Server configuration files, which could make the server execute other uploads
+                if (!empty($options['forbidden_filenames'])) {
+                    // Windows ignores trailing dots and spaces in file names
+                    $baseName = strtolower(rtrim(basename(str_replace('\\', '/', $intendedName)), '. '));
+
+                    foreach ($options['forbidden_filenames'] as $forbiddenName) {
+                        if ($baseName === strtolower($forbiddenName)) {
+                            return false;
+                        }
+                    }
+                }
 
                 // 1. Null byte check
                 if ($options['null_byte']) {
