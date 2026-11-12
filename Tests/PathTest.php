@@ -10,6 +10,7 @@ namespace Joomla\Filesystem\Tests;
 use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -449,5 +450,20 @@ class PathTest extends FilesystemTestCase
             $prefix . $expected . $suffix,
             Path::removeRoot($prefix . $path . $suffix, $root)
         );
+    }
+
+    /**
+     * Test that setPermissions() does not stop at a directory entry named "0".
+     */
+    public function testSetPermissionsDoesNotStopAtEntryNamedZero()
+    {
+        vfsStream::setup('root', 0777, ['dir' => ['0' => 'zero', 'z' => 'last']]);
+
+        $this->assertTrue(Path::setPermissions(vfsStream::url('root/dir'), '0644', '0755'));
+
+        clearstatcache();
+
+        $this->assertSame(0644, fileperms(vfsStream::url('root/dir/0')) & 0777);
+        $this->assertSame(0644, fileperms(vfsStream::url('root/dir/z')) & 0777);
     }
 }
