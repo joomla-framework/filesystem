@@ -445,11 +445,12 @@ class Stream
 
         $res = @filesize($this->filename);
 
-        if (!$res) {
+        // An empty file has the size 0, only false is a failure
+        if ($res === false) {
             $res = Helper::remotefsize($this->filename);
         }
 
-        if (!$res) {
+        if ($res === false) {
             $error = error_get_last();
 
             if ($error === null || $error['message'] === '') {
