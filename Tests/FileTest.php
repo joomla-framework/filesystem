@@ -7,7 +7,9 @@
 
 namespace Joomla\Filesystem\Tests;
 
+use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -302,6 +304,56 @@ class FileTest extends FilesystemTestCase
             File::delete($this->testPath . '/' . $name),
             'The file was not deleted.'
         );
+    }
+
+    /**
+     * Test that delete() removes a read-only file.
+     */
+    public function testDeleteReadOnlyFile()
+    {
+        $file = $this->testPath . '/readonly.txt';
+        file_put_contents($file, 'data');
+        chmod($file, 0444);
+
+        $this->assertTrue(File::delete($file));
+        $this->assertFileDoesNotExist($file);
+    }
+
+    /**
+     * Test that a failed delete() does not leave the file world-writable.
+     */
+    public function testFailedDeleteKeepsPermissions()
+    {
+        if (DIRECTORY_SEPARATOR === '\\' || (\function_exists('posix_geteuid') && posix_geteuid() === 0)) {
+            $this->markTestSkipped('Needs POSIX permissions that apply to the current user');
+        }
+
+        mkdir($this->testPath . '/locked');
+        $file = $this->testPath . '/locked/file.txt';
+        file_put_contents($file, 'data');
+        chmod($file, 0644);
+        chmod($this->testPath . '/locked', 0555);
+
+        try {
+            File::delete($file);
+            $this->fail('The file in a read-only folder has been deleted.');
+        } catch (FilesystemException $e) {
+            clearstatcache();
+            $this->assertSame(0644, fileperms($file) & 0777);
+        } finally {
+            chmod($this->testPath . '/locked', 0777);
+        }
+    }
+
+    /**
+     * Test that the error message of delete() names the full path of the file.
+     */
+    public function testDeleteErrorNamesTheFullPath()
+    {
+        $this->expectException(FilesystemException::class);
+        $this->expectExceptionMessage(Path::clean('/sub/index.html'));
+
+        File::delete($this->testPath . '/sub/index.html');
     }
 
     /**

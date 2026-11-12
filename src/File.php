@@ -173,14 +173,7 @@ class File
         $files = (array) $file;
 
         foreach ($files as $file) {
-            $file     = Path::clean($file);
-            $filename = basename($file);
-
-            /**
-             * Try making the file writable first. If it's read-only, it can't be deleted
-             * on Windows, even if the parent folder is writable
-             */
-            @chmod($file, 0777);
+            $file = Path::clean($file);
 
             /**
              * Invalidate the OPCache for the file before actually deleting it
@@ -188,13 +181,27 @@ class File
              */
             self::invalidateFileCache($file);
 
-            /**
-             * In case of restricted permissions we zap it one way or the other
-             * as long as the owner is either the webserver or the ftp
-             */
-            if (!@ unlink($file)) {
-                throw new FilesystemException(__METHOD__ . ': Failed deleting ' . $filename);
+            if (@unlink($file)) {
+                continue;
             }
+
+            /**
+             * A read-only file can't be deleted on Windows, even if the parent folder is writable.
+             * Add the write permission for the owner and try again, but don't widen the permissions
+             * any further, and restore them if the file still can't be deleted.
+             */
+            $perms = @fileperms($file);
+
+            if ($perms !== false && @chmod($file, ($perms & 07777) | 0200)) {
+                if (@unlink($file)) {
+                    continue;
+                }
+
+                @chmod($file, $perms & 07777);
+            }
+
+            // The full path tells which of several files with the same name failed; the root is masked by the exception
+            throw new FilesystemException(__METHOD__ . ': Failed deleting ' . $file);
         }
 
         return true;
