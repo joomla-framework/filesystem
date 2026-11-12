@@ -231,6 +231,16 @@ class Stream
 
         $url = parse_url($filename);
 
+        /*
+         * A one letter scheme is a Windows drive designator rather than a stream wrapper:
+         * parse_url() reports the "D" of D:\path\file.gz as one. Acting on it would throw away the
+         * processing method the caller set and read a compressed file as raw bytes. No registered
+         * wrapper has a single character name.
+         */
+        if (isset($url['scheme']) && \strlen($url['scheme']) === 1) {
+            unset($url['scheme']);
+        }
+
         if (isset($url['scheme'])) {
             $scheme = ucfirst($url['scheme']);
 
@@ -501,8 +511,17 @@ class Stream
                 break;
         }
 
-        if (!$res) {
+        if ($res === false) {
+            // Read the error before eof() clears it
             $error = error_get_last();
+
+            /*
+             * fgets() and gzgets() return false at the end of the file and on a genuine failure
+             * alike, so the position has to settle which of the two happened.
+             */
+            if ($this->eof()) {
+                return '';
+            }
 
             if ($error === null || $error['message'] === '') {
                 // Error but nothing from php? Create our own
@@ -576,7 +595,12 @@ class Stream
                     break;
             }
 
-            if (!$res) {
+            /*
+             * All three read functions report a failure with false and the end of the file with an
+             * empty string. Testing the result for truthiness cannot tell those apart - and calls a
+             * chunk holding nothing but "0" a failure as well.
+             */
+            if ($res === false) {
                 $error = error_get_last();
 
                 if ($error === null || $error['message'] === '') {
@@ -589,8 +613,13 @@ class Stream
                 throw new FilesystemException($error['message']);
             }
 
-            if (!$retval) {
+            if ($retval === false) {
                 $retval = '';
+            }
+
+            if ($res === '') {
+                // Nothing left to read, so hand back what we have. This is what ends a read loop.
+                break;
             }
 
             $retval .= $res;
