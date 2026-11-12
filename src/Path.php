@@ -216,7 +216,7 @@ class Path
 
         // Remove double slashes and backslashes and convert all slashes and backslashes to DIRECTORY_SEPARATOR
         // If dealing with a UNC path don't forget to prepend the path with a backslash.
-        if (($ds == '\\') && ($path[0] == '\\') && ($path[1] == '\\')) {
+        if (($ds == '\\') && str_starts_with($path, '\\\\')) {
             $path = '\\' . preg_replace('#[/\\\\]+#', $ds, $path);
         } else {
             $path = preg_replace('#[/\\\\]+#', $ds, $path);
@@ -325,11 +325,19 @@ class Path
         $path = static::clean($path);
 
         // Save start character for absolute path
-        $startCharacter = ($path[0] === DIRECTORY_SEPARATOR) ? DIRECTORY_SEPARATOR : '';
+        $startCharacter = str_starts_with($path, DIRECTORY_SEPARATOR) ? DIRECTORY_SEPARATOR : '';
 
+        $segments = explode(DIRECTORY_SEPARATOR, $path);
+
+        // A Windows drive is the root of the path, ".." must not remove it
         $parts = [];
+        $drive = [];
 
-        foreach (explode(DIRECTORY_SEPARATOR, $path) as $part) {
+        if (DIRECTORY_SEPARATOR === '\\' && preg_match('#^[A-Za-z]:$#', $segments[0])) {
+            $drive = [array_shift($segments)];
+        }
+
+        foreach ($segments as $part) {
             switch ($part) {
                 case '':
                 case '.':
@@ -349,7 +357,7 @@ class Path
             }
         }
 
-        return $startCharacter . implode(DIRECTORY_SEPARATOR, $parts);
+        return $startCharacter . implode(DIRECTORY_SEPARATOR, array_merge($drive, $parts));
     }
 
     /**
