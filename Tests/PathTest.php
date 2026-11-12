@@ -247,6 +247,8 @@ class PathTest extends FilesystemTestCase
             'UNC path.' => ['\\\\www\\docroot', '\\', '\\\\www\\docroot'],
             'UNC path with forward slash.' => ['\\\\www/docroot', '\\', '\\\\www\\docroot'],
             'UNC path with UNIX directory separator.' => ['\\\\www/docroot', '/', '/www/docroot'],
+            'Blank path.' => [' ', '\\', ''],
+            'Single backslash.' => ['\\', '\\', '\\'],
         ];
     }
 
@@ -374,6 +376,7 @@ class PathTest extends FilesystemTestCase
             ["/var/\/../www///joomla", "_DS_www_DS_joomla"],
             ["C:/var///www///joomla", "C:_DS_var_DS_www_DS_joomla"],
             ["/var\\www///joomla", "_DS_var_DS_www_DS_joomla"],
+            ["", ""],
         ];
     }
 
@@ -449,5 +452,47 @@ class PathTest extends FilesystemTestCase
             $prefix . $expected . $suffix,
             Path::removeRoot($prefix . $path . $suffix, $root)
         );
+    }
+
+    /**
+     * Test that resolve() does not remove the drive of a Windows path.
+     */
+    public function testResolveKeepsWindowsDrive()
+    {
+        if (DIRECTORY_SEPARATOR !== '\\') {
+            $this->markTestSkipped('Drives only exist on Windows');
+        }
+
+        $this->assertSame('C:\\b', Path::resolve('C:\\a\\..\\b'));
+
+        $this->expectException(FilesystemException::class);
+
+        Path::resolve('C:\\..\\Windows');
+    }
+
+    /**
+     * Test that clean() and resolve() do not read beyond the end of short paths.
+     */
+    public function testShortPathsDoNotRaiseWarnings()
+    {
+        $warnings = [];
+
+        set_error_handler(
+            static function ($errno, $errstr) use (&$warnings) {
+                $warnings[] = $errstr;
+
+                return true;
+            }
+        );
+
+        try {
+            Path::clean(' ', '\\');
+            Path::clean('\\', '\\');
+            Path::resolve('');
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame([], $warnings);
     }
 }
