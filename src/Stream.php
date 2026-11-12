@@ -161,7 +161,11 @@ class Stream
     {
         // Attempt to close on destruction if there is a file handle
         if ($this->fh) {
-            @$this->close();
+            // A destructor must not throw, there is nobody to catch the exception
+            try {
+                @$this->close();
+            } catch (FilesystemException $exception) {
+            }
         }
     }
 
@@ -378,7 +382,7 @@ class Stream
 
         // If we wrote, chmod the file after it's closed
         if ($this->openmode[0] == 'w') {
-            $this->chmod();
+            $this->chmodWrittenFile();
         }
 
         // Return the result
@@ -858,6 +862,30 @@ class Stream
     }
 
     /**
+     * Applies the file mode to the file just written
+     *
+     * Files and FTP paths get the mode or an exception. Other stream wrappers, such as php://memory or http://, often
+     * do not support changing the mode at all, so a failure is ignored for them.
+     *
+     * @return  void
+     *
+     * @since   __DEPLOY_VERSION__
+     * @throws  FilesystemException
+     */
+    private function chmodWrittenFile(): void
+    {
+        try {
+            @$this->chmod();
+        } catch (FilesystemException $exception) {
+            $scheme = strtolower((string) strstr($this->filename, '://', true));
+
+            if (strpos($this->filename, '://') === false || \in_array($scheme, ['file', 'ftp', 'ftps'], true)) {
+                throw $exception;
+            }
+        }
+    }
+
+    /**
      * Get the stream metadata
      *
      * @return  array  header/metadata
@@ -1309,7 +1337,7 @@ class Stream
 
         if ($this->open($filename, $fileMode)) {
             $result = $this->write($buffer);
-            $this->chmod();
+            $this->chmodWrittenFile();
             $this->close();
 
             return $result;
