@@ -241,10 +241,15 @@ class StringWrapperTest extends TestCase
             [0, 5, 0, SEEK_END, 5, true],
             [0, 5, 2, SEEK_SET, 2, true],
             [0, 5, 2, SEEK_CUR, 2, true],
-            [0, 5, 2, SEEK_END, 3, true],
+            [0, 5, -2, SEEK_END, 3, true],
+            [0, 5, 2, SEEK_END, 0, false],
+            [3, 5, -2, SEEK_CUR, 1, true],
+            [3, 5, -4, SEEK_CUR, 3, false],
+            [3, 5, -1, SEEK_SET, 3, false],
+            [3, 5, -6, SEEK_END, 3, false],
             [2, 5, 2, SEEK_SET, 2, true],
             [2, 5, 2, SEEK_CUR, 4, true],
-            [2, 5, 2, SEEK_END, 3, true],
+            [2, 5, -2, SEEK_END, 3, true],
             [2, 5, 5, SEEK_CUR, 2, false],
         ];
     }
@@ -284,5 +289,41 @@ class StringWrapperTest extends TestCase
         $this->assertTrue(
             $this->object->stream_flush()
         );
+    }
+
+    /**
+     * Test data for testOpenAndSeekThroughFopen
+     *
+     * @return  array
+     */
+    public static function dataOpenAndSeekThroughFopen(): array
+    {
+        return [
+            'seek from the end' => ['abcdefgh', -3, 'fgh'],
+            'empty string'      => ['', 0, ''],
+            'string "0"'        => ['0', -1, '0'],
+        ];
+    }
+
+    /**
+     * Test opening strings and seeking from their end through fopen() and fseek().
+     *
+     * @param   string   $string    The string to open
+     * @param   integer  $offset    The offset from the end to seek to
+     * @param   string   $expected  The expected rest of the string
+     */
+    #[DataProvider('dataOpenAndSeekThroughFopen')]
+    public function testOpenAndSeekThroughFopen(string $string, int $offset, string $expected)
+    {
+        StringController::createRef('jfs-seek', $string);
+
+        $handle = @fopen('string://jfs-seek', 'r');
+
+        $this->assertNotFalse($handle, 'The string could not be opened.');
+        $this->assertSame(0, fseek($handle, $offset, SEEK_END));
+        $this->assertSame(\strlen($string) + $offset, ftell($handle));
+        $this->assertSame($expected, stream_get_contents($handle));
+
+        fclose($handle);
     }
 }
