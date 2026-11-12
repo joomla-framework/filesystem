@@ -443,7 +443,8 @@ class Patcher
                         $srcBottom = $srcLine + \count($source);
 
                         for ($l = $srcLine; $l < $srcBottom; $l++) {
-                            if ($srcLines[$l] != $source[$l - $srcLine]) {
+                            // Compare strictly: "1000" == "1e3" in PHP, and a missing line must fail as well
+                            if (!isset($srcLines[$l]) || $srcLines[$l] !== $source[$l - $srcLine]) {
                                 throw new \RuntimeException(
                                     sprintf(
                                         'Failed source verification of file %1$s at line %2$s',
