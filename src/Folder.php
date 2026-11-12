@@ -278,9 +278,10 @@ abstract class Folder
      * @param   string   $path        An optional base path to prefix to the file names.
      * @param   boolean  $useStreams  Optionally use streams.
      *
-     * @return  string|boolean  Error message on false or boolean true on success.
+     * @return  boolean  True on success.
      *
      * @since   1.0
+     * @throws  FilesystemException
      */
     public static function move($src, $dest, $path = '', $useStreams = false)
     {
@@ -290,11 +291,11 @@ abstract class Folder
         }
 
         if (!is_dir(Path::clean($src))) {
-            return 'Cannot find source folder';
+            throw new FilesystemException(__METHOD__ . ': Cannot find source folder');
         }
 
         if (is_dir(Path::clean($dest))) {
-            return 'Folder already exists';
+            throw new FilesystemException(__METHOD__ . ': Folder already exists');
         }
 
         if ($useStreams) {
@@ -304,7 +305,7 @@ abstract class Folder
         }
 
         if (!@rename($src, $dest)) {
-            return 'Rename failed';
+            throw new FilesystemException(__METHOD__ . ': Rename failed');
         }
 
         return true;

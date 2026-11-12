@@ -7,6 +7,7 @@
 
 namespace Joomla\Filesystem\Tests;
 
+use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -393,10 +394,10 @@ class FileTest extends FilesystemTestCase
         $name      = 'tempFile';
         $movedName = 'tempCopiedFileName';
 
-        $this->assertSame(
-            'Cannot find source file.',
-            File::move($name, $movedName, $this->testPath)
-        );
+        $this->expectException(FilesystemException::class);
+        $this->expectExceptionMessage('Cannot find source file.');
+
+        File::move($name, $movedName, $this->testPath);
     }
 
     /**
