@@ -7,6 +7,7 @@
 
 namespace Joomla\Filesystem\Tests;
 
+use Joomla\Filesystem\Exception\FilesystemException;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 use Joomla\Filesystem\Stream;
@@ -366,6 +367,204 @@ class StreamTest extends FilesystemTestCase
         );
 
         $this->object->close();
+    }
+
+    /**
+     * Test that read reports the end of the file rather than treating it as a failure.
+     */
+    public function testReadReturnsAnEmptyStringAtTheEndOfTheFile()
+    {
+        $file = $this->testPath . '/read-eof.txt';
+        file_put_contents($file, 'Lorem ipsum');
+
+        $stream = new Stream();
+        $stream->open($file);
+
+        $this->assertSame('Lorem ipsum', $stream->read(8192));
+
+        $this->assertSame(
+            '',
+            $stream->read(8192),
+            'Once the file is exhausted read() has to hand back an empty string, not raise'
+        );
+
+        $stream->close();
+    }
+
+    /**
+     * Test that a read loop terminates, which is how the archive adapters consume a stream.
+     */
+    public function testReadCanBeLoopedUntilTheStreamRunsOut()
+    {
+        $contents = str_repeat('The quick brown fox. ', 2000);
+
+        $file = $this->testPath . '/read-loop.txt';
+        file_put_contents($file, $contents);
+
+        $stream = new Stream();
+        $stream->open($file);
+
+        $read  = '';
+        $calls = 0;
+
+        do {
+            $chunk = $stream->read(8192);
+            $read .= $chunk;
+            $calls++;
+
+            $this->assertLessThan(100, $calls, 'The loop has to terminate');
+        } while ($chunk);
+
+        $stream->close();
+
+        $this->assertSame($contents, $read);
+    }
+
+    /**
+     * Test that a chunk holding nothing but "0" is data rather than a failure.
+     */
+    public function testReadHandlesAChunkThatIsTheCharacterZero()
+    {
+        $file = $this->testPath . '/read-zero.txt';
+        file_put_contents($file, '0');
+
+        $stream = new Stream();
+        $stream->open($file);
+
+        $this->assertSame(
+            '0',
+            $stream->read(8192),
+            '"0" is falsy in PHP but it is still the content of the file'
+        );
+
+        $stream->close();
+    }
+
+    /**
+     * Test that read still reports a genuine failure.
+     */
+    public function testReadThrowsOnAGenuineReadFailure()
+    {
+        $file = $this->testPath . '/read-writeonly.txt';
+        file_put_contents($file, 'Lorem ipsum');
+
+        // Opened for writing only, so the underlying fread() fails rather than reaching the end
+        $stream = new Stream();
+        $stream->open($file, 'w');
+
+        $this->expectException(FilesystemException::class);
+
+        /*
+         * The failure is deliberate, so silence the diagnostic PHP emits with it. Without this the
+         * warning is reported against an otherwise clean run.
+         */
+        set_error_handler(static fn (): bool => true);
+
+        try {
+            $stream->read(8192);
+        } finally {
+            restore_error_handler();
+            $stream->close();
+        }
+    }
+
+    /**
+     * Test that gets reports the end of the file rather than treating it as a failure.
+     */
+    public function testGetsReturnsAnEmptyStringAtTheEndOfTheFile()
+    {
+        $file = $this->testPath . '/gets-eof.txt';
+        file_put_contents($file, "line one\n");
+
+        $stream = new Stream();
+        $stream->open($file);
+
+        $this->assertSame("line one\n", $stream->gets());
+
+        $this->assertSame(
+            '',
+            $stream->gets(),
+            'At the end of the file there is simply nothing left to hand back'
+        );
+
+        $stream->close();
+    }
+
+    /**
+     * Test that gets still reports a genuine failure.
+     */
+    public function testGetsThrowsOnAGenuineReadFailure()
+    {
+        $file = $this->testPath . '/gets-writeonly.txt';
+        file_put_contents($file, "line one\n");
+
+        $stream = new Stream();
+        $stream->open($file, 'w');
+
+        $this->expectException(FilesystemException::class);
+
+        // As above, the failure is deliberate and its diagnostic is not news
+        set_error_handler(static fn (): bool => true);
+
+        try {
+            $stream->gets();
+        } finally {
+            restore_error_handler();
+            $stream->close();
+        }
+    }
+
+    /**
+     * Test that an absolute path does not look like a stream wrapper to open().
+     *
+     * On Windows parse_url() reports the drive letter of D:\path\file.gz as a scheme. Acting on
+     * that discards the processing method and the file is read as raw bytes.
+     */
+    public function testOpenKeepsTheProcessingMethodForAnAbsolutePath()
+    {
+        $contents = "Lorem ipsum dolor sit amet\n";
+
+        $file = $this->testPath . '/data.gz';
+        file_put_contents($file, gzencode($contents));
+
+        $stream = new Stream();
+        $stream->set('processingmethod', 'gz');
+        $stream->open($file);
+
+        $this->assertSame(
+            'gz',
+            $stream->get('processingmethod'),
+            'open() must not mistake a drive letter for a stream wrapper'
+        );
+
+        $this->assertSame(
+            $contents,
+            $stream->read(8192),
+            'The file has to come back decompressed, not as the raw bytes on disk'
+        );
+
+        $stream->close();
+    }
+
+    /**
+     * Test that a real stream wrapper does still force the processing method.
+     */
+    public function testOpenForcesTheProcessingMethodForAStreamWrapper()
+    {
+        $string = 'Lorem ipsum';
+        StringController::createRef('wrapped', $string);
+
+        $stream = new Stream();
+        $stream->set('processingmethod', 'gz');
+        $stream->open('string://wrapped');
+
+        $this->assertSame(
+            'f',
+            $stream->get('processingmethod'),
+            'A wrapper handles its own decoding, so the method has to fall back to plain reads'
+        );
+
+        $stream->close();
     }
 
     /**
