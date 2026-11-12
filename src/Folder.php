@@ -492,6 +492,8 @@ abstract class Folder
     /**
      * Lists folder in format suitable for tree display.
      *
+     * The 'relname' of each folder is relative to JPATH_ROOT if that constant is defined, otherwise relative to $path.
+     *
      * @param   string   $path      The path of the folder to read.
      * @param   string   $filter    A filter for folder names.
      * @param   integer  $maxLevel  The maximum number of levels to recursively read, defaults to three.
@@ -504,27 +506,53 @@ abstract class Folder
      */
     public static function listFolderTree($path, $filter, $maxLevel = 3, $level = 0, $parent = 0)
     {
-        $dirs = [];
+        $index = 0;
+        $root  = \defined('JPATH_ROOT') ? JPATH_ROOT : Path::clean($path);
 
-        if ($level == 0) {
-            $GLOBALS['_JFolder_folder_tree_index'] = 0;
-        }
+        return self::buildFolderTree($path, $filter, $maxLevel, $level, $parent, $index, $root);
+    }
+
+    /**
+     * Recursively collects the folders for listFolderTree().
+     *
+     * @param   string   $path      The path of the folder to read.
+     * @param   string   $filter    A filter for folder names.
+     * @param   integer  $maxLevel  The maximum number of levels to recursively read.
+     * @param   integer  $level     The current level.
+     * @param   integer  $parent    Unique identifier of the parent folder.
+     * @param   integer  $index     The last identifier handed out, shared by all levels.
+     * @param   string   $root      The path to remove from the full names to get the relative names.
+     *
+     * @return  array  Folders in the given folder.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private static function buildFolderTree(
+        string $path,
+        string $filter,
+        int $maxLevel,
+        int $level,
+        int $parent,
+        int &$index,
+        string $root
+    ): array {
+        $dirs = [];
 
         if ($level < $maxLevel) {
             $folders = self::folders($path, $filter);
 
             // First path, index foldernames
             foreach ($folders as $name) {
-                $id       = ++$GLOBALS['_JFolder_folder_tree_index'];
+                $id       = ++$index;
                 $fullName = Path::clean($path . '/' . $name);
                 $dirs[]   = [
                     'id'       => $id,
                     'parent'   => $parent,
                     'name'     => $name,
                     'fullname' => $fullName,
-                    'relname'  => str_replace(JPATH_ROOT, '', $fullName),
+                    'relname'  => str_replace($root, '', $fullName),
                 ];
-                $dirs2 = self::listFolderTree($fullName, $filter, $maxLevel, $level + 1, $id);
+                $dirs2 = self::buildFolderTree($fullName, $filter, $maxLevel, $level + 1, $id, $index, $root);
                 $dirs  = array_merge($dirs, $dirs2);
             }
         }
