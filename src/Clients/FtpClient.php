@@ -707,7 +707,10 @@ class FtpClient
     {
         // If native FTP support is enabled let's use it...
         if (FTP_NATIVE) {
-            if (@ftp_site($this->conn, 'REST ' . $point) === false) {
+            // Not ftp_site(), which would send "SITE REST"
+            $response = @ftp_raw($this->conn, 'REST ' . (int) $point);
+
+            if (!\is_array($response) || strpos((string) reset($response), '350') !== 0) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
 
