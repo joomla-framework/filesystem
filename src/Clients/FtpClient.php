@@ -56,7 +56,7 @@ class FtpClient
     /**
      * Socket resource
      *
-     * @var    \FTP\Connection
+     * @var    \FTP\Connection|resource|null
      * @since  1.0
      */
     private $conn;
@@ -194,7 +194,7 @@ class FtpClient
      */
     public function __destruct()
     {
-        if (\is_resource($this->conn)) {
+        if ($this->hasConnection()) {
             $this->quit();
         }
     }
@@ -280,7 +280,7 @@ class FtpClient
         $err   = null;
 
         // If already connected, return
-        if (\is_resource($this->conn)) {
+        if ($this->hasConnection()) {
             return true;
         }
 
@@ -334,7 +334,7 @@ class FtpClient
      */
     public function isConnected()
     {
-        return \is_resource($this->conn);
+        return $this->hasConnection();
     }
 
     /**
@@ -391,6 +391,7 @@ class FtpClient
         // If native FTP support is enabled lets use it...
         if (FTP_NATIVE) {
             @ftp_close($this->conn);
+            $this->conn = null;
 
             return true;
         }
@@ -398,8 +399,23 @@ class FtpClient
         // Logout and close connection
         @fwrite($this->conn, "QUIT\r\n");
         @fclose($this->conn);
+        $this->conn = null;
 
         return true;
+    }
+
+    /**
+     * Checks whether there is an open control connection
+     *
+     * Since PHP 8.1, ftp_connect() returns an FTP\Connection object instead of a resource.
+     *
+     * @return  boolean
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private function hasConnection(): bool
+    {
+        return $this->conn instanceof \FTP\Connection || \is_resource($this->conn);
     }
 
     /**
