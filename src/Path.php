@@ -66,7 +66,7 @@ class Path
             $dh = @opendir($path);
 
             if ($dh) {
-                while ($file = readdir($dh)) {
+                while (($file = readdir($dh)) !== false) {
                     if ($file != '.' && $file != '..') {
                         $fullpath = $path . '/' . $file;
 
