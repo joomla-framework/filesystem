@@ -168,7 +168,7 @@ class Stream
     /**
      * Creates a new stream object with appropriate prefix
      *
-     * @param   boolean  $usePrefix  Prefix the connections for writing
+     * @param   boolean  $usePrefix  Prefix the connections with JPATH_ROOT; ignored if that constant is not defined
      * @param   string   $ua         UA User agent to use
      * @param   boolean  $uamask     User agent masking (prefix Mozilla)
      *
@@ -185,7 +185,7 @@ class Stream
         // Set the UA for HTTP
         $context['http']['user_agent'] = $ua ?: 'Joomla! Framework Stream';
 
-        if ($usePrefix) {
+        if ($usePrefix && \defined('JPATH_ROOT')) {
             return new static(JPATH_ROOT . '/', JPATH_ROOT, $context);
         }
 
@@ -1353,7 +1353,7 @@ class Stream
             }
 
             // Get rid of JPATH_ROOT (legacy compat)
-            if (!$relative && $prefixToUse) {
+            if (!$relative && $prefixToUse && \defined('JPATH_ROOT')) {
                 $pos = strpos($filename, JPATH_ROOT);
 
                 if ($pos !== false) {
