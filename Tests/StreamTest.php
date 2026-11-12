@@ -253,6 +253,24 @@ class StreamTest extends FilesystemTestCase
     }
 
     /**
+     * Test filesize method with an empty file.
+     */
+    public function testFilesizeOfEmptyFile()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'jfs');
+
+        try {
+            $this->object->open($filename);
+
+            $this->assertSame(0, $this->object->filesize());
+
+            $this->object->close();
+        } finally {
+            unlink($filename);
+        }
+    }
+
+    /**
      * Test filesize method.
      */
     public function testFilesize()
