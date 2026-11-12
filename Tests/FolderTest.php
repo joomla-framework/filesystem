@@ -688,6 +688,37 @@ class FolderTest extends FilesystemTestCase
     }
 
     /**
+     * Tests the Folder::listFolderTree method without the JPATH_ROOT constant.
+     */
+    public function testListFolderTreeWithoutJpathRoot()
+    {
+        $script = tempnam(sys_get_temp_dir(), 'jfs');
+        file_put_contents(
+            $script,
+            '<?php
+            require ' . var_export(dirname(__DIR__) . '/vendor/autoload.php', true) . ';
+            $root = sys_get_temp_dir() . "/jfs-tree-" . getmypid();
+            mkdir($root . "/a/b", 0777, true);
+            foreach (Joomla\Filesystem\Folder::listFolderTree($root, ".") as $dir) {
+                echo $dir["id"], " ", $dir["parent"], " ", str_replace("\\\\", "/", $dir["relname"]), "\n";
+            }
+            rmdir($root . "/a/b");
+            rmdir($root . "/a");
+            rmdir($root);
+            echo var_export(defined("JPATH_ROOT") || isset($GLOBALS["_JFolder_folder_tree_index"]), true);'
+        );
+
+        $process = proc_open([PHP_BINARY, $script], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        $output  = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+        unlink($script);
+
+        $this->assertSame("1 0 /a\n2 1 /a/b\nfalse", str_replace("\r\n", "\n", $output));
+    }
+
+    /**
      * Tests the Folder::listFolderTree method.
      */
     public function testListFolderTreeWithEmptyDirectory()
