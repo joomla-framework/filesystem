@@ -20,6 +20,14 @@ namespace Joomla\Filesystem;
 class Buffer
 {
     /**
+     * The stream context, set by PHP
+     *
+     * @var    resource|null
+     * @since  __DEPLOY_VERSION__
+     */
+    public $context;
+
+    /**
      * Stream position
      *
      * @var    integer
@@ -60,7 +68,7 @@ class Buffer
     {
         $url                        = parse_url($path);
         $this->name                 = $url['host'];
-        $this->buffers[$this->name] = null;
+        $this->buffers[$this->name] = '';
         $this->position             = 0;
 
         return true;
