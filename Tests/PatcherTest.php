@@ -297,6 +297,60 @@ class PatcherTest extends TestCase
     }
 
     /**
+     * Data provider for testApplyVerifiesTheSourceStrictly
+     *
+     * @return  array
+     */
+    public static function strictVerificationData(): array
+    {
+        return [
+            'numeric strings'      => ["1e3\n", "@@ -1,1 +1,1 @@\n-1000\n+2000\n"],
+            'beyond the last line' => ["one\n", "@@ -3,2 +3,2 @@\n-two\n-three\n+2\n+3\n"],
+        ];
+    }
+
+    /**
+     * Patcher::apply must refuse a patch whose source lines do not match the file exactly
+     *
+     * @param   string  $source  The content of the file to patch
+     * @param   string  $hunk    The hunk of the patch
+     */
+    #[DataProvider('strictVerificationData')]
+    public function testApplyVerifiesTheSourceStrictly(string $source, string $hunk)
+    {
+        $file = __DIR__ . '/tmp/patcher/numbers';
+        file_put_contents($file, $source);
+
+        $udiff = "--- numbers\t2011-09-21 16:05:45.086909120 +0200\n"
+            . "+++ numbers\t2011-09-21 16:05:41.156878938 +0200\n"
+            . $hunk;
+
+        $warnings = [];
+
+        set_error_handler(
+            static function ($errno, $errstr) use (&$warnings) {
+                $warnings[] = $errstr;
+
+                return true;
+            }
+        );
+
+        try {
+            Patcher::getInstance()->reset()->add($udiff, __DIR__ . '/tmp/patcher')->apply();
+            $this->fail('A patch with mismatching source lines has been applied.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringStartsWith('Failed source verification', $e->getMessage());
+        } finally {
+            restore_error_handler();
+            $content = file_get_contents($file);
+            unlink($file);
+        }
+
+        $this->assertSame($source, $content);
+        $this->assertSame([], $warnings);
+    }
+
+    /**
      * Data provider for testApply
      *
      * @return  array
