@@ -103,7 +103,8 @@ class StringWrapper
 
         $this->currentString = &$refPath;
 
-        if ($this->currentString) {
+        // An empty string or "0" is a valid string, only a missing reference is not
+        if ($this->currentString !== false) {
             $this->len  = \strlen($this->currentString);
             $this->pos  = 0;
             $this->stat = $this->url_stat($path, 0);
@@ -239,31 +240,33 @@ class StringWrapper
     public function stream_seek($offset, $whence)
     {
         // $whence: SEEK_SET, SEEK_CUR, SEEK_END
-        if ($offset > $this->len) {
-            // We can't seek beyond our len.
-            return false;
-        }
-
         switch ($whence) {
             case \SEEK_SET:
-                $this->pos = $offset;
+                $position = $offset;
 
                 break;
 
             case \SEEK_CUR:
-                if (($this->pos + $offset) > $this->len) {
-                    return false;
-                }
-
-                $this->pos += $offset;
+                $position = $this->pos + $offset;
 
                 break;
 
             case \SEEK_END:
-                $this->pos = $this->len - $offset;
+                // As with fseek(), the offset is added to the end, so it has to be negative to move into the string
+                $position = $this->len + $offset;
 
                 break;
+
+            default:
+                return false;
         }
+
+        // We can't seek before the start or beyond our len.
+        if ($position < 0 || $position > $this->len) {
+            return false;
+        }
+
+        $this->pos = $position;
 
         return true;
     }
@@ -285,6 +288,6 @@ class StringWrapper
 
 // phpcs:disable PSR1.Files.SideEffects
 if (!stream_wrapper_register('string', '\\Joomla\\Filesystem\\Stream\\StringWrapper')) {
-    die('\\Joomla\\Filesystem\\Stream\\StringWrapper Wrapper Registration Failed');
+    throw new \RuntimeException('\\Joomla\\Filesystem\\Stream\\StringWrapper Wrapper Registration Failed');
 }
 // phpcs:enable PSR1.Files.SideEffects

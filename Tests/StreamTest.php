@@ -391,10 +391,10 @@ class StreamTest extends FilesystemTestCase
             [0, 0, SEEK_END, 35],
             [0, 5, SEEK_SET, 5],
             [0, 5, SEEK_CUR, 5],
-            [0, 5, SEEK_END, 30],
+            [0, -5, SEEK_END, 30],
             [5, 5, SEEK_SET, 5],
             [5, 5, SEEK_CUR, 10],
-            [5, 5, SEEK_END, 30],
+            [5, -5, SEEK_END, 30],
         ];
     }
 
