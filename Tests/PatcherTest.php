@@ -904,4 +904,48 @@ But after they are produced,
             }
         }
     }
+
+    /**
+     * Data provider for testApplyRejectsPathsOutsideTheRoot
+     *
+     * @return  array
+     */
+    public static function pathsOutsideTheRootData(): array
+    {
+        return [
+            'parent directory'                => ['../evil.txt', 0],
+            'parent directory after strip'    => ['a/b/../../../evil.txt', 1],
+            'parent directory with backslash' => ['..\\evil.txt', 0],
+            'stream wrapper'                  => ['php://filter/resource=evil.txt', 0],
+        ];
+    }
+
+    /**
+     * Patcher::apply must not write files outside the root path
+     *
+     * @param   string   $file   The file name in the patch header
+     * @param   integer  $strip  The number of '/' to strip
+     */
+    #[DataProvider('pathsOutsideTheRootData')]
+    public function testApplyRejectsPathsOutsideTheRoot(string $file, int $strip)
+    {
+        $root = __DIR__ . '/tmp/patcher/root';
+        mkdir($root);
+
+        $udiff = "--- " . $file . "\t2011-09-21 16:05:45.086909120 +0200\n"
+            . "+++ " . $file . "\t2011-09-21 16:05:41.156878938 +0200\n"
+            . "@@ -0,0 +1,1 @@\n"
+            . "+pwned\n";
+
+        try {
+            Patcher::getInstance()->reset()->add($udiff, $root, $strip)->apply();
+            $this->fail('A patch writing outside of the root path has been applied.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringStartsWith('Invalid file path in patch', $e->getMessage());
+        } finally {
+            $this->assertFileDoesNotExist(__DIR__ . '/tmp/patcher/evil.txt');
+            @unlink(__DIR__ . '/tmp/patcher/evil.txt');
+            rmdir($root);
+        }
+    }
 }

@@ -152,12 +152,15 @@ class Patcher
                 $done = false;
 
                 if ($patch['strip'] === null) {
-                    $src = $patch['root'] . preg_replace('#^([^/]*/)*#', '', $src);
-                    $dst = $patch['root'] . preg_replace('#^([^/]*/)*#', '', $dst);
+                    $src = preg_replace('#^([^/]*/)*#', '', $src);
+                    $dst = preg_replace('#^([^/]*/)*#', '', $dst);
                 } else {
-                    $src = $patch['root'] . preg_replace('#^([^/]*/){' . (int) $patch['strip'] . '}#', '', $src);
-                    $dst = $patch['root'] . preg_replace('#^([^/]*/){' . (int) $patch['strip'] . '}#', '', $dst);
+                    $src = preg_replace('#^([^/]*/){' . (int) $patch['strip'] . '}#', '', $src);
+                    $dst = preg_replace('#^([^/]*/){' . (int) $patch['strip'] . '}#', '', $dst);
                 }
+
+                $src = $patch['root'] . self::checkPatchPath($src, $patch['root']);
+                $dst = $patch['root'] . self::checkPatchPath($dst, $patch['root']);
 
                 // Loop for each hunk of differences
                 while (self::findHunk($lines, $srcLine, $srcSize, $dstLine, $dstSize)) {
@@ -249,6 +252,40 @@ class Patcher
         ];
 
         return $this;
+    }
+
+    /**
+     * Make sure a file path from a patch header cannot leave the root path
+     *
+     * The header of a patch is untrusted input. A path climbing out with "..", a stream wrapper or, when there is no
+     * root to prepend, an absolute path would let the patch write or delete files anywhere.
+     *
+     * @param   string  $path  The file path from the patch header, after stripping
+     * @param   string  $root  The root path the file path is appended to
+     *
+     * @return  string  The unchanged path
+     *
+     * @since   __DEPLOY_VERSION__
+     * @throws  \RuntimeException
+     */
+    protected static function checkPatchPath(string $path, string $root): string
+    {
+        // "/dev/null" names the missing side of an added or removed file and is never written to
+        if ($path === '/dev/null') {
+            return $path;
+        }
+
+        $isAbsolute = preg_match('#^([/\\\\]|[A-Za-z]:)#', $path) === 1;
+
+        if (
+            \in_array('..', preg_split('#[/\\\\]#', $path), true)
+            || strpos($path, '://') !== false
+            || ($root === '' && $isAbsolute)
+        ) {
+            throw new \RuntimeException(sprintf('Invalid file path in patch: %s', $path));
+        }
+
+        return $path;
     }
 
     /**
