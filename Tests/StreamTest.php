@@ -11,6 +11,7 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 use Joomla\Filesystem\Stream;
 use Joomla\Filesystem\Support\StringController;
+use Joomla\Filesystem\Tests\Stubs\ShortWriteStreamWrapper;
 use Joomla\Test\TestHelper;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -985,5 +986,25 @@ class StreamTest extends FilesystemTestCase
             $expected,
             $this->object->_getFilename($filename, $mode, $use_prefix, $relative)
         );
+    }
+
+    /**
+     * Test that write() continues after the bytes actually written when the stream accepts less than requested.
+     */
+    public function testWriteWithShortWrites()
+    {
+        stream_wrapper_register('jfsshort', ShortWriteStreamWrapper::class);
+
+        try {
+            $buffer = 'abcdefghij';
+
+            $this->object->open('jfsshort://test', 'w');
+            $this->assertTrue($this->object->write($buffer, 0, 8));
+            $this->object->close();
+        } finally {
+            stream_wrapper_unregister('jfsshort');
+        }
+
+        $this->assertSame('abcdefghij', ShortWriteStreamWrapper::$data);
     }
 }

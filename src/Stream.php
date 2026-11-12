@@ -786,8 +786,8 @@ class Stream
                 throw new FilesystemException('Warning: No data written');
             }
 
-            // Wrote something
-            $start += $amount;
+            // Wrote something, continue after the last byte actually written
+            $start += $res;
             $remaining -= $res;
         } while ($remaining);
 
