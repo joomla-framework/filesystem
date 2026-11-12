@@ -526,13 +526,14 @@ class File
                     }
                 }
 
+                // The extensions of the file name, the last one first; also used by the content checks below
+                $explodedName = explode('.', $intendedName);
+                $explodedName = array_reverse($explodedName);
+                array_pop($explodedName);
+                $explodedName = array_map('strtolower', $explodedName);
+
                 // 2. PHP-in-extension check (.php, .php.xxx[.yyy[.zzz[...]]], .xxx[.yyy[.zzz[...]]].php)
                 if (!empty($options['forbidden_extensions'])) {
-                    $explodedName = explode('.', $intendedName);
-                    $explodedName = array_reverse($explodedName);
-                    array_pop($explodedName);
-                    $explodedName = array_map('strtolower', $explodedName);
-
                     /*
                      * DO NOT USE array_intersect HERE! array_intersect expects the two arrays to
                      * be set, i.e. they should have unique values.

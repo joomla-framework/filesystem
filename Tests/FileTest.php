@@ -602,4 +602,27 @@ class FileTest extends FilesystemTestCase
             'The file does not exists.'
         );
     }
+
+    /**
+     * Test that isSafeFile() still scans the content when no extensions are forbidden.
+     */
+    public function testIsSafeFileWithoutForbiddenExtensions()
+    {
+        $tmpName = tempnam(sys_get_temp_dir(), 'jfs');
+        file_put_contents($tmpName, 'Some text <? echo 1; ?>');
+
+        $descriptor = [
+            'name'     => 'file.txt',
+            'type'     => '',
+            'tmp_name' => $tmpName,
+            'error'    => 0,
+            'size'     => filesize($tmpName),
+        ];
+
+        try {
+            $this->assertFalse(File::isSafeFile($descriptor, ['forbidden_extensions' => [], 'php_tag_in_content' => false]));
+        } finally {
+            unlink($tmpName);
+        }
+    }
 }
