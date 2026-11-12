@@ -688,6 +688,82 @@ class FolderTest extends FilesystemTestCase
     }
 
     /**
+     * Tests that concurrent Folder::create calls for the same path do not fail.
+     */
+    public function testCreateConcurrently()
+    {
+        $script = tempnam(sys_get_temp_dir(), 'jfs');
+        file_put_contents(
+            $script,
+            '<?php
+            define("JPATH_ROOT", ' . var_export(JPATH_ROOT, true) . ');
+            require ' . var_export(dirname(__DIR__) . '/vendor/autoload.php', true) . ';
+            $failures = 0;
+            for ($i = 0; $i < 100; $i++) {
+                try {
+                    Joomla\Filesystem\Folder::create(' . var_export($this->testPath, true) . ' . "/r$i/a/b/c");
+                } catch (Joomla\Filesystem\Exception\FilesystemException $e) {
+                    $failures++;
+                }
+            }
+            echo $failures;'
+        );
+
+        $processes = [];
+        $pipes     = [];
+
+        for ($i = 0; $i < 4; $i++) {
+            $processes[$i] = proc_open([PHP_BINARY, $script], [1 => ['pipe', 'w']], $pipes[$i]);
+        }
+
+        $failures = 0;
+
+        for ($i = 0; $i < 4; $i++) {
+            $failures += (int) stream_get_contents($pipes[$i][1]);
+            fclose($pipes[$i][1]);
+            proc_close($processes[$i]);
+        }
+
+        unlink($script);
+
+        $this->assertSame(0, $failures, 'Folder::create failed because another process created the folder first.');
+    }
+
+    /**
+     * Tests that a recursive listing does not follow a link back to a parent folder.
+     */
+    public function testRecursiveListingStopsAtLinkLoops()
+    {
+        mkdir($this->testPath . '/a/b', 0777, true);
+        $link = $this->testPath . '/a/b/loop';
+
+        if (!@symlink($this->testPath . '/a', $link)) {
+            if (DIRECTORY_SEPARATOR !== '\\') {
+                $this->markTestSkipped('Symbolic links cannot be created.');
+            }
+
+            // A junction does not need special privileges on Windows
+            exec('mklink /J ' . escapeshellarg(Path::clean($link)) . ' ' . escapeshellarg(Path::clean($this->testPath . '/a')), $output, $result);
+
+            if ($result !== 0) {
+                $this->markTestSkipped('Neither a symbolic link nor a junction can be created.');
+            }
+        }
+
+        try {
+            $folders = Folder::folders($this->testPath, '.', true, false);
+            sort($folders);
+
+            $this->assertSame(['a', 'b', 'loop'], $folders);
+        } finally {
+            // Remove the link itself, never what it points to; Windows removes links to folders with rmdir()
+            if (!@unlink($link)) {
+                rmdir($link);
+            }
+        }
+    }
+
+    /**
      * Tests the Folder::listFolderTree method.
      */
     public function testListFolderTreeWithEmptyDirectory()
