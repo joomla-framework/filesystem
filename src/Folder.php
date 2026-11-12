@@ -19,6 +19,14 @@ use Joomla\Filesystem\Exception\FilesystemException;
 abstract class Folder
 {
     /**
+     * The real paths of the folders _items() is currently reading, to detect symbolic link loops
+     *
+     * @var    string[]
+     * @since  __DEPLOY_VERSION__
+     */
+    private static $itemsChain = [];
+
+    /**
      * Copy a folder.
      *
      * @param   string   $src         The path to the source folder.
@@ -189,6 +197,11 @@ abstract class Folder
         // Create the path
         if (!$ret = @mkdir($path, $mode)) {
             @umask($origmask);
+
+            // Another process may have created the directory since we checked
+            if (is_dir($path)) {
+                return true;
+            }
 
             throw new FilesystemException(__METHOD__ . ': Could not create directory.  Path: ' . $path);
         }
@@ -450,6 +463,46 @@ abstract class Folder
             return $arr;
         }
 
+        // Remember where we are, so that a link back to this folder is not followed again
+        $realPath = realpath($path);
+
+        if ($realPath !== false) {
+            self::$itemsChain[] = $realPath;
+        }
+
+        try {
+            $arr = self::readItems($handle, $path, $filter, $recurse, $full, $exclude, $excludeFilterString, $findfiles);
+        } finally {
+            if ($realPath !== false) {
+                array_pop(self::$itemsChain);
+            }
+
+            closedir($handle);
+        }
+
+        return $arr;
+    }
+
+    /**
+     * Reads the files/folders from an open directory handle for _items().
+     *
+     * @param   resource  $handle               The directory handle.
+     * @param   string    $path                 The path of the folder to read.
+     * @param   string    $filter               A filter for file names.
+     * @param   mixed     $recurse              True to recursively search into sub-folders, or an integer to specify the maximum depth.
+     * @param   boolean   $full                 True to return the full path to the file.
+     * @param   array     $exclude              Array with names of files which should not be shown in the result.
+     * @param   string    $excludeFilterString  Regexp of files to exclude
+     * @param   boolean   $findfiles            True to read the files, false to read the folders
+     *
+     * @return  array  Files.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private static function readItems($handle, $path, $filter, $recurse, $full, $exclude, $excludeFilterString, $findfiles)
+    {
+        $arr = [];
+
         while (($file = readdir($handle)) !== false) {
             if (
                 $file != '.' && $file != '..' && !\in_array($file, $exclude)
@@ -472,7 +525,10 @@ abstract class Folder
                     }
                 }
 
-                if ($isDir && $recurse) {
+                // Do not follow a link to a folder we are already reading, that would never end
+                $isLoop = $isDir && $recurse && \in_array(realpath($fullpath), self::$itemsChain, true);
+
+                if ($isDir && $recurse && !$isLoop) {
                     // Search recursively
                     if (\is_int($recurse)) {
                         // Until depth 0 is reached
@@ -483,8 +539,6 @@ abstract class Folder
                 }
             }
         }
-
-        closedir($handle);
 
         return $arr;
     }
