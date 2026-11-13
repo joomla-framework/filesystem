@@ -11,13 +11,25 @@ use Joomla\Filesystem\Patcher;
 use Joomla\Filesystem\Path;
 use Joomla\Test\TestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
 
 /**
  * A unit test class for Patcher
  */
+#[IgnoreDeprecations]
 class PatcherTest extends TestCase
 {
+    /**
+     * Patcher is deprecated
+     */
+    public function testGetInstanceTriggersADeprecation()
+    {
+        $this->expectUserDeprecationMessageMatches('/Patcher class is deprecated and will be removed in 5\.0/');
+
+        Patcher::getInstance();
+    }
+
     /**
      * This method is called before the first test of this test class is run.
      *
