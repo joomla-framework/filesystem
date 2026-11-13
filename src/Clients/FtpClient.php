@@ -11,7 +11,6 @@ namespace Joomla\Filesystem\Clients;
 
 use Joomla\Filesystem\Exception\FilesystemException;
 
-// phpcs:disable PSR1.Files.SideEffects
 /*
  * Error Codes:
  * - 30 : Unable to connect to host
@@ -25,27 +24,6 @@ use Joomla\Filesystem\Exception\FilesystemException;
  * - 38 : Local filesystem error
  */
 
-if (!\defined('CRLF')) {
-    \define('CRLF', "\r\n");
-}
-
-if (!\defined('FTP_AUTOASCII')) {
-    \define('FTP_AUTOASCII', -1);
-}
-
-if (!\defined('FTP_BINARY')) {
-    \define('FTP_BINARY', 1);
-}
-
-if (!\defined('FTP_ASCII')) {
-    \define('FTP_ASCII', 0);
-}
-
-if (!\defined('FTP_NATIVE')) {
-    \define('FTP_NATIVE', (\function_exists('ftp_connect')) ? 1 : 0);
-}
-// phpcs:enable PSR1.Files.SideEffects
-
 /**
  * FTP client class
  *
@@ -53,6 +31,38 @@ if (!\defined('FTP_NATIVE')) {
  */
 class FtpClient
 {
+    /**
+     * Transfer type: choose ASCII or binary mode by the file extension (see the "type" option)
+     *
+     * @var    integer
+     * @since  __DEPLOY_VERSION__
+     */
+    public const TYPE_AUTOASCII = -1;
+
+    /**
+     * Transfer type: ASCII mode, the value of FTP_ASCII of the FTP extension
+     *
+     * @var    integer
+     * @since  __DEPLOY_VERSION__
+     */
+    public const TYPE_ASCII = 1;
+
+    /**
+     * Transfer type: binary mode, the value of FTP_BINARY of the FTP extension
+     *
+     * @var    integer
+     * @since  __DEPLOY_VERSION__
+     */
+    public const TYPE_BINARY = 2;
+
+    /**
+     * The line ending of FTP commands and replies
+     *
+     * @var    string
+     * @since  __DEPLOY_VERSION__
+     */
+    public const CRLF = "\r\n";
+
     /**
      * Socket resource
      *
@@ -174,12 +184,12 @@ class FtpClient
     {
         // If default transfer type is not set, set it to autoascii detect
         if (!isset($options['type'])) {
-            $options['type'] = \FTP_BINARY;
+            $options['type'] = self::TYPE_BINARY;
         }
 
         $this->setOptions($options);
 
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Autoloading fails for Buffer as the class is used as a stream handler
             class_exists('Joomla\\Filesystem\\Buffer');
         }
@@ -210,7 +220,7 @@ class FtpClient
      *
      * @param   string  $host     Host to connect to
      * @param   string  $port     Port to connect to
-     * @param   array   $options  Array with any of these options: type=>[FTP_AUTOASCII|FTP_ASCII|FTP_BINARY], timeout=>(int)
+     * @param   array   $options  Array with any of these options: type=>[FtpClient::TYPE_AUTOASCII|FtpClient::TYPE_ASCII|FtpClient::TYPE_BINARY], timeout=>(int)
      * @param   string  $user     Username to use for a connection
      * @param   string  $pass     Password to use for a connection
      *
@@ -285,7 +295,7 @@ class FtpClient
         }
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             $this->conn = @ftp_connect($host, $port, $this->timeout);
 
             if ($this->conn === false) {
@@ -351,7 +361,7 @@ class FtpClient
     public function login($user = 'anonymous', $pass = 'jftp@joomla.org')
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_login($this->conn, $user, $pass) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to login');
             }
@@ -389,7 +399,7 @@ class FtpClient
     public function quit()
     {
         // If native FTP support is enabled lets use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             @ftp_close($this->conn);
 
             return true;
@@ -413,7 +423,7 @@ class FtpClient
     public function pwd()
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (($ret = @ftp_pwd($this->conn)) === false) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
@@ -446,7 +456,7 @@ class FtpClient
     public function syst()
     {
         // If native FTP support is enabled lets use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (($ret = @ftp_systype($this->conn)) === false) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
@@ -485,7 +495,7 @@ class FtpClient
     public function chdir($path)
     {
         // If native FTP support is enabled lets use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_chdir($this->conn, $path) === false) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
@@ -516,7 +526,7 @@ class FtpClient
     public function reinit()
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_site($this->conn, 'REIN') === false) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
@@ -546,7 +556,7 @@ class FtpClient
     public function rename($from, $to)
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_rename($this->conn, $from, $to) === false) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
@@ -595,7 +605,7 @@ class FtpClient
         }
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_site($this->conn, 'CHMOD ' . $mode . ' ' . $path) === false) {
                 if (!\defined('PHP_WINDOWS_VERSION_MAJOR')) {
                     throw new FilesystemException(__METHOD__ . 'Bad response.');
@@ -640,7 +650,7 @@ class FtpClient
     public function delete($path)
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_delete($this->conn, $path) === false) {
                 if (@ftp_rmdir($this->conn, $path) === false) {
                     throw new FilesystemException(__METHOD__ . 'Bad response.');
@@ -675,7 +685,7 @@ class FtpClient
     public function mkdir($path)
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_mkdir($this->conn, $path) === false) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
@@ -706,7 +716,7 @@ class FtpClient
     public function restart($point)
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             if (@ftp_site($this->conn, 'REST ' . $point) === false) {
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
             }
@@ -742,7 +752,7 @@ class FtpClient
     public function create($path)
     {
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Turn passive mode on
             if (@ftp_pasv($this->conn, true) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to use passive mode.');
@@ -750,7 +760,7 @@ class FtpClient
 
             $buffer = fopen('buffer://tmp', 'r');
 
-            if (@ftp_fput($this->conn, $path, $buffer, \FTP_ASCII) === false) {
+            if (@ftp_fput($this->conn, $path, $buffer, self::TYPE_ASCII) === false) {
                 fclose($buffer);
 
                 throw new FilesystemException(__METHOD__ . 'Bad response.');
@@ -803,7 +813,7 @@ class FtpClient
         $mode = $this->_findMode($remote);
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Turn passive mode on
             if (@ftp_pasv($this->conn, true) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to use passive mode.');
@@ -856,14 +866,14 @@ class FtpClient
         fclose($this->dataconn);
 
         // Let's try to cleanup some line endings if it is ascii
-        if ($mode == \FTP_ASCII) {
+        if ($mode == self::TYPE_ASCII) {
             $os = 'UNIX';
 
             if (\defined('PHP_WINDOWS_VERSION_MAJOR')) {
                 $os = 'WIN';
             }
 
-            $buffer = preg_replace('/' . CRLF . '/', $this->lineEndings[$os], $buffer);
+            $buffer = preg_replace('/' . self::CRLF . '/', $this->lineEndings[$os], $buffer);
         }
 
         if (!$this->_verifyResponse(226)) {
@@ -897,7 +907,7 @@ class FtpClient
         $mode = $this->_findMode($remote);
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Turn passive mode on
             if (@ftp_pasv($this->conn, true) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to use passive mode.');
@@ -974,7 +984,7 @@ class FtpClient
         $mode = $this->_findMode($remote);
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Turn passive mode on
             if (@ftp_pasv($this->conn, true) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to use passive mode.');
@@ -1059,7 +1069,7 @@ class FtpClient
         $mode = $this->_findMode($remote);
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Turn passive mode on
             if (@ftp_pasv($this->conn, true) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to use passive mode.');
@@ -1137,7 +1147,7 @@ class FtpClient
         $data = null;
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Turn passive mode on
             if (@ftp_pasv($this->conn, true) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to use passive mode.');
@@ -1200,7 +1210,7 @@ class FtpClient
             );
         }
 
-        $data = preg_split('/[' . CRLF . ']+/', $data, -1, \PREG_SPLIT_NO_EMPTY);
+        $data = preg_split('/[' . self::CRLF . ']+/', $data, -1, \PREG_SPLIT_NO_EMPTY);
         $data = preg_replace('#^' . preg_quote(substr($path, 1), '#') . '[/\\\\]?#', '', $data);
 
         if ($keys = array_merge(array_keys($data, '.'), array_keys($data, '..'))) {
@@ -1234,7 +1244,7 @@ class FtpClient
         $recurse = false;
 
         // If native FTP support is enabled let's use it...
-        if (FTP_NATIVE) {
+        if (self::isNative()) {
             // Turn passive mode on
             if (@ftp_pasv($this->conn, true) === false) {
                 throw new FilesystemException(__METHOD__ . ': Unable to use passive mode.');
@@ -1284,7 +1294,7 @@ class FtpClient
                 );
             }
 
-            $contents = explode(CRLF, $data);
+            $contents = explode(self::CRLF, $data);
         }
 
         // If only raw output is requested we are done
@@ -1454,7 +1464,7 @@ class FtpClient
 
         do {
             $this->response .= fgets($this->conn, 4096);
-        } while (!preg_match('/^([0-9]{3})(-(.*' . CRLF . ')+\\1)? [^' . CRLF . ']+' . CRLF . '$/', $this->response, $parts) && time() < $endTime);
+        } while (!preg_match('/^([0-9]{3})(-(.*' . self::CRLF . ')+\\1)? [^' . self::CRLF . ']+' . self::CRLF . '$/', $this->response, $parts) && time() < $endTime);
 
         // Catch a timeout or bad response
         if (!isset($parts[1])) {
@@ -1518,7 +1528,7 @@ class FtpClient
 
         do {
             $this->response .= fgets($this->conn, 4096);
-        } while (!preg_match('/^([0-9]{3})(-(.*' . CRLF . ')+\\1)? [^' . CRLF . ']+' . CRLF . '$/', $this->response, $parts) && time() < $endTime);
+        } while (!preg_match('/^([0-9]{3})(-(.*' . self::CRLF . ')+\\1)? [^' . self::CRLF . ']+' . self::CRLF . '$/', $this->response, $parts) && time() < $endTime);
 
         // Catch a timeout or bad response
         if (!isset($parts[1])) {
@@ -1579,25 +1589,25 @@ class FtpClient
      *
      * @param   string  $fileName  Name of the file
      *
-     * @return  integer Transfer-mode for this filetype [FTP_ASCII|FTP_BINARY]
+     * @return  self::TYPE_ASCII|self::TYPE_BINARY  Transfer-mode for this filetype
      *
      * @since   1.0
      */
     protected function _findMode($fileName)
     {
-        if ($this->type == FTP_AUTOASCII) {
+        if ($this->type == self::TYPE_AUTOASCII) {
             $dot = strrpos($fileName, '.') + 1;
             $ext = substr($fileName, $dot);
 
             if (\in_array($ext, $this->autoAscii)) {
-                $mode = \FTP_ASCII;
+                $mode = self::TYPE_ASCII;
             } else {
-                $mode = \FTP_BINARY;
+                $mode = self::TYPE_BINARY;
             }
-        } elseif ($this->type == \FTP_ASCII) {
-            $mode = \FTP_ASCII;
+        } elseif ($this->type == self::TYPE_ASCII) {
+            $mode = self::TYPE_ASCII;
         } else {
-            $mode = \FTP_BINARY;
+            $mode = self::TYPE_BINARY;
         }
 
         return $mode;
@@ -1607,7 +1617,7 @@ class FtpClient
      * Set transfer mode
      *
      * @param   integer  $mode  Integer representation of data transfer mode [1:Binary|0:Ascii]
-     *                          Defined constants can also be used [FTP_BINARY|FTP_ASCII]
+     *                          Defined constants can also be used [FtpClient::TYPE_BINARY|FtpClient::TYPE_ASCII]
      *
      * @return  boolean  True if successful
      *
@@ -1616,7 +1626,7 @@ class FtpClient
      */
     protected function _mode($mode)
     {
-        if ($mode == \FTP_BINARY) {
+        if ($mode == self::TYPE_BINARY) {
             if (!$this->_putCmd('TYPE I', 200)) {
                 throw new FilesystemException(
                     sprintf('%1$s: Bad response. Server response: %2$s [Expected: 200]. Mode sent: Binary', __METHOD__, $this->response)
@@ -1631,5 +1641,17 @@ class FtpClient
         }
 
         return true;
+    }
+
+    /**
+     * Whether the FTP extension is available, so that its functions are used instead of sockets
+     *
+     * @return  boolean
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private static function isNative(): bool
+    {
+        return \function_exists('ftp_connect');
     }
 }
