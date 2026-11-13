@@ -100,8 +100,22 @@ class File
 
         // Remove any trailing dots, as those aren't ever valid file names.
         $file = rtrim($file, '.');
+        $file = trim($file);
 
-        return trim($file);
+        /*
+         * Most filesystems limit a file name to 255 bytes, and move_uploaded_file() already fails at around 247.
+         * Shorten the name, but keep its extension.
+         */
+        $maxLength = 240;
+
+        if (\strlen($file) > $maxLength) {
+            $ext = static::getExt($file);
+            $ext = ($ext !== '' && \strlen($ext) < 20) ? '.' . $ext : '';
+
+            $file = rtrim(substr($file, 0, $maxLength - \strlen($ext)), '. ') . $ext;
+        }
+
+        return $file;
     }
 
     /**

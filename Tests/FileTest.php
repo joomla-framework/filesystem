@@ -161,6 +161,30 @@ class FileTest extends FilesystemTestCase
                 '.gitignore',
                 'Files starting with a fullstop should be allowed when strip chars parameter is empty',
             ],
+            [
+                str_repeat('a', 300) . '.jpeg',
+                ['#^\.#'],
+                str_repeat('a', 235) . '.jpeg',
+                'Long file names should be shortened to 240 characters, keeping the extension',
+            ],
+            [
+                str_repeat('a', 240) . '.txt',
+                ['#^\.#'],
+                str_repeat('a', 236) . '.txt',
+                'File names just above the limit should be shortened, keeping the extension',
+            ],
+            [
+                str_repeat('a', 236) . '.txt',
+                ['#^\.#'],
+                str_repeat('a', 236) . '.txt',
+                'File names of exactly 240 characters should not be changed',
+            ],
+            [
+                str_repeat('a', 300),
+                ['#^\.#'],
+                str_repeat('a', 240),
+                'Long file names without an extension should be shortened to 240 characters',
+            ],
         ];
 
         if (function_exists('transliterator_transliterate') && function_exists('iconv')) {
