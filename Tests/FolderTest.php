@@ -248,10 +248,10 @@ class FolderTest extends FilesystemTestCase
         $name            = 'tempFolder';
         $movedFolderName = 'tempMovedFolderName';
 
-        $this->assertSame(
-            'Cannot find source folder',
-            Folder::move($name, $movedFolderName, $this->testPath)
-        );
+        $this->expectException(FilesystemException::class);
+        $this->expectExceptionMessage('Cannot find source folder');
+
+        Folder::move($name, $movedFolderName, $this->testPath);
     }
 
     /**
@@ -274,10 +274,10 @@ class FolderTest extends FilesystemTestCase
             $this->markTestSkipped('The test directory could not be created.');
         }
 
-        $this->assertSame(
-            'Folder already exists',
-            Folder::move($name, $movedFolderName, $this->testPath)
-        );
+        $this->expectException(FilesystemException::class);
+        $this->expectExceptionMessage('Folder already exists');
+
+        Folder::move($name, $movedFolderName, $this->testPath);
     }
 
     /**

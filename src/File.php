@@ -222,7 +222,7 @@ class File
 
         // Check src path
         if (!is_readable($src)) {
-            return 'Cannot find source file.';
+            throw new FilesystemException(__METHOD__ . ': Cannot find source file.');
         }
 
         self::invalidateFileCache($src);
