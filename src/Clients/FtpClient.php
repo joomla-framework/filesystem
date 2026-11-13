@@ -25,6 +25,11 @@ use Joomla\Filesystem\Exception\FilesystemException;
  * - 38 : Local filesystem error
  */
 
+/*
+ * Deprecated: 5.0 will no longer define these global constants. Use FtpClient::CRLF, FtpClient::TYPE_AUTOASCII,
+ * FtpClient::TYPE_ASCII and FtpClient::TYPE_BINARY instead, and extension_loaded('ftp') instead of FTP_NATIVE.
+ * FTP_ASCII and FTP_BINARY remain available from the FTP extension when it is loaded.
+ */
 if (!\defined('CRLF')) {
     \define('CRLF', "\r\n");
 }
@@ -53,6 +58,42 @@ if (!\defined('FTP_NATIVE')) {
  */
 class FtpClient
 {
+    /**
+     * Transfer type: choose ASCII or binary mode by the file extension (see the "type" option)
+     *
+     * Use this instead of the global constant FTP_AUTOASCII, which is deprecated.
+     *
+     * @var    integer
+     * @since  __DEPLOY_VERSION__
+     */
+    public const TYPE_AUTOASCII = -1;
+
+    /**
+     * Transfer type: ASCII mode
+     *
+     * @var    integer
+     * @since  __DEPLOY_VERSION__
+     */
+    public const TYPE_ASCII = \FTP_ASCII;
+
+    /**
+     * Transfer type: binary mode
+     *
+     * @var    integer
+     * @since  __DEPLOY_VERSION__
+     */
+    public const TYPE_BINARY = \FTP_BINARY;
+
+    /**
+     * The line ending of FTP commands and replies
+     *
+     * Use this instead of the global constant CRLF, which is deprecated.
+     *
+     * @var    string
+     * @since  __DEPLOY_VERSION__
+     */
+    public const CRLF = "\r\n";
+
     /**
      * Socket resource
      *
